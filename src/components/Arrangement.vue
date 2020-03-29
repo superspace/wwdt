@@ -4,7 +4,7 @@
             <div class="card mb-3 c-arrangement">
 
                     <draggable-asset 
-                        v-for="asset in arrangement.assets" v-bind:key="asset.id"
+                        v-for="asset in arrangement.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
                         :asset="asset">
                     </draggable-asset>
 
@@ -20,7 +20,7 @@
 
 import DraggableAsset from '@/components/DraggableAsset'
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'arrangement',
@@ -29,26 +29,19 @@ export default {
     },
     mounted: function () {
 
-        this.setActiveArrangement(this.arrangements[0])
-
-        // this.getCompSize()
-        // const context = this
-        // window.addEventListener('resize', function () {
-        //     context.getCompSize()
-        // })        
+        this.getArrangement(this.arrangements[0].id)
 
     },
     data() {
         return {
-            // pWidth: 0,
-            // pHeight: 0
         }
     },
     computed: {
+        ...mapGetters('assets', ['getAsset']),
         ...mapState('arrangement', ['arrangement', 'arrangements'])
     },
     methods: {
-        ...mapActions('arrangement', ['setActiveArrangement']),
+        ...mapActions('arrangement', ['getArrangement']),
 
     }
 }

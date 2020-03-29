@@ -9,6 +9,7 @@ import { player } from './player.module'
 import { project } from './project.module'
 import { arrangement } from './arrangement.module'
 import { marker } from './marker.module'
+import { assets } from './assets.module'
 
 Vue.use(Vuex);
 
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
         player,
         project,
         arrangement,
-        marker
+        marker,
+        assets
     }
 });
 

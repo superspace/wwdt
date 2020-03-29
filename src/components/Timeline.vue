@@ -80,7 +80,7 @@ export default {
     methods: {
         ...mapActions('timeline', ['setStart']),
         ...mapActions('player', ['stopPlayer', 'setPosition']),
-        ...mapActions('marker', ['setActiveMarker']),
+        ...mapActions('marker', ['setMarker']),
 
         onChange: function () {
             this.setPosition(this.value)
@@ -95,7 +95,7 @@ export default {
             this.value = marker.time
             this.stopPlayer();
             this.setPosition(marker.time)
-            this.setActiveMarker(marker)
+            this.setMarker(marker)
         },
 
 

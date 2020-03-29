@@ -6,7 +6,7 @@
 
         <b-list-group>
 
-          <b-list-group-item a href="#" class="d-flex justify-content-center align-items-center" v-for="project in projects" :key="project.id" v-on:click.prevent="setProject(project)">
+          <b-list-group-item a href="#" class="d-flex justify-content-center align-items-center" v-for="project in projects" :key="project.id" v-on:click.prevent="setActiveProject(project)">
 
               {{ project.title }}
 
@@ -35,10 +35,10 @@ export default {
         ...mapState('project', ['projects']),
     },
     methods: {
-        ...mapActions('project', ['setActiveProject']),
+        ...mapActions('project', ['setProject']),
 
-        setProject: function (project) {
-            this.setActiveProject(project)
+        setActiveProject: function (project) {
+            this.setProject(project)
             router.push('/')
         }
     }

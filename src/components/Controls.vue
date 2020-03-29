@@ -1,7 +1,7 @@
 <template>
     <vue-draggable-resizable 
         :resizable="false"
-        :w="341"
+        :w="345"
         :h="70"
         :z="1000"
         :x="x"

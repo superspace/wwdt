@@ -59,7 +59,7 @@ router.beforeEach((to, from, next) => {
     } else if (!activeProject && to.path !== '/projects') {
       if (store.state.project.projects.length === 1 ) {
         const project = store.state.project.projects[0]
-        store.dispatch('project/setActiveProject', project)        
+        store.dispatch('project/setProject', project)        
         return next()
       } else {
         return next('/projects')

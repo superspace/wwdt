@@ -38,8 +38,6 @@ import Arrangement from '@/components/Arrangement'
 import Prompter from '@/components/Prompter'
 import Controls from '@/components/Controls'
 
-import { mapActions } from 'vuex'
-
 export default {
   name: 'HomeView',
   components: {
@@ -52,14 +50,12 @@ export default {
     Prompter
   },
   created: function () {
-    this.getMarkers
   },
   data: function () {
     return {
     }
   },
   computed: {
-    ...mapActions('marker', ['getMarkers'])
   }
 }
 </script>

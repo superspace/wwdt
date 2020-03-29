@@ -14,15 +14,12 @@
 
         <!-- :handles="['tl','tr','br','bl']" -->
 
-
             <div class="c-asset__header">
-
-                {{ asset.title }} <b-badge>{{asset.type}}</b-badge>
-
+                {{ asset.data.title }} <b-badge>{{asset.data.type}}</b-badge>
             </div>
 
-            <figure v-show="asset.src" >
-                <img @load="onHandleLoad" :src="src" :alt="asset.title" class="img-fluid" ref="image" /> 
+            <figure v-show="asset.data.file" >
+                <img @load="onHandleLoad" :src="src" :alt="asset.data.title" class="img-fluid" ref="image" /> 
             </figure>
 
     </vue-draggable-resizable>
@@ -72,7 +69,7 @@ export default {
         ...mapState('player', ['play']),
 
         src: function () {
-            return process.env.VUE_APP_HOST + this.asset.src
+            return (this.asset.data.file) ? process.env.VUE_APP_HOST + this.asset.data.file.src : ''
         },
 
         assetClass: function () {

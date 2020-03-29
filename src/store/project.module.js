@@ -1,5 +1,7 @@
 import Axios from "axios"
 
+// import store from "../store"
+
 const state = {
     project: {},
     session: {},
@@ -8,21 +10,45 @@ const state = {
 }
 
 const actions = {
-    setActiveProject ({ commit }, project) {
-        commit('setProject', project)
-        if (project.sessions.length > 0) {
-            commit('setSession', state.project.sessions[0])
-            if (state.session.recordings.length > 0) {
-                commit('setRecording', state.session.recordings[0])
-            }
-        }
-    },
+
     getProjects: function ({ commit }) {
-        Axios.get('list-projects')
+        Axios.get('get-projects')
             .then(data => {
                 commit('setProjects', data.data.result)
             })
-    }
+    },
+
+    setProject ({ commit, dispatch }, project) {
+        commit('setProject', project)
+        if (project.sessions.length > 0) {
+
+            // Set Session
+            dispatch('setSession', state.project.sessions[0])
+
+        }
+    },
+
+    setSession ({ commit, dispatch }, session) {
+        commit('setSession', session)
+
+        // Set recording
+        if (session.recordings.length > 0) {
+            commit('setRecording', session.recordings[0])
+        }
+
+        // Set Arrangement
+        if (session.arrangements.length > 0) {
+            dispatch('arrangement/setArrangements', session.arrangements, {root: true})
+        }
+
+        // Load assets
+        dispatch('assets/getAssets', session.id, {root: true})
+            .then(() => {
+                // Load markers
+                dispatch('marker/getMarkers', session.id, {root: true})
+            })
+    },
+
 }
 
 const mutations = {
