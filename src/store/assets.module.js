@@ -12,7 +12,6 @@ const getters = {
         asset.id = id
         return asset
     }
-
 }
 
 const actions = {
@@ -40,6 +39,23 @@ const actions = {
                     }
                 })
         })
+    },
+
+    deleteAsset ( {commit}, id) {
+        let data = new FormData
+        data.append('id', id)
+
+        return new Promise((resolve) => {
+            Axios.post('/delete-asset', data)
+                .then(data => {
+                    if (data.data.status === 'OK') {
+                        commit('deleteAsset', id)
+                        resolve()
+                    }
+                })
+        })
+
+
     },
   
     // addAsset ({ commit }, asset) {
@@ -80,6 +96,11 @@ const mutations = {
     },
     updateAsset(state, asset) {
         state.assets[asset.id] = asset
+    },
+    deleteAsset(state, id) {
+        if (state.assets.hasOwnProperty(id)) {
+            delete state.assets[id]
+        }
     }
 }
 

@@ -1,5 +1,17 @@
 import Axios from "axios"
-// import store from "../store"
+// import Vue from "vue"
+
+function doUpdateMarker (commit, marker, data) {
+    return new Promise((resolve) => {
+        Axios.post('/update-marker', data)
+            .then(data => {
+                if (data.data.status === 'OK') {
+                    commit('updateMarker', marker)
+                    resolve()
+                }
+            })
+    })
+}
 
 const state = {
     marker: {},
@@ -7,29 +19,7 @@ const state = {
 }
 
 const actions = {
-    setMarker ({ commit }, marker) {
-        commit('setMarker', marker)
-    },
-    addMarker ({ commit }, marker) {
-        Axios.post('/add-marker', marker)
-            .then(data => {
-                if (data.data.status === 'OK') {
-                    commit('addMarker', marker)
-                }
-            })
-    },
-    // addAsset ({ commit }, asset) {
-    //     Axios.post('/add-asset', asset, 
-    //             {
-    //                 headers: {'Content-Type': 'multipart/form-data'}
-    //             }
-    //         )
-    //         .then(data => {
-    //             if (data.data.status === 'OK') {
-    //                 commit('addAsset', asset)
-    //             }
-    //         })
-    // },
+
     getMarkers({ commit }, sessionId) {
         const params = {
             sessionId: sessionId
@@ -38,6 +28,61 @@ const actions = {
             .then(data => {
                 commit('setMarkers', data.data.result)
             })
+    },
+
+    setMarker ({ commit }, marker) {
+        commit('setMarker', marker)
+    },
+
+    addMarker ({ commit }, marker) {
+        Axios.post('/add-marker', marker)
+            .then(data => {
+                if (data.data.status === 'OK') {
+                    commit('addMarker', marker)
+                }
+            })
+    },
+
+    updateMarker ({ commit }, marker) {
+
+        let data = new FormData
+        data.append('id', marker.id)
+        data.append('title', marker.title)
+        data.append('time', marker.time)
+
+        return new Promise((resolve) => {
+            Axios.post('/update-marker', data)
+                .then(data => {
+                    if (data.data.status === 'OK') {
+                        commit('updateMarker', marker)
+                        resolve()
+                    }
+                })
+        })
+    },
+
+    removeAsset ({ commit }, {marker, id}) {
+
+        let index = marker.assets.indexOf(id)
+        if (index != -1)
+            marker.assets.splice(index, 1)
+
+        let data = new FormData
+        data.append('id', marker.id)
+        data.append('assets', marker.assets)
+
+        return doUpdateMarker(commit, marker, data)
+    },
+ 
+    addAsset ({ commit }, marker, id) {
+
+        marker.assets.push(id)
+
+        let data = new FormData
+        data.append('id', marker.id)
+        data.append('assets', marker.assets)
+
+        return doUpdateMarker(commit, marker, data)
     }
 }
 
@@ -45,32 +90,26 @@ const mutations = {
     setMarker(state, marker) {
         state.marker = marker
     },
+
     setMarkers(state, markers) {
-
-        // Plug assets to markers
-        // markers.forEach((marker) => {
-        //     marker.assets = []
-        //     marker.assetids.forEach((id) => {
-        //         let asset = store.getters['assets/getAsset'](id)
-        //         asset.id = id
-        //         marker.assets.push(asset)
-        //     })
-
-        // });
-
         state.markers = markers
     },
+
     addMarker(state, marker) {
-        marker.id = state.markers.length + 1
-        marker.assets = []
-        state.markers.push(marker)
+        // marker.id = state.markers.length + 1
+        // marker.assets = []
+        // state.markers.push(marker)
         state.marker = marker
     },
-    // addAsset(state, asset) {
-    //     const index = state.markers.indexOf(state.marker)
-    //     state.marker.assets.push(asset)
-    //     state.markers.splice(index, 1, state.marker)        
-    // }
+
+    updateMarker(state, marker) {
+        const index = state.markers.findIndex(x => x.id === state.marker.id)
+        //console.log("update Marker: " + marker.time) // eslint-disable-line no-console
+        state.markers.splice(index, 1, marker)
+        //Vue.set(state.markers, index, marker)  
+        //console.log("update Marker: " + state.markers) // eslint-disable-line no-console
+
+    }
 }
 
 export const marker = {

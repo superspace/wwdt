@@ -1,7 +1,7 @@
 <template>
     <div class="row c-arrangement__wrapper">
         <div class="col-md-12">
-            <div class="card mb-3 c-arrangement">
+            <div class="card mb-3 c-arrangement" v-if="arrangement">
 
                     <draggable-asset 
                         v-for="asset in arrangement.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
@@ -29,7 +29,7 @@ export default {
     },
     mounted: function () {
 
-        this.getArrangement(this.arrangements[0].id)
+        this.getArrangement(this.arrangements[0]['id'])
 
     },
     data() {

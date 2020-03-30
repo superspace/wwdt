@@ -20,12 +20,12 @@
 
                     </vue-slider>
 
-                    <div class="marker__wrapper">
+                    <div class="marker__wrapper" ref="markerParent">
 
-                        <div v-for="marker in markers" :key="marker.id">
-                            <a href="#" variant="" :title="marker.title" :id="'marker-'+marker.id" v-on:click.prevent="handleClickOnMarker(marker)" :style="getMarkerStyle(marker.time)" class="marker"><b-icon-triangle-fill></b-icon-triangle-fill></a>
-                            <b-tooltip :target="'marker-'+marker.id" variant="secondary" placement="bottom"></b-tooltip>
-                        </div>
+                        <timeline-marker v-for="marker in markers" 
+                            :key="marker.index"
+                            :marker="marker"
+                            :parentWidth="parentWidth"></timeline-marker>
 
                     </div>
 
@@ -42,6 +42,7 @@
 <script>
 
 import VueSlider from 'vue-slider-component'
+import TimelineMarker from './TimelineMarker'
 
 import { mapState, mapActions } from 'vuex'
 
@@ -50,15 +51,27 @@ import 'vue-slider-component/theme/default.css'
 export default {
     name: 'Timeline',
     components: {
-        VueSlider
+        VueSlider,
+        TimelineMarker
     },
     data: function () {
         return {
             value: 0,
+            parentWidth: 0
         }
     },
     created: function () {
         this.setStart(Date.now())
+    },
+    mounted: function () {
+
+        let context = this;
+
+        window.addEventListener('resize', function () {
+            context.parentWidth = context.$refs.markerParent.clientWidth
+        })
+
+        this.parentWidth = this.$refs.markerParent.clientWidth
     },
     computed: {
         ...mapState('timeline', ['time','start','end','duration']),
@@ -66,7 +79,7 @@ export default {
 
         formattime: function () {
             return this.$timestamp(this.start, this.time)
-        }
+        },
     },
     watch: {
         time: function (val) {
@@ -79,50 +92,26 @@ export default {
     },
     methods: {
         ...mapActions('timeline', ['setStart']),
-        ...mapActions('player', ['stopPlayer', 'setPosition']),
-        ...mapActions('marker', ['setMarker']),
+        ...mapActions('player', ['setPosition']),
 
         onChange: function () {
             this.setPosition(this.value)
         },
-
-        getMarkerStyle: function (time) {
-            const left = 100 / this.duration * time;
-            return {left: left + '%'}
-        },
-
-        handleClickOnMarker: function (marker) {
-            this.value = marker.time
-            this.stopPlayer();
-            this.setPosition(marker.time)
-            this.setMarker(marker)
-        },
-
-
     }
 }
 </script>
 
 <style lang="scss">
 
-
-
-.marker {
-    transform: translateX(-50%);
-    display: inline-block;
-    text-align: center;
-    position: absolute;
-
-    &__wrapper {
-        position: relative;
-        width: 100%;
-    }
-}
-
 .slider__tooltip {
     margin-bottom: 0;
     background: white;
     padding: 0 4px;
+}
+
+.marker__wrapper {
+    width: 100%;
+    position: relative;
 }
 
 </style>
