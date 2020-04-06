@@ -8,14 +8,11 @@
         :className="'marker--draggable'"
         :x="xPos"
         @dragstop="handleMarkerDragStop">
-        <a href="#"
+        <a href="#" v-b-tooltip.hover.bottom
             @click.prevent="handleClickOnMarker()" 
             :title="marker.title" 
-            :id="'marker-' + marker.id" 
             class="marker"><b-icon-triangle-fill></b-icon-triangle-fill>
         </a>
-        <!-- :style="getMarkerStyle(marker.time)"  -->
-        <!-- <b-tooltip :target="'marker-'+marker.id" variant="secondary" placement="bottom"></b-tooltip> -->
     </vue-draggable-resizable>
 
 </template>
@@ -31,10 +28,7 @@ export default {
         VueDraggableResizable
     },
     mounted: function () {
-        let context = this
-        setTimeout(function () {
-            context.setXPos()
-        }, 300)
+        this.setXPos()
     },
     data: function () {
         return {
@@ -49,6 +43,9 @@ export default {
         ...mapState('timeline', ['duration']),
     },
     watch: {
+        marker: function () {
+            this.setXPos()
+        },
         parentWidth: function () {
             this.setXPos()
         }
@@ -72,6 +69,7 @@ export default {
                 this.marker.time = time
                 this.updateMarker(this.marker)
                     .then(()=>{
+                        this.setXPos()
                     })
             }
         },

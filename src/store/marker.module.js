@@ -50,15 +50,19 @@ const actions = {
         data.append('title', marker.title)
         data.append('time', marker.time)
 
-        return new Promise((resolve) => {
-            Axios.post('/update-marker', data)
-                .then(data => {
-                    if (data.data.status === 'OK') {
-                        commit('updateMarker', marker)
-                        resolve()
-                    }
-                })
-        })
+        return doUpdateMarker(commit, marker, data)
+
+    },
+
+    removeMarker ({ commit}, marker) {
+        const params = {
+            id: marker.id
+        }
+        Axios.get('/delete-marker', {params: params})
+            .then(() => {
+                commit('deleteMarker', marker.id)
+            })
+
     },
 
     removeAsset ({ commit }, {marker, id}) {
@@ -97,18 +101,21 @@ const mutations = {
 
     addMarker(state, marker) {
         // marker.id = state.markers.length + 1
-        // marker.assets = []
-        // state.markers.push(marker)
+        marker.assets = []
+        state.markers.push(marker)
         state.marker = marker
     },
 
     updateMarker(state, marker) {
-        const index = state.markers.findIndex(x => x.id === state.marker.id)
-        //console.log("update Marker: " + marker.time) // eslint-disable-line no-console
+        const index = state.markers.findIndex(x => x.id === marker.id)
         state.markers.splice(index, 1, marker)
-        //Vue.set(state.markers, index, marker)  
-        //console.log("update Marker: " + state.markers) // eslint-disable-line no-console
+        state.marker = marker
+    },
 
+    deleteMarker(state, id) {
+        const index = state.markers.findIndex(x => x.id === id)
+        state.markers.splice(index, 1)
+        state.marker = {}
     }
 }
 

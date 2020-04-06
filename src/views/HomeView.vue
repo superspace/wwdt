@@ -14,13 +14,17 @@
       <div class="col-md-4">
         <video-player></video-player>
         <b-tabs>
-          <b-tab title="Assets" active>
+          <b-tab title="Marker" active>
             <br>
-            <asset-viewer></asset-viewer>
+            <marker-editor></marker-editor>
           </b-tab>
           <b-tab title="Transkript">
             <br>
             <prompter></prompter>
+          </b-tab>
+          <b-tab title="Assets">
+            <br>
+            <asset-list></asset-list>
           </b-tab>
         </b-tabs>
       </div>
@@ -32,7 +36,8 @@
 // @ is an alias to /src
 import Activity from '@/components/Activity'
 import VideoPlayer from '@/components/VideoPlayer'
-import AssetViewer from '@/components/AssetViewer'
+import MarkerEditor from '@/components/MarkerEditor'
+import AssetList from '@/components/AssetList'
 import Timeline from '@/components/Timeline'
 import Arrangement from '@/components/Arrangement'
 import Prompter from '@/components/Prompter'
@@ -44,7 +49,8 @@ export default {
     Controls,
     Activity,
     VideoPlayer,
-    AssetViewer,
+    MarkerEditor,
+    AssetList,
     Timeline,
     Arrangement,
     Prompter

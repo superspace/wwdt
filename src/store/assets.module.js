@@ -2,7 +2,16 @@ import Axios from "axios"
 
 const state = {
     asset: {},
-    assets: {}
+    assets: {},
+    types: [
+        {value: 'FILE', text: 'Datei (DOC,XLS,PDF)'},
+        {value: 'IMAGE', text: 'Bild (JPG,PNG,GIF)'},
+        {value: 'TEXT', text: 'Text'},
+        {value: 'VIDEO', text: 'Video (MP4)'},
+        {value: 'AUDIO', text: 'Audio (MP3)'},
+        {value: 'LABEL', text: 'Textlabel'}
+    ],
+    ranking: [1,2,3,4,5],
 }
 
 const getters = {

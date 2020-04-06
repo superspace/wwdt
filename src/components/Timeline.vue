@@ -1,5 +1,5 @@
 <template>
-    <div class="card mb-2">
+    <div class="card mb-2 pt-3">
         <div class="card-body">
             <div class="row">
                 <div class="">
@@ -8,7 +8,7 @@
                 <div class="col">
                     <vue-slider
                         v-model="value"
-                        v-on:change="onChange"
+                        @change="onTimelineChange"
                         :min="0"
                         :max="duration"
                         :interval="0.1"
@@ -22,11 +22,12 @@
 
                     <div class="marker__wrapper" ref="markerParent">
 
-                        <timeline-marker v-for="marker in markers" 
-                            :key="marker.index"
-                            :marker="marker"
-                            :parentWidth="parentWidth"></timeline-marker>
-
+                        <span v-if="duration > 0">
+                            <timeline-marker v-for="marker in markers"
+                                :key="marker.id"
+                                :marker="marker"
+                                :parentWidth="parentWidth"></timeline-marker>
+                        </span>
                     </div>
 
                 </div>
@@ -64,14 +65,8 @@ export default {
         this.setStart(Date.now())
     },
     mounted: function () {
-
-        let context = this;
-
-        window.addEventListener('resize', function () {
-            context.parentWidth = context.$refs.markerParent.clientWidth
-        })
-
-        this.parentWidth = this.$refs.markerParent.clientWidth
+        window.addEventListener('resize', this.setParentWidth)
+        this.setParentWidth();
     },
     computed: {
         ...mapState('timeline', ['time','start','end','duration']),
@@ -88,15 +83,32 @@ export default {
             } else {
                 this.value = this.duration
             }
+        },
+        duration: function () {
+            console.log(this.duration)
         }
     },
     methods: {
         ...mapActions('timeline', ['setStart']),
         ...mapActions('player', ['setPosition']),
 
-        onChange: function () {
+        onTimelineChange: function () {
             this.setPosition(this.value)
         },
+
+        setParentWidth: function () {
+            if (this.$refs.markerParent)
+                this.parentWidth = this.$refs.markerParent.clientWidth
+        }
+
+        // onMarkerChange: function () {
+
+        // },
+
+        // onDragMarkerStart: function () {
+        //     console.log(this.$refs.markers.getIndex()); // eslint-disable-line no-console
+        // }
+
     }
 }
 </script>
@@ -110,7 +122,7 @@ export default {
 }
 
 .marker__wrapper {
-    width: 100%;
+    width: auto;
     position: relative;
 }
 
