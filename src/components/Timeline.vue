@@ -83,9 +83,6 @@ export default {
             } else {
                 this.value = this.duration
             }
-        },
-        duration: function () {
-            console.log(this.duration)
         }
     },
     methods: {

@@ -36,17 +36,17 @@
 
         <div class="card-body">
             <b-list-group>
-                <span v-for="id in marker.assets" :key="id" :define="asset = getAsset(id)">
+                <span v-for="id in marker.assets" :key="id" :define="item = getAsset(id)">
                     <b-list-group-item class="d-flex justify-content-between align-items-center">
                         <div>
-                            {{ asset.title }}
-                            <b-badge variant="primary" pill>{{ asset.type }} </b-badge>
+                            {{ item.title }}
+                            <b-badge variant="primary" pill>{{ item.type }} </b-badge>
                         </div>
                         <b-button-group>
-                            <b-button variant="primary" size="sm" @click.prevent="openUpdateAssetModal(asset)">
+                            <b-button variant="primary" size="sm" @click.prevent="openUpdateAssetModal(item)">
                                 <b-icon-pencil></b-icon-pencil>
                             </b-button>
-                            <b-button variant="light" size="sm" ><b-icon-trash></b-icon-trash></b-button>
+                            <b-button variant="light" size="sm" @click.prevent="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
                         </b-button-group>
                     </b-list-group-item>
                 </span>
@@ -115,7 +115,7 @@ export default {
     watch: {
     },
     methods: {
-        ...mapActions('marker', ['addAsset','removeAsset','updateMarker']),
+        ...mapActions('marker', ['addAsset','removeAsset','updateMarker','removeMarker']),
 
         // Update Marker
 
@@ -155,7 +155,6 @@ export default {
 
             this.removeMarker(data)
                 .then(() => {
-                    this.marker = {}
                     this.showDeleteMarkerAlert = false
                 })   
 
