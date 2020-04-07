@@ -1,15 +1,9 @@
 <template>
-    <div class="mb-2 text-right">
-        <b-form-checkbox v-model="visible" name="check-button" switch>
-            <small><strong>Activity</strong></small>
-        </b-form-checkbox>
-
-        <b-collapse v-model="visible">
+    <b-collapse v-model="visible">
         <line-chart height="80" type="line" ref="chart"
             :options="chartOptions" 
             :series="series"></line-chart>
-        </b-collapse>
-    </div>
+    </b-collapse>
 </template>
 
 <script>
@@ -23,9 +17,12 @@ export default {
     components: {
         lineChart: VueApexCharts
     },
+    props: {
+        visible: Boolean
+    },
     data: function () {
         return {
-            visible: false,
+            // visible: false,
             series: [
             ],
             chartOptions: {

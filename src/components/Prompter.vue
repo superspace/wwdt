@@ -1,7 +1,7 @@
 <template>
-    <div class="text-center">
+    <b-alert variant="secondary" show class="text-center mt-3">
         <span style="white-space: pre;">{{ cue.text }}</span>
-    </div>
+    </b-alert>
 </template>
 
 <script>

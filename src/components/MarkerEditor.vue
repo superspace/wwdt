@@ -17,9 +17,9 @@
         </b-button-group>
     </b-alert>
 
-    <div class="card mb-3" v-if="marker.id">
+    <b-card no-body class="mb-3" v-if="marker.id">
 
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <b-card-header class="d-flex justify-content-between align-items-center">
             <div>
                 <div>{{marker.title}}</div>
                 <b-badge variant="secondary">{{ $timestamp(start, marker.time) }} Uhr</b-badge> 
@@ -29,30 +29,27 @@
                     <b-icon-pencil></b-icon-pencil>
                 </b-button>
                 <b-button variant="light" size="sm" @click.prevent="handleDeleteMarkerAlert()"><b-icon-trash></b-icon-trash></b-button>
-                <b-button vaiant="secondary" size="sm"><b-icon-plus></b-icon-plus> Add Asset</b-button>
+                <b-button variant="secondary" size="sm"><b-icon-plus></b-icon-plus> Add Asset</b-button>
             </b-button-group>
 
-        </div>
+        </b-card-header>
 
-        <div class="card-body">
-            <b-list-group>
-                <span v-for="id in marker.assets" :key="id" :define="item = getAsset(id)">
-                    <b-list-group-item class="d-flex justify-content-between align-items-center">
-                        <div>
-                            {{ item.title }}
-                            <b-badge variant="primary" pill>{{ item.type }} </b-badge>
-                        </div>
-                        <b-button-group>
-                            <b-button variant="primary" size="sm" @click.prevent="openUpdateAssetModal(item)">
-                                <b-icon-pencil></b-icon-pencil>
-                            </b-button>
-                            <b-button variant="light" size="sm" @click.prevent="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
-                        </b-button-group>
-                    </b-list-group-item>
-                </span>
-            </b-list-group>
-        </div>    
-
+        <b-list-group flush>
+                <b-list-group-item class="d-flex justify-content-between align-items-center" v-for="id in marker.assets" :key="id" :define="item = getAsset(id)">
+                    <div>
+                        <b-icon-file-earmark></b-icon-file-earmark> {{ item.title }}
+                        <b-badge variant="primary" pill>{{ item.type }} </b-badge>
+                    </div>
+                    <b-button-group>
+                        <b-button variant="primary" size="sm" @click.prevent="openUpdateAssetModal(item)">
+                            <b-icon-pencil></b-icon-pencil>
+                        </b-button>
+                        <b-button variant="light" size="sm" @click.prevent="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
+                    </b-button-group>
+                </b-list-group-item>
+        </b-list-group>
+ 
+    </b-card>    
         <b-modal id="modal-update-marker" size="md" title="Update Marker" @ok="handleUpdateMarkerModalOK">
 
             <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateMarkerSubmit">
@@ -64,23 +61,19 @@
 
                 <b-form-group label="Time" label-for="time" 
                     invalid-feedback="Time is required">
-
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <b-form-spinbutton id="time" v-model="data.time" step="1" min="0" :max="duration" required />
-                        </div>
-                        <div class="col-sm-6">
-                            <b-badge variant="secondary">{{ $timestamp(start, data.time) }}</b-badge>
-                        </div>
-                    </div>
+                    
+                    <b-input-group>
+                        <b-form-spinbutton id="time" v-model="data.time" step="1" min="0" :max="duration" required />
+                        <b-input-group-append>
+                            <b-alert class="p-2" variant="secondary" show><pre class="mb-0"> <b-icon-clock></b-icon-clock> {{ $timestamp(start, data.time) }}</pre></b-alert>
+                        </b-input-group-append>
+                    </b-input-group>
 
                 </b-form-group>
 
             </b-form>
 
         </b-modal>
- 
-    </div>    
     </div>
 </template>
 

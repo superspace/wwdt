@@ -37,6 +37,7 @@
                     <b-button variant="primary" size="sm" v-b-modal.modal-add-marker class="ml-md-2 mr-md-2">
                         <b-icon-plus></b-icon-plus> Add marker
                     </b-button>
+
                 </div>
             </div>
 

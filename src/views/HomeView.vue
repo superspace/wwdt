@@ -1,32 +1,54 @@
 <template>
-  <div class="container-fluid d-flex flex-column c-home"> 
-    <controls></controls>
-    <div class="row">
-      <div class="col">
-        <timeline></timeline>
-        <activity></activity>
+  <div>
+    <b-sidebar id="sidebar-assets" v-model="showAssets" title="Assets" right shadow>
+      <div class="px-2 py-2">
+          <asset-list></asset-list>
       </div>
-    </div>
-    <div class="row flex-grow-1">
-      <div class="col-md-8">
-        <arrangement></arrangement>
+    </b-sidebar>
+    <div class="container-fluid d-flex flex-column c-home"> 
+      <controls></controls>
+      <div class="row">
+        <div class="col">
+          <timeline></timeline>
+        </div>
       </div>
-      <div class="col-md-4">
-        <video-player></video-player>
-        <b-tabs>
-          <b-tab title="Marker" active>
-            <br>
-            <marker-editor></marker-editor>
-          </b-tab>
-          <b-tab title="Transkript">
-            <br>
-            <prompter></prompter>
-          </b-tab>
-          <b-tab title="Assets">
-            <br>
-            <asset-list></asset-list>
-          </b-tab>
-        </b-tabs>
+      <div class="row">
+        <div class="col d-flex justify-content-end">
+
+          <b-form inline class="p-1">
+
+            <b-form-checkbox switch v-model="showAssets" class="mr-3">
+              <small><strong>Assets </strong></small>
+            </b-form-checkbox>
+
+            <b-form-checkbox v-model="showActivity" switch>
+                <small><strong>Activity</strong></small>
+            </b-form-checkbox>
+
+          </b-form>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <activity :visible="showActivity"></activity>
+        </div>
+      </div>
+      <div class="row flex-grow-1">
+        <div class="col-md-8">
+          <arrangement></arrangement>
+        </div>
+        <div class="col-md-4">
+          <video-player></video-player>
+          <b-tabs>
+            <b-tab title="Marker" active>
+              <marker-editor class="pt-3"></marker-editor>
+            </b-tab>
+            <b-tab title="Transkript">
+              <prompter></prompter>
+            </b-tab>
+          </b-tabs>
+        </div>
       </div>
     </div>
   </div>
@@ -59,6 +81,8 @@ export default {
   },
   data: function () {
     return {
+      showAssets: false,
+      showActivity: false
     }
   },
   computed: {
