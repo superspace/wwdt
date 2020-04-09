@@ -3,7 +3,7 @@ import Axios from "axios"
 
 function doUpdateMarker (commit, marker, data) {
     return new Promise((resolve) => {
-        Axios.post('/update-marker', data)
+        Axios.post('/marker/update', data)
             .then(data => {
                 if (data.data.status === 'OK') {
                     commit('updateMarker', marker)
@@ -15,6 +15,7 @@ function doUpdateMarker (commit, marker, data) {
 
 const state = {
     marker: {},
+    tmpMarker: {},
     markers: []
 }
 
@@ -24,7 +25,7 @@ const actions = {
         const params = {
             sessionId: sessionId
         }
-        Axios.get('/get-markers', {params: params})
+        Axios.get('/marker/list', {params: params})
             .then(data => {
                 commit('setMarkers', data.data.result)
             })
@@ -34,8 +35,12 @@ const actions = {
         commit('setMarker', marker)
     },
 
+    setTmpMarker ({ commit }, marker) {
+        commit('setTmpMarker', marker)
+    },
+
     addMarker ({ commit }, marker) {
-        Axios.post('/add-marker', marker)
+        Axios.post('/marker/add', marker)
             .then(data => {
                 if (data.data.status === 'OK') {
                     commit('addMarker', marker)
@@ -58,7 +63,7 @@ const actions = {
         const params = {
             id: marker.id
         }
-        Axios.get('/delete-marker', {params: params})
+        Axios.get('/marker/delete', {params: params})
             .then(() => {
                 commit('deleteMarker', marker.id)
             })
@@ -95,16 +100,19 @@ const mutations = {
         state.marker = marker
     },
 
+    setTmpMarker(state, marker) {
+        state.tmpMarker = Object.assign({}, marker)
+    },
+
     setMarkers(state, markers) {
         state.markers = markers
     },
 
-    addMarker(state, marker) {
-        // marker.id = state.markers.length + 1
-        marker.assets = []
-        state.markers.push(marker)
-        state.marker = marker
-    },
+    // addMarker(state, marker) {
+    //     marker.assets = []
+    //     state.markers.push(marker)
+    //     state.marker = marker
+    // },
 
     updateMarker(state, marker) {
         const index = state.markers.findIndex(x => x.id === marker.id)

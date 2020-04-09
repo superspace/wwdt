@@ -2,7 +2,8 @@ import Axios from "axios"
 
 const state = {
     arrangement: {},
-    arrangements: []
+    arrangements: [],
+    keyframes: []
 }
 
 const actions = {
@@ -12,22 +13,28 @@ const actions = {
     },
 
     getArrangement ({ commit }, id) {
-        const params = {
-            id: id
-        }
-        Axios.get('/get-arrangement', {params: params})
+        Axios.get('/arrangement/'+id)
             .then(data=> {
-                commit('setArrangement', data.data.result)
+                if (data.data.status == 'OK') {
+                    let arrangement = data.data.result
+                    let keyframes = arrangement.keyframes
+                    delete arrangement.keyframes
+                    commit('setArrangement', arrangement)
+                    commit('setKeyframes', keyframes)
+                }
             })
 
     }
 }
 
 const mutations = {
-    setArrangements(state, arrangements) {
+    setArrangements (state, arrangements) {
         state.arrangements = arrangements
     },
-    setArrangement(state, arrangement) {
+    setKeyframes (state, keyframes) {
+        state.keyframes = keyframes
+    },
+    setArrangement (state, arrangement) {
         state.arrangement = arrangement
     },
 }

@@ -2,6 +2,7 @@ import Axios from "axios"
 
 const state = {
     asset: {},
+    tmpAsset: {},
     assets: {},
     types: [
         {value: 'FILE', text: 'Datei (DOC,XLS,PDF)'},
@@ -40,7 +41,7 @@ const actions = {
         data.append('rank', asset.rank)
 
         return new Promise((resolve) => {
-            Axios.post('/update-asset', data)
+            Axios.post('/asset/update', data)
                 .then(data => {
                     if (data.data.status === 'OK') {
                         commit('updateAsset', asset)
@@ -55,7 +56,7 @@ const actions = {
         data.append('id', id)
 
         return new Promise((resolve) => {
-            Axios.post('/delete-asset', data)
+            Axios.post('/asset/delete', data)
                 .then(data => {
                     if (data.data.status === 'OK') {
                         commit('deleteAsset', id)
@@ -81,18 +82,23 @@ const actions = {
     //         }
     //     })
     // },
+
     getAssets({ commit }, sessionId) {
         const params = {
             sessionId: sessionId
         }
         return new Promise((resolve) => {
 
-            Axios.get('/get-assets', {params: params})
+            Axios.get('/asset/list', {params: params})
                 .then(data => {
                     commit('setAssets', data.data.result)
                     resolve()
                 })
         })
+    },
+
+    setTmpAsset ({ commit }, asset) {
+        commit('setTmpAsset', asset)
     }
 }
 
@@ -110,6 +116,9 @@ const mutations = {
         if (state.assets.hasOwnProperty(id)) {
             delete state.assets[id]
         }
+    },
+    setTmpAsset(state, asset) {
+        state.tmpAsset = Object.assign({}, asset)
     }
 }
 

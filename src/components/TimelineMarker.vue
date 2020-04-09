@@ -10,8 +10,8 @@
         @dragstop="handleMarkerDragStop">
         <a href="#" v-b-tooltip.hover.bottom
             @click.prevent="handleClickOnMarker()" 
-            :title="marker.title" 
-            class="marker"><b-icon-triangle-fill></b-icon-triangle-fill>
+            :title="data.title" 
+            :class="classNames"><b-icon-triangle-fill></b-icon-triangle-fill>
         </a>
     </vue-draggable-resizable>
 
@@ -36,17 +36,25 @@ export default {
         }
     },
     props: {
-        marker: Object,
-        parentWidth: Number
+        data: Object,
+        width: Number,
+        type: {
+            type: String,
+            default: 'upload'
+        }
     },
     computed: {
         ...mapState('timeline', ['duration']),
+
+        classNames: function () {
+            return ['marker', 'marker--'+this.type]
+        }
     },
     watch: {
         marker: function () {
             this.setXPos()
         },
-        parentWidth: function () {
+        width: function () {
             this.setXPos()
         }
     },
@@ -56,18 +64,18 @@ export default {
         ...mapActions('marker', ['setMarker', 'updateMarker']),
 
         setXPos: function () {
-            const left = this.parentWidth / this.duration * this.marker.time
+            const left = this.width / this.duration * this.data.time
             this.xPos = Math.round(left)
         },
 
         handleMarkerDragStop: function (left) {
 
-            let time = left * (this.duration / this.parentWidth)
+            let time = left * (this.duration / this.width)
             time = Math.round(time)
             
-            if (time != this.marker.time) {
-                this.marker.time = time
-                this.updateMarker(this.marker)
+            if (time != this.data.time) {
+                this.data.time = time
+                this.updateMarker(this.data)
                     .then(()=>{
                         this.setXPos()
                     })
@@ -76,18 +84,26 @@ export default {
 
         handleClickOnMarker: function () {
             this.stopPlayer();
-            this.setPosition(this.marker.time)
-            this.setMarker(this.marker)
+            this.setPosition(this.data.time)
+            this.setMarker(this.data)
         },
     }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .marker {
     transform: translateX(-50%);
     display: inline-block;
     text-align: center;
+
+    &--upload {
+        color: red;
+    }
+
+    &--keyframe {
+        color: green;
+    }
 
     &__wrapper {
         position: relative;

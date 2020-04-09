@@ -7,6 +7,7 @@
                 </div>
                 <div class="col">
                     <vue-slider
+                        ref="slider"
                         v-model="value"
                         @change="onTimelineChange"
                         :min="0"
@@ -20,13 +21,24 @@
 
                     </vue-slider>
 
-                    <div class="marker__wrapper" ref="markerParent">
+                    <div class="marker__wrapper">
 
                         <span v-if="duration > 0">
-                            <timeline-marker v-for="marker in markers"
-                                :key="marker.id"
-                                :marker="marker"
-                                :parentWidth="parentWidth"></timeline-marker>
+                            <timeline-marker v-for="item in markers"
+                                :key="item.id"
+                                :data="item"
+                                :width="width"></timeline-marker>
+                        </span>
+                    </div>
+
+                    <div class="marker__wrapper">
+
+                        <span v-if="duration > 0">
+                            <timeline-marker v-for="item in keyframes"
+                                :key="item.id"
+                                :data="item"
+                                :type="'keyframe'"
+                                :width="width"></timeline-marker>
                         </span>
                     </div>
 
@@ -58,19 +70,23 @@ export default {
     data: function () {
         return {
             value: 0,
-            parentWidth: 0
+            width: 0
         }
     },
     created: function () {
         this.setStart(Date.now())
     },
     mounted: function () {
-        window.addEventListener('resize', this.setParentWidth)
-        this.setParentWidth();
+        window.addEventListener('resize', this.setWidth)
+        let context = this;
+        setTimeout(function () {
+            context.setWidth();
+        }, 300)
     },
     computed: {
         ...mapState('timeline', ['time','start','end','duration']),
         ...mapState('marker', ['markers']),
+        ...mapState('arrangement', ['keyframes']),
 
         formattime: function () {
             return this.$timestamp(this.start, this.time)
@@ -93,18 +109,11 @@ export default {
             this.setPosition(this.value)
         },
 
-        setParentWidth: function () {
-            if (this.$refs.markerParent)
-                this.parentWidth = this.$refs.markerParent.clientWidth
+        setWidth: function () {
+            if (this.$refs.slider) {
+                this.width = this.$refs.slider.$el.offsetWidth
+            }
         }
-
-        // onMarkerChange: function () {
-
-        // },
-
-        // onDragMarkerStart: function () {
-        //     console.log(this.$refs.markers.getIndex()); // eslint-disable-line no-console
-        // }
 
     }
 }

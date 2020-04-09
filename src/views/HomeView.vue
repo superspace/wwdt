@@ -1,5 +1,6 @@
 <template>
   <div>
+    <asset></asset>
     <b-sidebar id="sidebar-assets" v-model="showAssets" title="Assets" right shadow>
       <div class="px-2 py-2">
           <asset-list></asset-list>
@@ -36,18 +37,25 @@
       </div>
       <div class="row flex-grow-1">
         <div class="col-md-8">
-          <arrangement></arrangement>
+          <b-tabs>
+            <b-tab title="Arrangement" active>
+              <arrangement class="pt-3"></arrangement>
+            </b-tab>
+            <b-tab title="Marker" active>
+              <marker-editor class="pt-3"></marker-editor>
+            </b-tab>
+          </b-tabs>
         </div>
         <div class="col-md-4">
           <video-player></video-player>
-          <b-tabs>
+          <prompter></prompter>
+          <!-- <b-tabs>
             <b-tab title="Marker" active>
               <marker-editor class="pt-3"></marker-editor>
             </b-tab>
             <b-tab title="Transkript">
-              <prompter></prompter>
             </b-tab>
-          </b-tabs>
+          </b-tabs> -->
         </div>
       </div>
     </div>
@@ -64,6 +72,7 @@ import Timeline from '@/components/Timeline'
 import Arrangement from '@/components/Arrangement'
 import Prompter from '@/components/Prompter'
 import Controls from '@/components/Controls'
+import Asset from '@/components/Asset'
 
 export default {
   name: 'HomeView',
@@ -75,7 +84,8 @@ export default {
     AssetList,
     Timeline,
     Arrangement,
-    Prompter
+    Prompter,
+    Asset
   },
   created: function () {
   },

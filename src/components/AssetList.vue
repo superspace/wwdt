@@ -1,18 +1,18 @@
 <template>
     <div>
-        <asset :asset="data"></asset>
-
         <b-list-group>
-            <b-list-group-item v-for="asset in assetList" :key="asset.id" class="d-flex justify-content-between align-items-center">
+            <b-list-group-item href="#"
+                @click.prevent="setAsset(asset)" 
+                v-for="asset in assetList" :key="asset.id" 
+                class="d-flex justify-content-between align-items-center">
                 <div>
-                    {{ asset.title }}
-                    <b-badge variant="primary" pill>{{ asset.type }} </b-badge>
+                    <b-icon-file-earmark></b-icon-file-earmark> {{ asset.title }}
                 </div>
                 <b-button-group>
-                    <b-button variant="primary" size="sm" @click.prevent="openUpdateAssetModal(asset)">
+                    <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(asset)">
                         <b-icon-pencil></b-icon-pencil>
                     </b-button>
-                    <b-button variant="light" size="sm" ><b-icon-trash></b-icon-trash></b-button>
+                    <b-button variant="light" size="sm" @click.prevent.stop=""><b-icon-trash></b-icon-trash></b-button>
                 </b-button-group>
             </b-list-group-item>
         </b-list-group>
@@ -23,12 +23,10 @@
 
 import { mapState, mapActions, mapGetters } from 'vuex'
 
-import Asset from '@/components/Asset'
 
 export default {
     name: 'AssetList',
     components: {
-        Asset
     },
     data: function () {
         return {
@@ -53,10 +51,10 @@ export default {
         }
     },
     methods: {
-        ...mapActions('assets', []),
+        ...mapActions('assets', ['setAsset', 'setTmpAsset']),
 
         openUpdateAssetModal: function (asset) {
-            this.data = Object.assign({}, asset)
+            this.setTmpAsset(asset)
             this.$bvModal.show('modal-update-asset')  
         },
 

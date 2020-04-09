@@ -12,7 +12,7 @@ const state = {
 const actions = {
 
     getProjects: function ({ commit }) {
-        Axios.get('get-projects')
+        Axios.get('project/list')
             .then(data => {
                 commit('setProjects', data.data.result)
             })
