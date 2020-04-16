@@ -13,7 +13,7 @@
                     <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(asset)">
                         <b-icon-pencil></b-icon-pencil>
                     </b-button>
-                    <b-button variant="light" size="sm" @click.prevent.stop=""><b-icon-trash></b-icon-trash></b-button>
+                    <!-- <b-button variant="light" size="sm" @click.prevent.stop=""><b-icon-trash></b-icon-trash></b-button> -->
                 </b-button-group>
             </b-list-group-item>
         </b-list-group>

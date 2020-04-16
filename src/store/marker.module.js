@@ -32,6 +32,13 @@ const actions = {
     },
 
     setMarker ({ commit }, marker) {
+        if (marker == undefined) {
+            marker = {
+                id: undefined,
+                title: '',
+                time: 0
+            }
+        }
         commit('setMarker', marker)
     },
 
@@ -88,7 +95,7 @@ const actions = {
         return doUpdateMarker(commit, marker, data)
     },
  
-    addAsset ({ commit }, marker, id) {
+    addAsset ({ commit }, {marker, id}) {
 
         marker.assets.push(id)
 

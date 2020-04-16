@@ -110,6 +110,7 @@ export default {
     },
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
+        ...mapState('marker', ['marker']),
 
         allowedFileTypes: function () {
             const index = this.types.findIndex(x => x.value === this.tmpAsset.type)
@@ -159,7 +160,12 @@ export default {
 
             if (this.tmpAsset.id == undefined) {
 
-                this.createAsset(this.tmpAsset)
+                let payload = {
+                    asset: this.tmpAsset,
+                    marker: this.marker ? this.marker : 0
+                }
+
+                this.createAsset(payload)
                     .then(() => {
                         this.$bvModal.hide('modal-update-asset')
                     })

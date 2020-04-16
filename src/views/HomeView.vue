@@ -41,7 +41,7 @@
             <b-tab title="Arrangement" active>
               <arrangement class="pt-3"></arrangement>
             </b-tab>
-            <b-tab title="Marker" active>
+            <b-tab title="Marker">
               <marker-editor class="pt-3"></marker-editor>
             </b-tab>
           </b-tabs>

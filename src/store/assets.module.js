@@ -76,7 +76,8 @@ const actions = {
 
     },
 
-    createAsset({ commit }, asset) {
+    createAsset({ commit, dispatch}, {asset, marker}) {
+        
         let data = new FormData
         data.append('title', asset.title)
         data.append('description', asset.description)
@@ -96,6 +97,14 @@ const actions = {
                 .then(resp => {
                     if (resp.data.status === 'OK') {
                         commit('createAsset', resp.data.result)
+
+                        const payload = {
+                            marker: marker,
+                            id: resp.data.result.id,
+                        }
+
+                        dispatch('marker/addAsset', payload, {root: true}) 
+
                         resolve()
                     }
                 })

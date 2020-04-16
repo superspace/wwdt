@@ -1,31 +1,41 @@
 <template>
-    <div class="row c-arrangement__wrapper">
-        <div class="col-md-12">
-            <div class="card mb-3 c-arrangement" v-if="arrangement">
-
-                    <draggable-asset 
-                        v-for="asset in arrangement.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
-                        :asset="asset">
-                    </draggable-asset>
-
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <b-button class="mb-3" size="sm" variant="primary"><b-icon-plus></b-icon-plus> Add Keyframe</b-button>
             </div>
         </div>
-        <!-- <div class="col-md-1">
-            <b-button vaiant="secondary" size="sm"><b-icon-plus></b-icon-plus> Add Asset</b-button>
-        </div>     -->
-    </div>    
+        <div class="row c-arrangement__wrapper">
+            <div class="col-md-9">
+                <div class="card mb-3 c-arrangement" v-if="arrangement">
+
+                        <draggable-asset 
+                            v-for="asset in arrangement.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
+                            :asset="asset">
+                        </draggable-asset>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <asset-list></asset-list>
+            </div>    
+        </div>    
+    </div>
 </template>
 
 <script>
 
 import DraggableAsset from '@/components/DraggableAsset'
 
+import AssetList from '@/components/AssetList'
+
 import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'arrangement',
     components: {
-        DraggableAsset
+        DraggableAsset,
+        AssetList
     },
     mounted: function () {
 

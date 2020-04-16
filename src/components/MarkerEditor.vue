@@ -1,9 +1,6 @@
 <template>
     <div>
 
-        <div class="row">
-
-            <div class="col-md-5">
 
         <b-alert variant="danger" :show="showRemoveAssetAlert" class="d-flex flex-row justify-content-between">
             <span>Remove <strong>{{ tmpAsset.title }}</strong> from {{ marker.title }} ?</span>
@@ -21,43 +18,47 @@
             </b-button-group>
         </b-alert>
 
-        <b-card no-body class="mb-3" v-if="marker.id">
+        <div class="row">
 
-            <b-card-header class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div>{{marker.title}}</div>
-                    <b-badge variant="secondary">{{ $timestamp(start, marker.time) }} Uhr</b-badge> 
-                </div>
-                <b-button-group>
-                    <b-button variant="primary" size="sm" @click.prevent="openUpdateMarkerModal()">
-                        <b-icon-pencil></b-icon-pencil>
-                    </b-button>
-                    <b-button variant="light" size="sm" @click.prevent="handleDeleteMarkerAlert()"><b-icon-trash></b-icon-trash></b-button>
-                    <b-button variant="secondary" size="sm" @click.prevent="openCreateAssetModal()"><b-icon-plus></b-icon-plus> Add Asset</b-button>
-                </b-button-group>
+            <div class="col-md-5">
+        
+                <b-card no-body class="mb-3" v-if="marker.id">
 
-            </b-card-header>
-
-            <b-list-group flush>
-                    <b-list-group-item href="#" 
-                        @click.prevent="setAsset(item)"
-                        class="d-flex justify-content-between align-items-center" 
-                        v-for="item in markerAssets" :key="item.id">
+                    <b-card-header class="d-flex justify-content-between align-items-center">
                         <div>
-                            <b-icon-file-earmark></b-icon-file-earmark> {{ item.title }}
+                            {{marker.title}}  <b-badge variant="secondary">{{ $timestamp(start, marker.time) }} Uhr</b-badge> 
                         </div>
                         <b-button-group>
-                            <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
+                            <b-button variant="primary" size="sm" @click.prevent="openUpdateMarkerModal()">
+                                <b-icon-pencil></b-icon-pencil>
+                            </b-button>
+                            <b-button variant="light" size="sm" @click.prevent="handleDeleteMarkerAlert()"><b-icon-trash></b-icon-trash></b-button>
+                            <b-button variant="secondary" size="sm" @click.prevent="openCreateAssetModal()"><b-icon-plus></b-icon-plus> Add Asset</b-button>
                         </b-button-group>
-                    </b-list-group-item>
-            </b-list-group>
-    
-        </b-card>    
+
+                    </b-card-header>
+
+                    <b-list-group flush>
+                            <b-list-group-item href="#" 
+                                @click.prevent="setAsset(item)"
+                                class="d-flex justify-content-between align-items-center" 
+                                v-for="item in markerAssets" :key="item.id">
+                                <div>
+                                    <b-icon-file-earmark></b-icon-file-earmark> {{ item.title }}
+                                </div>
+                                <b-button-group>
+                                    <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
+                                </b-button-group>
+                            </b-list-group-item>
+                    </b-list-group>
+
+                </b-card>    
 
             </div>
+
             <div class="col-md-7" v-if="asset.id">
 
-                <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex justify-content-between align-items-start">
 
                         <div>
                             <h3>{{ asset.title }}</h3>
@@ -80,9 +81,9 @@
                     <a :href="src" v-if="src" target="_blank">Download</a>
 
                     <div v-html="asset.content"></div>
-                
-            </div>
 
+            
+            </div>    
         </div>
 
         <b-modal id="modal-update-marker" size="md" title="Update Marker" @ok="handleUpdateMarkerModalOK">

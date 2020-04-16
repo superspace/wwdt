@@ -5,7 +5,7 @@
         :w="20"
         :h="30"
         :axis="'x'"
-        :className="'marker--draggable'"
+        :className="'marker'"
         :x="xPos"
         @dragstop="handleMarkerDragStop">
         <a href="#" v-b-tooltip.hover.bottom
@@ -51,7 +51,7 @@ export default {
         }
     },
     watch: {
-        marker: function () {
+        data: function () {
             this.setXPos()
         },
         width: function () {
@@ -92,17 +92,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .marker {
     transform: translateX(-50%);
     display: inline-block;
     text-align: center;
 
+    transition: left 0.25s ease-out;
+
     &--upload {
-        color: #007bff;
+        color: var(--primary);
     }
 
     &--keyframe {
-        color: #6c757d;
+        color: var(--secondary);
     }
 
     &__wrapper {

@@ -31,11 +31,6 @@ const router = new Router({
       name: 'capture',
       component: () => import('../views/CaptureView.vue')
     },
-    {
-      path: '/admin',
-      name: 'admin',
-      component: () => import('../views/AdminView.vue')
-    },
     { 
       path: '*', 
       redirect: '/' 

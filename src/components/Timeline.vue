@@ -13,6 +13,7 @@
                         :min="0"
                         :max="duration"
                         :interval="0.1"
+                        :process-style="{ backgroundColor: 'var(--primary)' }"
                         :tooltip="'always'">
 
                         <template v-slot:tooltip="{ value, focus }">

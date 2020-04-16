@@ -16,8 +16,6 @@ Vue.use(VueAxios, axios)
 
 import './scss/custom.scss'
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'video.js/dist/video-js.css'
 
 Vue.config.productionTip = false
