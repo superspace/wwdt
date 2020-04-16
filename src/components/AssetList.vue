@@ -2,8 +2,9 @@
     <div>
         <b-list-group>
             <b-list-group-item href="#"
+                v-for="(asset, id) in assets" :key="id" 
+                :setid="asset.id = id"
                 @click.prevent="setAsset(asset)" 
-                v-for="asset in assetList" :key="asset.id" 
                 class="d-flex justify-content-between align-items-center">
                 <div>
                     <b-icon-file-earmark></b-icon-file-earmark> {{ asset.title }}
@@ -36,19 +37,6 @@ export default {
     computed: {
         ...mapState('assets', ['assets']),
         ...mapGetters('assets', ['getAsset']),
-
-        assetList: function () {
-
-            let out = [];
-
-            for (var key in this.assets) {
-                let asset = this.getAsset(key)
-                asset['id'] = key
-                out.push(asset)
-            }
-
-            return out
-        }
     },
     methods: {
         ...mapActions('assets', ['setAsset', 'setTmpAsset']),

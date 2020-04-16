@@ -41,9 +41,9 @@
                 </div>
             </div>
 
-            <b-modal id="modal-add-marker" title="Add Marker" @ok="handleAddMarkerModalOk">
+            <b-modal id="modal-add-marker" title="Add Marker" @ok="handleCreateMarkerModalOk">
 
-                <b-form @submit.stop.prevent="handleAddMarkerSubmit">
+                <b-form @submit.stop.prevent="handleCreateMarkerSubmit">
 
                     <p>Zeitpunkt: <strong>{{ formattime }} Uhr</strong></p>
 
@@ -51,10 +51,10 @@
                         label="Name"
                         label-for="title">
                         <b-form-input
-                        id="title"
-                        v-model="marker.title"
-                        type="text"
-                        required
+                            id="title"
+                            v-model="marker.title"
+                            type="text"
+                            required
                         ></b-form-input>
                     </b-form-group>
                 </b-form>
@@ -96,17 +96,17 @@ export default {
     },
     methods: {
         ...mapActions('player', ['setPosition','setPlaybackRate','startPlayer','stopPlayer']),
-        ...mapActions('marker', ['addMarker']),
+        ...mapActions('marker', ['createMarker']),
 
-        handleAddMarkerModalOk: function (e) {
+        handleCreateMarkerModalOk: function (e) {
             e.preventDefault();
-            this.handleAddMarkerSubmit()
+            this.handleCreateMarkerSubmit()
         },
 
-        handleAddMarkerSubmit: function () {
+        handleCreateMarkerSubmit: function () {
 
             this.marker.time = this.time;
-            this.addMarker(this.marker);
+            this.createMarker(this.marker);
             this.marker = {};
 
             this.$nextTick(() => {

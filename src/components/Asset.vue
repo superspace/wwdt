@@ -1,9 +1,16 @@
 <template>
     <div>
 
-        <b-modal id="modal-update-asset" size="lg" title="Update Asset" @ok="handleUpdateAssetModalOk">
+        <b-modal id="modal-update-asset" size="lg" title="" @ok="handleUpdateAssetModalOk">
 
             <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateAssetSubmit">
+
+                <div class="row">
+                    <div class="col-md-6">
+
+                <b-form-group label="Type" label-for="type">
+                    <b-form-select id="type" v-model="tmpAsset.type" :options="types" required />
+                </b-form-group>
 
                 <b-form-group label="Titel" label-for="title" 
                     :state="titleState" 
@@ -24,26 +31,37 @@
                     </b-form-radio-group>
                 </b-form-group>
 
-                <div v-if="tmpAsset.type=='IMAGE'||tmpAsset.type=='FILE'">
+                    </div>
+                    <div class="col-md-6">
 
-                    <b-form-file
-                        v-model="tmpAsset.src"
-                        :state="Boolean(tmpAsset.src)"
-                        placeholder="Datei auswählen oder auf dieses Feld ziehen..."
-                        drop-placeholder="Drop file here..."
-                    ></b-form-file>
+                <div v-if="['IMAGE','FILE','AUDIO','VIDEO'].includes(tmpAsset.type)">
+
+                    <b-form-group label="Upload" label-for="file">
+                        <b-form-file
+                            v-model="tmpAsset.file"
+                            :accept="allowedFileTypes"
+                            id="file"
+                            placeholder="Select file ..."
+                            drop-placeholder="Drop file here..."
+                            @input="handleFilePreview()"
+                        ></b-form-file>
+                    </b-form-group>
+
+                    <div class="card mb-4" v-if="showPreview">
+                        <div class="card-body">
+                        <img :src="imagePreview" class="img-fluid" />
+                        </div>
+                    </div>
 
                 </div>
 
                 <div v-if="tmpAsset.type=='TEXT'">
 
-                    <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-                        <button :class="{ 'is-active': isActive.bold() }" @click="commands.bold">Bold</button>
-                        <button :class="{ 'is-active': isActive.bold() }" @click="commands.bold">Bold</button>
-                    </editor-menu-bar>
+                        <vue-editor v-model="tmpAsset.content" :editorToolbar="customToolbar"></vue-editor>
 
-                    <editor-content :editor="editor" />
+                </div>
 
+                    </div>
                 </div>
 
             </b-form>
@@ -56,14 +74,12 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 
-import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
-import { Bold, Italic, Link, HardBreak, Heading } from 'tiptap-extensions'
+import { VueEditor } from "vue2-editor";
 
 export default {
     name: 'Asset',
     components: {
-        EditorContent,
-        EditorMenuBar
+        VueEditor
     },
     props: {
     },
@@ -72,27 +88,57 @@ export default {
     data: function () {
         return {
             titleState: null,
-            editor: new Editor({
-                extensions: [
-                    new Bold(),
-                    new Italic(),
-                    new Link(),
-                    new HardBreak(),
-                    new Heading()
-                ],
-                content: this.tmpAsset ? this.tmpAsset.content : '',
-            }),   
+            imagePreview: "",
+            showPreview: false,
+            customToolbar: [
+                [{ 'header': [1, 2, 3, 4, false] }],
+                ["bold", "italic", "underline"], 
+                [{ list: "ordered" }, { list: "bullet" }], 
+                ["code-block"]
+            ]
         }
     },
     beforeDestroy() {
-        this.editor.destroy()
+    },
+    watch: {
+        'tmpAsset.type': function () {
+            this.imagePreview = ''
+            this.showPreview = false
+            this.tmpAsset.file = undefined
+        }
+
     },
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
+
+        allowedFileTypes: function () {
+            const index = this.types.findIndex(x => x.value === this.tmpAsset.type)
+            return this.types[index].types
+        }
     },
     methods: {
 
-        ...mapActions('assets', ['updateAsset','deleteAsset', 'setTmpAsset']),
+        ...mapActions('assets', ['updateAsset','deleteAsset', 'createAsset', 'setTmpAsset']),
+
+        handleFilePreview: function () {
+
+            let reader = new FileReader();
+            reader.addEventListener(
+                "load",
+                function () {
+                    this.showPreview = true
+                    this.imagePreview = reader.result
+                }.bind(this),
+                false
+            );
+
+            if (this.tmpAsset.file) {
+                if (/\.(jpe?g|png|gif)$/i.test(this.tmpAsset.file.name)) {
+                    reader.readAsDataURL(this.tmpAsset.file)
+                }
+            }
+
+        },
 
         checkUpdateAssetValidity: function () {
             const valid = this.$refs.formUpdateAsset.checkValidity()
@@ -111,10 +157,21 @@ export default {
                 return
             }
 
-            this.updateAsset(this.tmpAsset)
-                .then(() => {
-                    this.$bvModal.hide('modal-update-asset')
-                })
+            if (this.tmpAsset.id == undefined) {
+
+                this.createAsset(this.tmpAsset)
+                    .then(() => {
+                        this.$bvModal.hide('modal-update-asset')
+                    })
+
+            } else {
+
+                this.updateAsset(this.tmpAsset)
+                    .then(() => {
+                        this.$bvModal.hide('modal-update-asset')
+                    })
+
+            }
 
         },
 

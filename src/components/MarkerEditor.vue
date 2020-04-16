@@ -33,7 +33,7 @@
                         <b-icon-pencil></b-icon-pencil>
                     </b-button>
                     <b-button variant="light" size="sm" @click.prevent="handleDeleteMarkerAlert()"><b-icon-trash></b-icon-trash></b-button>
-                    <b-button variant="secondary" size="sm"><b-icon-plus></b-icon-plus> Add Asset</b-button>
+                    <b-button variant="secondary" size="sm" @click.prevent="openCreateAssetModal()"><b-icon-plus></b-icon-plus> Add Asset</b-button>
                 </b-button-group>
 
             </b-card-header>
@@ -47,9 +47,6 @@
                             <b-icon-file-earmark></b-icon-file-earmark> {{ item.title }}
                         </div>
                         <b-button-group>
-                            <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(item)">
-                                <b-icon-pencil></b-icon-pencil>
-                            </b-button>
                             <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
                         </b-button-group>
                     </b-list-group-item>
@@ -58,23 +55,31 @@
         </b-card>    
 
             </div>
-            <div class="col-md-7">
+            <div class="col-md-7" v-if="asset.id">
 
-                <h3>{{ asset.title }}</h3>
+                <div class="d-flex justify-content-between align-items-start">
 
-                <b-badge class="mr-1" variant="primary" v-for="tag in asset.tags" :key="tag">{{tag}}</b-badge>
+                        <div>
+                            <h3>{{ asset.title }}</h3>
+                            <b-badge class="mr-1" variant="primary" v-for="tag in asset.tags" :key="tag">{{tag}}</b-badge>
+                            <p><small>Added {{ asset.creationdate | moment('DD.MM.YYYY HH:mm:ss')}} by {{asset.author}}</small></p>
+                        </div>
 
-                <p><small>Added {{ asset.creationdate | moment('DD.MM.YYYY HH:mm:ss')}} by {{asset.author}}</small></p>
+                        <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(asset)">
+                            <b-icon-pencil></b-icon-pencil>
+                        </b-button>
 
-                <p>{{ asset.description }}</p>
+                    </div>
 
-                <figure v-if="asset.type == 'IMAGE'">
-                    <img v-if="src" :src="src" :alt="asset.title" class="img-fluid" />
-                </figure>
+                    <p>{{ asset.description }}</p>
 
-                <a :href="src" v-if="src" target="_blank">Download</a>
+                    <figure v-if="asset.type == 'IMAGE'">
+                        <img v-if="src" :src="src" :alt="asset.title" class="img-fluid" />
+                    </figure>
 
-                <div v-html="asset.content"></div>
+                    <a :href="src" v-if="src" target="_blank">Download</a>
+
+                    <div v-html="asset.content"></div>
                 
             </div>
 
@@ -111,12 +116,9 @@
 
 import { mapState, mapActions, mapGetters } from 'vuex'
 
-// import Asset from '@/components/Asset'
-
 export default {
     name: 'MarkerEditor',
     components: {
-        // Asset
     },
     data: function () {
         return {
@@ -214,7 +216,7 @@ export default {
         },
 
         handleCancelRemoveAsset: function () {
-            this.setTmpAsset({})
+            this.setTmpAsset()
             this.showRemoveAssetAlert = false
         },
 
@@ -227,19 +229,16 @@ export default {
 
             this.removeAsset(data)
                 .then(() => {
-                    this.setTmpAsset({})
+                    this.setTmpAsset()
                     this.showRemoveAssetAlert = false
                 })   
         },
 
-        // Create
+        // Create Asset
 
-        handleAddAssetModalOk: function (e) {
-            e.preventDefault()
-            this.handleAddAssetSubmit()
-        },
-
-        handleAddAssetSubmit: function () {
+        openCreateAssetModal: function () {
+            this.setTmpAsset()
+            this.$bvModal.show('modal-update-asset')  
         },
 
         // Update Asset

@@ -98,11 +98,11 @@ export default {
     text-align: center;
 
     &--upload {
-        color: red;
+        color: #007bff;
     }
 
     &--keyframe {
-        color: green;
+        color: #6c757d;
     }
 
     &__wrapper {

@@ -26,8 +26,8 @@ const actions = {
             sessionId: sessionId
         }
         Axios.get('/marker/list', {params: params})
-            .then(data => {
-                commit('setMarkers', data.data.result)
+            .then(resp => {
+                commit('setMarkers', resp.data.result)
             })
     },
 
@@ -39,11 +39,16 @@ const actions = {
         commit('setTmpMarker', marker)
     },
 
-    addMarker ({ commit }, marker) {
-        Axios.post('/marker/add', marker)
-            .then(data => {
-                if (data.data.status === 'OK') {
-                    commit('addMarker', marker)
+    createMarker ({ commit }, marker) {
+
+        let data = new FormData
+        data.append('title', marker.title)
+        data.append('time', marker.time)
+
+        Axios.post('/marker/create', data)
+            .then(resp => {
+                if (resp.data.status === 'OK') {
+                    commit('createMarker', resp.data.result)
                 }
             })
     },
@@ -108,11 +113,11 @@ const mutations = {
         state.markers = markers
     },
 
-    // addMarker(state, marker) {
-    //     marker.assets = []
-    //     state.markers.push(marker)
-    //     state.marker = marker
-    // },
+    createMarker(state, marker) {
+        marker.assets = []
+        state.markers.push(marker)
+        state.marker = marker
+    },
 
     updateMarker(state, marker) {
         const index = state.markers.findIndex(x => x.id === marker.id)
