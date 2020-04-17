@@ -3,11 +3,11 @@
         :parent="true"
         :w="w"
         :h="h"
-        :x="x"
-        :y="y"
-        :z="z"
-        :min-width="200"
-        :min-height="40"
+        :x="props.x"
+        :y="props.y"
+        :z="props.z"
+        :min-width="100"
+        :min-height="50"
         :class="assetClass"
         :handles="['tl','tr','br','bl']"
         :resizable="isResizable"
@@ -20,31 +20,33 @@
         v-show="visible">
 
         <div v-show="active">
-            <div class="c-asset__header d-flex flex-row align-end">
-                <!-- <span>{{ asset.data.title }}</span> -->
+            <div class="c-asset__toolbar d-flex flex-row align-end">
                 <span>
                     <b-button-group>
-                        <b-button size="sm" variant="primary">
+                        <b-button size="sm" variant="primary" @click.prevent.stop="openUpdateAssetModal">
                             <b-icon-pencil></b-icon-pencil>
                         </b-button>
                         <b-button size="sm" variant="light">
-                            <b-icon-arrow-up-short @click.prevent="handleUpZ"></b-icon-arrow-up-short>
+                            <b-icon-arrow-up-short @click.prevent.stop="handleIncreaseZ"></b-icon-arrow-up-short>
                         </b-button>
-                        <b-button size="sm" variant="light" @click.prevent="handleDownZ">
+                        <b-button size="sm" variant="light" @click.prevent.stop="handleDecreaseZ">
                             <b-icon-arrow-down-short></b-icon-arrow-down-short>
                         </b-button>
-                        <b-button size="sm" variant="light">
-                            <b-icon-trash></b-icon-trash>
+                        <b-button size="sm" variant="light" @click.prevent.stop="handleRemoveAssetFromKeyframe">
+                            <b-icon-x ></b-icon-x>
                         </b-button>
                     </b-button-group>
+                    {{props.z}}
                 </span> 
             </div>
         </div>
 
-        <h2 :class="['mb-0', textClass]" v-if="asset.data.type == 'LABEL'">{{ asset.data.title }}</h2>
+        <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
 
-        <figure v-show="asset.data.file" >
-            <img @load="handleLoad" :src="src" :alt="asset.data.title" class="img-fluid" ref="image" /> 
+        <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
+
+        <figure v-show="asset.file" >
+            <img @load="handleLoad" :src="src" :alt="asset.title" class="img-fluid" ref="image" /> 
         </figure>
 
     </vue-draggable-resizable>
@@ -56,7 +58,7 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'DraggableAsset',
@@ -64,40 +66,37 @@ export default {
         VueDraggableResizable
     },
     props: {
-        asset: {}
+        asset: Object,
+        props: Object
     },
     data: function () {
         return {
-            width: 0,
-            height: 0,
-            x: 0,
-            y: 0,
-            z: 1,
+            // width: 0,
+            // height: 0,
             w: 200,
-            h: 40,
-            scale: 1,
-            ratio: 0,
+            h: 100,
+            ratio: 1,
             dragging: false,
             resize: false,
-            visible: false,
+            visible: true,
             active: false,
+            initalWidth: 200
         }
     },
+    mounted: function () {
+    },
     watch: {
-        time: function () {
-            this.updateProperties()
+        'props.scale': function () {
             this.setSize()
-        },
-        data: function () {
-
         }
     },
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
+        ...mapState('arrangement', ['keyframes','keyframe']),
 
         src: function () {
-            return (this.asset.data.file) ? process.env.VUE_APP_HOST + this.asset.data.file.src : ''
+            return (this.asset.file) ? process.env.VUE_APP_HOST + this.asset.file.src : ''
         },
 
         assetClass: function () {
@@ -114,7 +113,7 @@ export default {
 
         textClass: function () {
             let className = ''
-            switch (this.asset.data.rank) {
+            switch (this.asset.rank) {
                 case 1:
                     className = 'text-info'
                     break;
@@ -134,11 +133,14 @@ export default {
         },
 
         isResizable: function () {
-            return (this.asset.data.type == 'LABEL') ? false : true
+            return (this.asset.type == 'LABEL') ? false : true
         }
 
     },
     methods: {
+
+        ...mapActions('arrangement', ['updateProperties','removeAssetFromKeyframe']),
+        ...mapActions('assets', ['setTmpAsset']),
 
         handleLoad: function (e) {
             let image = e.currentTarget
@@ -146,31 +148,61 @@ export default {
             let width = image.naturalHeight
 
             if (height && width) {
-                this.ratio = Math.round((width / height)*100)/100;
-                this.w = 200
-                this.h = Math.round(this.w * this.ratio);
+                this.ratio = Math.round((width/height)*100)/100;
             }
+
+            this.setSize()
         },
 
-        handleUpZ: function () {
-            this.z = this.z+1
+        handleIncreaseZ: function () {
+            this.props.z += 1
+
+            const payload = {
+                asset: this.asset,
+                props: {
+                    z: this.props.z
+                }
+            }
+
+            this.updateProperties(payload)
         },
 
-        handleDownZ: function () {
-            this.z = this.z-1
+        handleDecreaseZ: function () {
+            this.props.z -= 1
+
+            const payload = {
+                asset: this.asset,
+                props: {
+                    z: this.props.z
+                }
+            }
+
+            this.updateProperties(payload)
         },
 
         setSize: function () {
-            this.w = Math.round(this.w * this.scale)
-            this.h = Math.round(this.h * this.scale) 
+            this.w = this.initalWidth * this.props.scale
+            this.h = this.w * this.ratio 
         },
 
         handleDragging: function () {
             this.dragging = true
         },
 
-        handleDragStop: function () {
+        handleDragStop: function (x, y) {
             this.dragging = false
+
+            if (this.props.x != x || this.props.y != y) {    
+                const payload = {
+                    asset: this.asset,
+                    props: {
+                        x: x,
+                        y: y
+                    }
+                }
+                this.updateProperties(payload)
+            }
+
         },
 
         handleResize: function () {
@@ -179,9 +211,19 @@ export default {
 
         handleResizeStop: function (x, y, width) {
             this.resize = false
+            const scale = Math.round((width / this.initalWidth)*100)/100;
+
+            const payload = {
+                asset: this.asset,
+                props: {
+                    scale: scale
+                }
+            }
+
+            this.updateProperties(payload)
+
             if (this.ratio > 0) {
-                this.width = width
-                this.height = this.h = Math.round(width * this.ratio)
+                this.h = Math.round(width * this.ratio)
             }
         },
 
@@ -193,31 +235,13 @@ export default {
             this.active = false
         },
 
-        updateProperties: function () {
+        handleRemoveAssetFromKeyframe: function () {
+            this.removeAssetFromKeyframe(this.asset)
+        },
 
-            let time = this.time
-
-            function filterProps (prop) {
-                return prop.timestamp <= time  
-            }
-
-            const props = this.asset.props.filter(filterProps)
-
-            if (props.length) {
-                let prop = props.slice(-1)[0]
-                
-                if (prop.action === 'out') {
-                    this.visible = false
-                } else {
-                    this.visible = true
-                    this.x = prop.x ? prop.x : 0
-                    this.y = prop.y ? prop.y : 0
-                    this.z = prop.z ? prop.z : 1
-                }
-            } else {
-                this.visible = false
-            }
-
+        openUpdateAssetModal: function () {
+            this.setTmpAsset(this.asset)
+            this.$bvModal.show('modal-update-asset')  
         },
 
     },
@@ -230,7 +254,6 @@ export default {
     background: white;
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
     position: relative;
-    // overflow: hidden;
 
     &--animate {
         transition: all 0.5s ease-in-out;
@@ -245,7 +268,7 @@ export default {
         border: none;
     }
 
-    &__header {
+    &__toolbar {
         position: absolute;
         top: -32px;
         height: 32px;

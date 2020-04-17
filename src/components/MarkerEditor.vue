@@ -1,27 +1,26 @@
 <template>
     <div>
 
-
-        <b-alert variant="danger" :show="showRemoveAssetAlert" class="d-flex flex-row justify-content-between">
-            <span>Remove <strong>{{ tmpAsset.title }}</strong> from {{ marker.title }} ?</span>
-            <b-button-group>
-                <b-button variant="danger" size="sm" @click="handleRemoveAsset">Yes</b-button>
-                <b-button variant="" size="sm" @click="handleCancelRemoveAsset">No</b-button>
-            </b-button-group>
-        </b-alert>
-
-        <b-alert variant="danger" :show="showDeleteMarkerAlert" class="d-flex flex-row justify-content-between">
-            <span><b-icon-trash></b-icon-trash> Delete <strong>{{ tmpMarker.title }}</strong> ?</span>
-            <b-button-group>
-                <b-button variant="danger" size="sm" @click="handleDeleteMarker">Yes</b-button>
-                <b-button variant="" size="sm" @click="handleCancelDeleteMarker">No</b-button>
-            </b-button-group>
-        </b-alert>
-
         <div class="row">
 
             <div class="col-md-5">
-        
+
+                <b-alert variant="danger" :show="showRemoveAssetAlert" class="d-flex flex-row justify-content-between">
+                    <span>Remove <strong>{{ tmpAsset.title }}</strong> from {{ marker.title }} ?</span>
+                    <b-button-group>
+                        <b-button variant="danger" size="sm" @click="handleRemoveAsset">Yes</b-button>
+                        <b-button variant="" size="sm" @click="handleCancelRemoveAsset">No</b-button>
+                    </b-button-group>
+                </b-alert>
+
+                <b-alert variant="danger" :show="showDeleteMarkerAlert" class="d-flex flex-row justify-content-between">
+                    <span><b-icon-trash></b-icon-trash> Delete <strong>{{ tmpMarker.title }}</strong> ?</span>
+                    <b-button-group>
+                        <b-button variant="danger" size="sm" @click="handleDeleteMarker">Yes</b-button>
+                        <b-button variant="" size="sm" @click="handleCancelDeleteMarker">No</b-button>
+                    </b-button-group>
+                </b-alert>
+
                 <b-card no-body class="mb-3" v-if="marker.id">
 
                     <b-card-header class="d-flex justify-content-between align-items-center">
@@ -29,11 +28,15 @@
                             {{marker.title}}  <b-badge variant="secondary">{{ $timestamp(start, marker.time) }} Uhr</b-badge> 
                         </div>
                         <b-button-group>
-                            <b-button variant="primary" size="sm" @click.prevent="openUpdateMarkerModal()">
+                            <b-button variant="primary" size="sm" @click.prevent="openUpdateMarkerModal">
                                 <b-icon-pencil></b-icon-pencil>
                             </b-button>
-                            <b-button variant="light" size="sm" @click.prevent="handleDeleteMarkerAlert()"><b-icon-trash></b-icon-trash></b-button>
-                            <b-button variant="secondary" size="sm" @click.prevent="openCreateAssetModal()"><b-icon-plus></b-icon-plus> Add Asset</b-button>
+                            <b-button variant="light" size="sm" @click.prevent="handleDeleteMarkerAlert">
+                                <b-icon-trash></b-icon-trash>
+                            </b-button>
+                            <b-button variant="primary" size="sm" @click.prevent="openCreateAssetModal">
+                                <b-icon-plus></b-icon-plus> Add Asset
+                            </b-button>
                         </b-button-group>
 
                     </b-card-header>
@@ -47,7 +50,9 @@
                                     <b-icon-file-earmark></b-icon-file-earmark> {{ item.title }}
                                 </div>
                                 <b-button-group>
-                                    <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)"><b-icon-x></b-icon-x></b-button>
+                                    <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)">
+                                        <b-icon-x></b-icon-x>
+                                    </b-button>
                                 </b-button-group>
                             </b-list-group-item>
                     </b-list-group>

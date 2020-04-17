@@ -21,7 +21,10 @@ export default {
                 fluid: true,
                 autoplay: false,
                 controls: false,
-            }
+                muted: true
+            },
+            volume: 0.5,
+            muted: true
         }
     },
     mounted: function () {
@@ -72,6 +75,12 @@ export default {
         },
         rate: function (val) {
             this.player.playbackRate(val)
+        },
+        volume: function (val) {
+            this.player.setVolume(val)  
+        },
+        muted: function (val) {
+            this.player.muted(val)
         },
         play: function (val) {
             if (val === true) {

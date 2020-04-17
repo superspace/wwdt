@@ -3,59 +3,53 @@
     <asset></asset>
     <b-sidebar id="sidebar-assets" v-model="showAssets" title="Assets" right shadow>
       <div class="px-2 py-2">
-          <asset-list></asset-list>
+        <asset-list></asset-list>
       </div>
     </b-sidebar>
-    <div class="container-fluid d-flex flex-column c-home"> 
+    <div class="container-fluid d-flex flex-column c-home">
       <controls></controls>
       <div class="row">
-        <div class="col">
+        <div class="col-md-9">
           <timeline></timeline>
-        </div>
-      </div>
       <div class="row">
-        <div class="col d-flex justify-content-end">
+          <div class="col d-flex justify-content-end">
+            <b-form inline class="p-1">
+              <!-- <b-form-checkbox switch v-model="showAssets" class="mr-3">
+                <small>
+                  <strong>Assets</strong>
+                </small>
+              </b-form-checkbox> -->
 
-          <b-form inline class="p-1">
-
-            <b-form-checkbox switch v-model="showAssets" class="mr-3">
-              <small><strong>Assets </strong></small>
-            </b-form-checkbox>
-
-            <b-form-checkbox v-model="showActivity" switch>
-                <small><strong>Activity</strong></small>
-            </b-form-checkbox>
-
-          </b-form>
-
-        </div>
+              <b-form-checkbox v-model="showActivity" switch>
+                <small>
+                  <strong>Activity</strong>
+                </small>
+              </b-form-checkbox>
+            </b-form>
+          </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <activity :visible="showActivity"></activity>
+          <div class="row">
+            <div class="col">
+              <activity :visible="showActivity"></activity>
+            </div>
+          </div>
+          <div class="row flex-grow-1">
+            <div class="col">
+              <b-tabs>
+                <b-tab title="Arrangement" active>
+                  <arrangement class="pt-3"></arrangement>
+                </b-tab>
+                <b-tab title="Marker">
+                  <marker-editor class="pt-3"></marker-editor>
+                </b-tab>
+              </b-tabs>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="row flex-grow-1">
-        <div class="col-md-8">
-          <b-tabs>
-            <b-tab title="Arrangement" active>
-              <arrangement class="pt-3"></arrangement>
-            </b-tab>
-            <b-tab title="Marker">
-              <marker-editor class="pt-3"></marker-editor>
-            </b-tab>
-          </b-tabs>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <video-player></video-player>
           <prompter></prompter>
-          <!-- <b-tabs>
-            <b-tab title="Marker" active>
-              <marker-editor class="pt-3"></marker-editor>
-            </b-tab>
-            <b-tab title="Transkript">
-            </b-tab>
-          </b-tabs> -->
+          <asset-list></asset-list>
         </div>
       </div>
     </div>
@@ -64,18 +58,18 @@
 
 <script>
 // @ is an alias to /src
-import Activity from '@/components/Activity'
-import VideoPlayer from '@/components/VideoPlayer'
-import MarkerEditor from '@/components/MarkerEditor'
-import AssetList from '@/components/AssetList'
-import Timeline from '@/components/Timeline'
-import Arrangement from '@/components/Arrangement'
-import Prompter from '@/components/Prompter'
-import Controls from '@/components/Controls'
-import Asset from '@/components/Asset'
+import Activity from "@/components/Activity";
+import VideoPlayer from "@/components/VideoPlayer";
+import MarkerEditor from "@/components/MarkerEditor";
+import AssetList from "@/components/AssetList";
+import Timeline from "@/components/Timeline";
+import Arrangement from "@/components/Arrangement";
+import Prompter from "@/components/Prompter";
+import Controls from "@/components/Controls";
+import Asset from "@/components/Asset";
 
 export default {
-  name: 'HomeView',
+  name: "HomeView",
   components: {
     Controls,
     Activity,
@@ -87,25 +81,21 @@ export default {
     Prompter,
     Asset
   },
-  created: function () {
-  },
-  data: function () {
+  created: function() {},
+  data: function() {
     return {
       showAssets: false,
       showActivity: false
-    }
+    };
   },
-  computed: {
-  }
-}
+  computed: {}
+};
 </script>
 
 <style lang="scss">
-
 .c-home {
   height: calc(100vh - 100px);
   overflow: scroll;
 }
-
 </style>
 

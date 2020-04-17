@@ -98,13 +98,13 @@ const actions = {
                     if (resp.data.status === 'OK') {
                         commit('createAsset', resp.data.result)
 
-                        const payload = {
-                            marker: marker,
-                            id: resp.data.result.id,
+                        if (marker.id) {
+                            const payload = {
+                                marker: marker,
+                                id: resp.data.result.id,
+                            }
+                            dispatch('marker/addAsset', payload, {root: true}) 
                         }
-
-                        dispatch('marker/addAsset', payload, {root: true}) 
-
                         resolve()
                     }
                 })

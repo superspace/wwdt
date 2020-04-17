@@ -1,24 +1,25 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-md-12">
-                <b-button class="mb-3" size="sm" variant="primary"><b-icon-plus></b-icon-plus> Add Keyframe</b-button>
+            <div class="col-md-12 d-flex justify-content-between align-items-center">
+                <span>{{ keyframe.title }}</span>
+                <b-button class="mb-3" size="sm" variant="primary" @click.prevent="openCreateKeyframeModal">
+                    <b-icon-plus></b-icon-plus> Add Keyframe
+                </b-button>
             </div>
         </div>
         <div class="row c-arrangement__wrapper">
-            <div class="col-md-9">
+            <div class="col">
                 <div class="card mb-3 c-arrangement" v-if="arrangement">
 
-                        <draggable-asset 
-                            v-for="asset in arrangement.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
-                            :asset="asset">
-                        </draggable-asset>
+                    <draggable-asset 
+                        v-for="asset in keyframe.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
+                        :asset="asset.data" :props="asset.props">
+                    </draggable-asset>
 
                 </div>
             </div>
-            <div class="col-md-3">
-                <asset-list></asset-list>
-            </div>    
+
         </div>    
     </div>
 </template>
@@ -27,15 +28,12 @@
 
 import DraggableAsset from '@/components/DraggableAsset'
 
-import AssetList from '@/components/AssetList'
-
 import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'arrangement',
     components: {
         DraggableAsset,
-        AssetList
     },
     mounted: function () {
 
@@ -48,7 +46,7 @@ export default {
     },
     computed: {
         ...mapGetters('assets', ['getAsset']),
-        ...mapState('arrangement', ['arrangement', 'arrangements'])
+        ...mapState('arrangement', ['arrangement', 'arrangements','keyframes','keyframe'])
     },
     methods: {
         ...mapActions('arrangement', ['getArrangement']),
@@ -60,11 +58,7 @@ export default {
 <style lang="scss">
 
 .c-arrangement {
-    height: 100%;
-
-    &__wrapper {
-        height: 100%;
-    }
+    height: calc(100vh - 340px);
 }
 
 </style>

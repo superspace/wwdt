@@ -1,5 +1,5 @@
 <template>
-    <b-alert variant="secondary" show class="text-center mt-3">
+    <b-alert variant="primary" show class="c-prompter text-center mt-3 p-4">
         <span style="white-space: pre;">{{ cue.text }}</span>
     </b-alert>
 </template>
@@ -82,3 +82,10 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+
+.c-prompter {
+    min-height: 100px;
+}
+</style>

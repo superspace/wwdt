@@ -22,7 +22,7 @@
 
                     </vue-slider>
 
-                    <div class="marker__wrapper">
+                    <div class="c-timeline-marker">
 
                         <span v-if="duration > 0">
                             <timeline-marker v-for="item in markers"
@@ -32,7 +32,7 @@
                         </span>
                     </div>
 
-                    <div class="marker__wrapper">
+                    <div class="c-timeline-marker">
 
                         <span v-if="duration > 0">
                             <timeline-marker v-for="item in keyframes"
@@ -100,11 +100,25 @@ export default {
             } else {
                 this.value = this.duration
             }
+
+            let context = this
+
+            const keyframes = this.keyframes
+                .filter(keyframe => keyframe.time <= context.time)
+
+            if (keyframes.length) {
+                const keyframe = keyframes.slice(-1)[0]
+                this.setKeyframe(keyframe)
+            } else {
+                this.setKeyframe()
+            }
+
         }
     },
     methods: {
         ...mapActions('timeline', ['setStart']),
         ...mapActions('player', ['setPosition']),
+        ...mapActions('arrangement', ['setKeyframe']),
 
         onTimelineChange: function () {
             this.setPosition(this.value)
@@ -128,7 +142,7 @@ export default {
     padding: 0 4px;
 }
 
-.marker__wrapper {
+.c-timeline-marker {
     width: auto;
     position: relative;
 }

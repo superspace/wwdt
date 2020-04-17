@@ -4,8 +4,8 @@ import Axios from "axios"
 function doUpdateMarker (commit, marker, data) {
     return new Promise((resolve) => {
         Axios.post('/marker/update', data)
-            .then(data => {
-                if (data.data.status === 'OK') {
+            .then(resp => {
+                if (resp.data.status === 'OK') {
                     commit('updateMarker', marker)
                     resolve()
                 }
