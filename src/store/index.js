@@ -10,6 +10,7 @@ import { project } from './project.module'
 import { arrangement } from './arrangement.module'
 import { marker } from './marker.module'
 import { assets } from './assets.module'
+import { keyframe } from './keyframe.module'
 
 Vue.use(Vuex);
 
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
         project,
         arrangement,
         marker,
-        assets
+        assets,
+        keyframe
     }
 });
 

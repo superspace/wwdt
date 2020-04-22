@@ -16,7 +16,8 @@ function doUpdateMarker (commit, marker, data) {
 const state = {
     marker: {},
     tmpMarker: {},
-    markers: []
+    markers: [],
+    deleteMarkerAlert: false
 }
 
 const actions = {
@@ -31,7 +32,7 @@ const actions = {
             })
     },
 
-    setMarker ({ commit }, marker) {
+    setMarker ({ commit, dispatch }, marker) {
         if (marker == undefined) {
             marker = {
                 id: undefined,
@@ -39,11 +40,16 @@ const actions = {
                 time: 0
             }
         }
+        dispatch('assets/setAsset', {}, {root: true})
         commit('setMarker', marker)
     },
 
     setTmpMarker ({ commit }, marker) {
         commit('setTmpMarker', marker)
+    },
+
+    setDeleteMarkerAlert ({ commit }, show) {
+        commit('setDeleteMarkerAlert', show)
     },
 
     createMarker ({ commit }, marker) {
@@ -71,14 +77,17 @@ const actions = {
 
     },
 
-    removeMarker ({ commit}, marker) {
+    deleteMarker ({ commit}, marker) {
         const params = {
             id: marker.id
         }
-        Axios.get('/marker/delete', {params: params})
-            .then(() => {
-                commit('deleteMarker', marker.id)
-            })
+        return new Promise((resolve) => {
+            Axios.get('/marker/delete', {params: params})
+                .then(() => {
+                    commit('deleteMarker', marker.id)
+                    resolve()
+                })
+        })
 
     },
 
@@ -136,6 +145,10 @@ const mutations = {
         const index = state.markers.findIndex(x => x.id === id)
         state.markers.splice(index, 1)
         state.marker = {}
+    },
+
+    setDeleteMarkerAlert(state, show) {
+        state.deleteMarkerAlert = show
     }
 }
 

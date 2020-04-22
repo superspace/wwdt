@@ -11,7 +11,8 @@ const state = {
         {value: 'TEXT', text: 'Text'},
         {value: 'VIDEO', text: 'Video', types: '.mp4'},
         {value: 'AUDIO', text: 'Audio', types: '.mp3'},
-        {value: 'LABEL', text: 'Label'}
+        {value: 'LABEL', text: 'Label'},
+        {value: 'URL', text: 'Link'}
     ],
     ranking: [1,2,3,4,5],
 }
@@ -41,6 +42,7 @@ const actions = {
         data.append('tags', asset.tags)
         data.append('rank', asset.rank)
         data.append('type', asset.type)
+        data.append('file', asset.upload)
 
         return new Promise((resolve) => {
             Axios.post('/asset/update', 
@@ -85,6 +87,7 @@ const actions = {
         data.append('tags', asset.tags)
         data.append('rank', asset.rank)
         data.append('type', asset.type)
+        data.append('file', asset.upload)
 
         return new Promise((resolve) => {
             Axios.post('/asset/create', 

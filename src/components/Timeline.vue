@@ -87,7 +87,7 @@ export default {
     computed: {
         ...mapState('timeline', ['time','start','end','duration']),
         ...mapState('marker', ['markers']),
-        ...mapState('arrangement', ['keyframes']),
+        ...mapState('keyframe', ['keyframes']),
 
         formattime: function () {
             return this.$timestamp(this.start, this.time)
@@ -95,6 +95,7 @@ export default {
     },
     watch: {
         time: function (val) {
+
             if (val <= this.duration) {
                 this.value = val
             } else {
@@ -113,12 +114,23 @@ export default {
                 this.setKeyframe()
             }
 
+            const markers = this.markers
+                .filter(marker => marker.time == Math.round(context.time))
+
+            if (markers.length) {
+                const marker = markers.slice(-1)[0]
+                this.setMarker(marker)
+            } else {
+                this.setMarker()
+            }
+
         }
     },
     methods: {
         ...mapActions('timeline', ['setStart']),
         ...mapActions('player', ['setPosition']),
-        ...mapActions('arrangement', ['setKeyframe']),
+        ...mapActions('keyframe', ['setKeyframe']),
+        ...mapActions('marker', ['setMarker']),
 
         onTimelineChange: function () {
             this.setPosition(this.value)

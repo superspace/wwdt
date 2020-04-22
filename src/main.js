@@ -5,7 +5,12 @@ import store from './store'
 
 import TimeFormatter from './services/formatter'
 
+
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+
+import VueDragDrop from 'vue-drag-drop';
+
+Vue.use(VueDragDrop)
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -21,7 +26,6 @@ import 'video.js/dist/video-js.css'
 Vue.config.productionTip = false
 
 Vue.use(require('vue-moment'))
-
 Vue.use(TimeFormatter)
 
 // Install BootstrapVue

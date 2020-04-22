@@ -9,13 +9,14 @@
                 </b-button-group>
 
             </b-card-header>
+                    <!-- @drag="onDrag(asset)" -->
 
             <b-list-group flush>
-                <b-list-group-item href="#"
-                    v-for="(asset, id) in assets" :key="id" 
+                <drag class="list-group-item d-flex justify-content-between align-items-center" href="#"
+                    v-for="(asset, id) in assets" :key="id"
                     :setid="asset.id = id"
-                    @click.prevent="setAsset(asset)" 
-                    class="d-flex justify-content-between align-items-center">
+                    :transfer-data="asset" 
+                    @click.prevent="setAsset(asset)">
                     <div>
                         <b-icon-file-earmark></b-icon-file-earmark> {{ asset.title }}
                     </div>
@@ -25,7 +26,7 @@
                         </b-button>
                         <!-- <b-button variant="light" size="sm" @click.prevent.stop=""><b-icon-trash></b-icon-trash></b-button> -->
                     </b-button-group>
-                </b-list-group-item>
+                </drag>
             </b-list-group>
         </b-card>
     </div>
@@ -34,7 +35,6 @@
 <script>
 
 import { mapState, mapActions, mapGetters } from 'vuex'
-
 
 export default {
     name: 'AssetList',
@@ -63,6 +63,12 @@ export default {
             this.setMarker()
             this.$bvModal.show('modal-update-asset')  
         },
+
+        onDrag: function () {
+
+            
+            // console.log(asset); // eslint-disable-line no-console
+        }
 
     }
 }

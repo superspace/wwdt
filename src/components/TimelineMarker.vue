@@ -78,8 +78,8 @@ export default {
     methods: {
 
         ...mapActions('player', ['stopPlayer', 'setPosition']),
-        ...mapActions('marker', ['setMarker', 'updateMarker', 'setTmpMarker']),
-        ...mapActions('arrangement', ['updateKeyframe', 'setTmpKeyframe']),
+        ...mapActions('marker', ['setMarker', 'updateMarker', 'setTmpMarker','setDeleteMarkerAlert']),
+        ...mapActions('keyframe', ['updateKeyframe', 'setTmpKeyframe', 'setDeleteKeyframeAlert']),
 
         setXPos: function () {
             const left = this.width / this.duration * this.data.time
@@ -118,14 +118,21 @@ export default {
         openUpdateMarkerModal: function () {
             if (this.type == 'upload') {
                 this.setTmpMarker(this.data)
+                this.$bvModal.show('modal-update-marker')
             } else if (this.type == 'keyframe') {
                 this.setTmpKeyframe(this.data)
+                this.$bvModal.show('modal-update-keyframe')
             }
-            this.$bvModal.show('modal-update-marker')
         },
 
         handleDeleteMarkerAlert: function () {
-
+            if (this.type == 'upload') {
+                this.setTmpMarker(this.data)
+                this.setDeleteMarkerAlert(true)
+            } else if (this.type == 'keyframe') {
+                this.setTmpKeyframe(this.data)
+                this.setDeleteKeyframeAlert(true)            
+            }
         }
     }
 }

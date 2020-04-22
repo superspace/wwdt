@@ -1,7 +1,7 @@
 <template>
     <vue-draggable-resizable 
         :resizable="false"
-        :w="345"
+        :w="230"
         :h="70"
         :z="1000"
         :x="x"
@@ -9,7 +9,7 @@
         class="c-controller">
 
         <div class="card">
-            <div class="card-body">
+            <div class="card-body d-flex justify-content-center">
                 <div>
 
                     <b-button variant="primary" size="sm" v-show="!play" v-on:click="startPlayer">
@@ -34,31 +34,9 @@
                         <b-dropdown-item v-on:click="setPlaybackRate(2)">2x</b-dropdown-item>
                         <b-dropdown-item v-on:click="setPlaybackRate(5)">5x</b-dropdown-item>
                     </b-dropdown>
-                    <b-button variant="primary" size="sm" v-b-modal.modal-add-marker class="ml-md-2 mr-md-2">
-                        <b-icon-plus></b-icon-plus> Add marker
-                    </b-button>
 
                 </div>
             </div>
-
-            <b-modal id="modal-add-marker" title="Add Marker" @ok="handleCreateMarkerModalOk">
-
-                <b-form @submit.stop.prevent="handleCreateMarkerSubmit">
-
-                    <p>Zeitpunkt: <strong>{{ formattime }} Uhr</strong></p>
-
-                    <b-form-group
-                        label="Name"
-                        label-for="title">
-                        <b-form-input
-                            id="title"
-                            v-model="marker.title"
-                            type="text"
-                            required
-                        ></b-form-input>
-                    </b-form-group>
-                </b-form>
-            </b-modal>
 
         </div>
 
@@ -89,31 +67,10 @@ export default {
     computed: {
         ...mapState('player', ['play','rate']),
         ...mapState('timeline', ['time','start']),
-
-        formattime: function () {
-            return this.$timestamp(this.start, this.time)
-        }
     },
     methods: {
         ...mapActions('player', ['setPosition','setPlaybackRate','startPlayer','stopPlayer']),
-        ...mapActions('marker', ['createMarker']),
 
-        handleCreateMarkerModalOk: function (e) {
-            e.preventDefault();
-            this.handleCreateMarkerSubmit()
-        },
-
-        handleCreateMarkerSubmit: function () {
-
-            this.marker.time = this.time;
-            this.createMarker(this.marker);
-            this.marker = {};
-
-            this.$nextTick(() => {
-                this.$bvModal.hide('modal-add-marker')
-            })
-
-        }
     }
 }
 </script>

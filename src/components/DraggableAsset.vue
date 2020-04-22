@@ -1,5 +1,5 @@
 <template>
-    <vue-draggable-resizable ref="draggable"
+    <vue-draggable-resizable
         :parent="true"
         :w="w"
         :h="h"
@@ -139,7 +139,7 @@ export default {
     },
     methods: {
 
-        ...mapActions('arrangement', ['updateProperties','removeAssetFromKeyframe']),
+        ...mapActions('keyframe', ['updateProperties','removeAssetFromKeyframe']),
         ...mapActions('assets', ['setTmpAsset']),
 
         handleLoad: function (e) {
