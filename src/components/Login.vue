@@ -2,14 +2,14 @@
     <div>
         <h2>Login</h2>
         <form @submit.prevent="handleSubmit">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" class="form-control" v-model="username" required>
+            <!-- <div class="form-group">
+                <label>E-Mail</label>
+                <input type="email" class="form-control" v-model="email" required>
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" class="form-control" v-model="password" required>
-            </div>
+                <label>Token</label>
+                <input type="token" class="form-control" v-model="token" required>
+            </div> -->
             <div class="form-group">
                 <button class="btn btn-primary">Login</button>
             </div>
@@ -19,7 +19,7 @@
 
 <script>
 
-import router from '../router'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'login',
@@ -27,25 +27,33 @@ export default {
     },
     data () {
         return {
-            username: '',
-            password: '',
+            email: 'dev@superspace.ch',
+            token: '4CqnNf2Wm7jeiqZEShb6v0ZhQH4ZEkYI',
             submitted: false
         }
     },
     created: function () {
-        localStorage.removeItem('user');
+
+    },
+    computed: {
+        ...mapState('user', [])
     },
     methods: {
+
+        ...mapActions('user', ['login']),
+
         handleSubmit: function () {
             this.submitted = true
-            if (this.username === 'moderator') {
-                const user = {username: 'Moderator', token: 'fake-token'}
-                localStorage.setItem('user', JSON.stringify(user))
-            } else if (this.username === 'user') {
-                const user = {username: 'User', token: 'fake-token'}
-                localStorage.setItem('user', JSON.stringify(user))
-            } 
-            router.push('/')
+
+            const payload = {
+                email: this.email,
+                token: this.token
+            }
+
+            this.login(payload)
+                .then(() => {
+                    this.$router.push('/')
+                })
         }
     }
 }

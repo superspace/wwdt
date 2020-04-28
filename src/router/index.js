@@ -39,25 +39,36 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+
   // redirect to login page if not logged in and trying to access a restricted page
+
   const publicPages = ['/login'];
   const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('user');
-  const activeProject = store.state.project.project.id
-
-  // console.log(store.state.project.project); // eslint-disable-line no-console
-
+  
   if (authRequired) {
 
-    if (!loggedIn) {
+    // console.log("router:: logged in:: " + store.getters['user/isLoggedIn']()); // eslint-disable-line no-console
+
+    if (!store.getters['user/isLoggedIn']()) {
+    
       return next('/login');
-    } else if (!activeProject && to.path !== '/projects') {
-      if (store.state.project.projects.length === 1 ) {
-        const project = store.state.project.projects[0]
-        store.dispatch('project/setProject', project)        
-        return next()
-      } else {
-        return next('/projects')
+    
+    } else {
+
+      const activeProject = store.state.project.project.id
+
+      if (!activeProject && to.path !== '/projects') {
+        
+        if (store.state.project.projects.length === 1 ) {
+          const project = store.state.project.projects[0]
+          
+          store.dispatch('project/setProject', project)        
+          return next()
+        
+        } else {
+        
+          return next('/projects')
+        }
       }
     }
     return next()

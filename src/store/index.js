@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import { alert } from './alert.module'
+import { user } from './user.module'
 import { timeline } from './timeline.module'
 import { player } from './player.module'
 import { project } from './project.module'
@@ -16,7 +16,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
-        alert,
+        user,
         timeline,
         player,
         project,

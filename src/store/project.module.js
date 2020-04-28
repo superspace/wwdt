@@ -1,7 +1,5 @@
 import Axios from "axios"
 
-// import store from "../store"
-
 const state = {
     project: {},
     session: {},

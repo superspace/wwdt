@@ -15,7 +15,21 @@ Vue.use(VueDragDrop)
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
-axios.defaults.baseURL = process.env.VUE_APP_HOST + '/api'
+axios.defaults.baseURL = process.env.VUE_APP_HOST + '/v1'
+
+axios.interceptors.request.use(
+  (config) => {
+    let authKey = store.getters['user/authKey'];
+    if (authKey) {
+      config.headers['Auth-Key'] = authKey;
+    }
+    return config;
+  }, 
+
+  (error) => {
+    return Promise.reject(error);
+  }
+);
  
 Vue.use(VueAxios, axios)
 
@@ -33,7 +47,6 @@ Vue.use(BootstrapVue)
 
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
-
 
 new Vue({
   router,
