@@ -31,11 +31,22 @@ export default {
     components: {
 
     },
+    mounted: function () {
+
+      this.getProjects()
+        .then(()=>{
+          if (this.projects && this.projects.length === 1 ) {
+            const project = this.projects[0]
+            this.setProject(project)
+            router.push('/')
+          }
+        })
+    },
     computed: {
         ...mapState('project', ['projects']),
     },
     methods: {
-        ...mapActions('project', ['setProject']),
+        ...mapActions('project', ['setProject', 'getProjects']),
 
         setActiveProject: function (project) {
             this.setProject(project)

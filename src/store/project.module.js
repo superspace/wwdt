@@ -1,19 +1,25 @@
 import Axios from "axios"
 
 const state = {
+    projects: [],
     project: {},
     session: {},
-    recording: {},
-    projects: []
+    recording: {}
 }
 
 const actions = {
 
     getProjects: function ({ commit }) {
-        Axios.get('project/list')
-            .then(data => {
-                commit('setProjects', data.data.result)
-            })
+        return new Promise((resolve) => {
+            Axios.get('project/list')
+                .then(resp => {
+
+
+
+                    commit('setProjects', resp.data)
+                    resolve()
+                })
+        })
     },
 
     setProject ({ commit, dispatch }, project) {

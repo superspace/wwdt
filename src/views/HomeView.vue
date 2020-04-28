@@ -76,14 +76,12 @@ export default {
     AssetEditor,
     KeyframeEditor
   },
-  created: function() {},
   data: function() {
     return {
       showAssets: false,
       showActivity: false
     };
   },
-  computed: {}
 };
 </script>
 

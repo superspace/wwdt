@@ -33,17 +33,10 @@
 
 <script>
 
-import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
   components: {
   },
-  created: function () {
-    this.getProjects
-  },
-  computed: {
-    ...mapActions('project', ['getProjects'])
-  }
 }
 </script>

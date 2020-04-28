@@ -28,7 +28,7 @@ export default {
     data () {
         return {
             email: 'dev@superspace.ch',
-            token: '4CqnNf2Wm7jeiqZEShb6v0ZhQH4ZEkYI',
+            token: 'OLh-cYppUy-RA5OjVebv_NgDP2C4zA7i',
             submitted: false
         }
     },
@@ -52,7 +52,7 @@ export default {
 
             this.login(payload)
                 .then(() => {
-                    this.$router.push('/')
+                    this.$router.push('projects')
                 })
         }
     }
