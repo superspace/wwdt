@@ -1,5 +1,6 @@
 import Axios from "axios"
 import Vue from "vue"
+import store from "."
 
 const sortKeyframes = function (state) {
     state.keyframes.sort((a,b) => a.time > b.time ? 1 : -1 )
@@ -34,6 +35,7 @@ const actions = {
         let data = new FormData
         data.append('title', keyframe.title)
         data.append('time', keyframe.time)
+        data.append('arrangementId', store.state.arrangement.arrangement.id)
 
         return new Promise((resolve) => {
             Axios.post('/keyframe/create', data)

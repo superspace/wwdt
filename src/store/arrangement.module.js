@@ -14,16 +14,14 @@ const actions = {
     getArrangement ({ commit, dispatch }, id) {
         Axios.get('/arrangement/'+id)
             .then(resp=> {
-                if (resp.data.status == 'OK') {
-                    let arrangement = resp.data.result
-                    let keyframes = arrangement.keyframes
-                    delete arrangement.keyframes
-                    commit('setArrangement', arrangement)
+                let arrangement = resp.data
+                let keyframes = arrangement.keyframes
+                delete arrangement.keyframes
+                commit('setArrangement', arrangement)
 
-                    dispatch('keyframe/setKeyframes', keyframes, {root: true}) 
-                    dispatch('keyframe/setKeyframe', {}, {root: true}) 
+                dispatch('keyframe/setKeyframes', keyframes, {root: true}) 
+                dispatch('keyframe/setKeyframe', {}, {root: true}) 
 
-                }
             })
     },
 }

@@ -13,9 +13,6 @@ const actions = {
         return new Promise((resolve) => {
             Axios.get('project/list')
                 .then(resp => {
-
-
-
                     commit('setProjects', resp.data)
                     resolve()
                 })
@@ -46,10 +43,10 @@ const actions = {
         }
 
         // Load assets
-        dispatch('assets/getAssets', session.id, {root: true})
+        dispatch('assets/getAssets', {}, {root: true})
             .then(() => {
                 // Load markers
-                dispatch('marker/getMarkers', session.id, {root: true})
+                dispatch('marker/getMarkers', {}, {root: true})
             })
     },
 

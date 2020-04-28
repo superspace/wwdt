@@ -32,7 +32,7 @@ export default {
 
         if (this.recording.id) {
             this.options['sources'] = [					{
-                    src: this.recording.file_path,
+                    src: process.env.VUE_APP_HOST + this.recording.file_path,
                     type: this.recording.type
                 }
             ]        

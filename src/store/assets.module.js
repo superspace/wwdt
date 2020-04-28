@@ -1,5 +1,6 @@
 import Axios from "axios"
 import Vue from "vue"
+import store from "."
 
 const state = {
     asset: {},
@@ -88,10 +89,10 @@ const actions = {
         data.append('rank', asset.rank)
         data.append('type', asset.type)
         data.append('file', asset.upload)
+        data.append('sessionId', store.state.project.session.id)
 
         return new Promise((resolve) => {
-            Axios.post('/asset/create', 
-                data,
+            Axios.post('/asset/create', data,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -101,7 +102,7 @@ const actions = {
                     if (resp.data.status === 'OK') {
                         commit('createAsset', resp.data.result)
 
-                        if (marker.id) {
+                        if (marker && marker.id !== 0) {
                             const payload = {
                                 marker: marker,
                                 id: resp.data.result.id,
@@ -115,7 +116,10 @@ const actions = {
 
     },
   
-    getAssets({ commit }, sessionId) {
+    getAssets({ commit }) {
+
+        const sessionId = store.state.project.session.id
+
         const params = {
             sessionId: sessionId
         }
@@ -123,7 +127,7 @@ const actions = {
 
             Axios.get('/asset/list', {params: params})
                 .then(resp => {
-                    commit('setAssets', resp.data.result)
+                    commit('setAssets', resp.data)
                     resolve()
                 })
         })
@@ -164,7 +168,8 @@ const mutations = {
                 content: '',
                 tags: [],
                 rank: 0,
-                type: 'IMAGE'
+                type: 'IMAGE',
+                file: undefined
             }
         }
         state.tmpAsset = Object.assign({}, asset)

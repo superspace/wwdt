@@ -91,7 +91,7 @@ export default {
 
         handleCreateMarkerSubmit: function () {
 
-            this.tmpMarker.time = this.time
+            this.tmpMarker.time = Math.round(this.time)
 
             this.createMarker(this.tmpMarker)
                 .then(() => {

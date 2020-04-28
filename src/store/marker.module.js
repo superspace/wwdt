@@ -1,5 +1,5 @@
 import Axios from "axios"
-// import Vue from "vue"
+import store from "."
 
 function doUpdateMarker (commit, marker, data) {
     return new Promise((resolve) => {
@@ -22,13 +22,15 @@ const state = {
 
 const actions = {
 
-    getMarkers({ commit }, sessionId) {
+    getMarkers({ commit }) {
+        const sessionId = store.state.project.session.id
+
         const params = {
             sessionId: sessionId
         }
         Axios.get('/marker/list', {params: params})
             .then(resp => {
-                commit('setMarkers', resp.data.result)
+                commit('setMarkers', resp.data)
             })
     },
 
@@ -57,6 +59,7 @@ const actions = {
         let data = new FormData
         data.append('title', marker.title)
         data.append('time', marker.time)
+        data.append('sessionId', store.state.project.session.id)
 
         Axios.post('/marker/create', data)
             .then(resp => {

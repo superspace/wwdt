@@ -38,6 +38,7 @@
 
                             <b-form-group label="Upload" label-for="file">
                                 <b-form-file
+                                    ref="fileupload"
                                     v-model="tmpAsset.upload"
                                     :accept="allowedFileTypes"
                                     id="file"
@@ -105,14 +106,14 @@ export default {
         }
     },
     watch: {
-        tmpAsset: {
-            handler () {
-                this.tmpAsset.upload = undefined
-                this.uploadSrc = ''
-                this.uploadFilename = ''
-            },
-            deep: true
-        }
+        // tmpAsset: {
+        //     handler () {
+        //         this.tmpAsset.upload = undefined
+        //         this.uploadSrc = ''
+        //         this.uploadFilename = ''
+        //     },
+        //     deep: true
+        // }
     },
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),

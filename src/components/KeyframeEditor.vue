@@ -92,7 +92,7 @@ export default {
 
         handleCreateKeyframeSubmit: function () {
 
-            this.tmpKeyframe.time = this.time
+            this.tmpKeyframe.time = Math.round(this.time)
 
             this.createKeyframe(this.tmpKeyframe)
                 .then(() => {

@@ -15,7 +15,7 @@ Vue.use(VueDragDrop)
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
-axios.defaults.baseURL = process.env.VUE_APP_HOST + '/v1'
+axios.defaults.baseURL = process.env.VUE_APP_API + '/v1'
 
 axios.interceptors.request.use(
   (config) => {
