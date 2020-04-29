@@ -18,8 +18,8 @@
         </div>
 
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <router-link class="nav-link" to="/login">Logout</router-link>
+          <li class="nav-item" v-if="isLoggedIn()">
+            <router-link class="nav-link" to="/login?logout=1">Logout</router-link>
           </li>
         </ul>
 
@@ -33,10 +33,14 @@
 
 <script>
 
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
   },
+  computed: {
+    ...mapGetters('user', ['isLoggedIn'])
+  }
 }
 </script>

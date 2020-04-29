@@ -13,6 +13,7 @@ const actions = {
         return new Promise((resolve) => {
             Axios.get('project/list')
                 .then(resp => {
+                    resp.data = resp.data ? resp.data : []
                     commit('setProjects', resp.data)
                     resolve()
                 })

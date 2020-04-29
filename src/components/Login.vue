@@ -1,25 +1,40 @@
 <template>
-    <div>
-        <h2>Login</h2>
-        <form @submit.prevent="handleSubmit">
-            <!-- <div class="form-group">
-                <label>E-Mail</label>
-                <input type="email" class="form-control" v-model="email" required>
-            </div>
+    <div class="pt-4">
+        
+        <h3 v-if="state == 'INITIAL' || state == 'ERROR'">Login</h3>
+
+        <b-alert variant="danger" :show="state == 'ERROR'">
+            <b-icon-exclamation-triangle></b-icon-exclamation-triangle> {{errorMessage}}
+        </b-alert>
+
+        <b-alert variant="success" :show="state == 'SUCCESS'">
+            Hat geklappt.
+        </b-alert>
+
+        <b-form ref="formSendLoginLink" @submit.stop.prevent="handleSendLoginLink" novalidate v-if="state == 'INITIAL' || state == 'ERROR'">
+
+            <b-form-group label="E-Mail" label-for="email"
+                :state="emailState" 
+                invalid-feedback="E-Mail is required">
+                <b-form-input @blur="validateFormSendLoginLink" id="email" type="email" v-model="email" :state="emailState" required />
+            </b-form-group>
+
             <div class="form-group">
-                <label>Token</label>
-                <input type="token" class="form-control" v-model="token" required>
-            </div> -->
-            <div class="form-group">
-                <button class="btn btn-primary">Login</button>
+                <button class="btn btn-primary">Request Login Link</button>
             </div>
-        </form>
+
+        </b-form>
+
+
+
     </div>
 </template>
 
 <script>
 
 import { mapState, mapActions } from 'vuex'
+import Axios from "axios"
+
 
 export default {
     name: 'login',
@@ -27,23 +42,63 @@ export default {
     },
     data () {
         return {
-            email: 'dev@superspace.ch',
-            token: 'OLh-cYppUy-RA5OjVebv_NgDP2C4zA7i',
-            submitted: false
+            email: '',
+            token: '',
+            state: '',
+            errorMessage: '',
+            emailState: null
         }
     },
     created: function () {
+        if (this.$route.query.logout) {
+            this.logout()
+        }
+
+        this.email = this.$route.query.email
+        this.token = this.$route.query.token
+
+        if (this.email && this.token) {
+            this.handleLogin()
+        } else {
+            this.state = 'INITIAL'
+        }
 
     },
     computed: {
-        ...mapState('user', [])
+        ...mapState('user', []),
+
     },
     methods: {
 
-        ...mapActions('user', ['login']),
+        ...mapActions('user', ['login','logout']),
 
-        handleSubmit: function () {
-            this.submitted = true
+        validateFormSendLoginLink: function () {
+            const valid = this.$refs.formSendLoginLink.checkValidity()
+            this.emailState = valid
+            return valid
+        },
+
+        handleSendLoginLink: function () {
+
+            if (this.validateFormSendLoginLink()) {
+
+                let data = new FormData
+                data.append('email', this.email)
+                Axios.post('/login/resend-login-link', data)
+                    .then((resp) => {
+                        if (resp.data.status == 'OK') {
+                            this.state = 'SUCCESS'
+                        }
+                    })
+                    .catch(() => {
+                        this.state = 'ERROR'
+                        this.email = ''
+                        this.emailState = null
+                    })
+            }
+        },
+
+        handleLogin: function () {
 
             const payload = {
                 email: this.email,
@@ -53,6 +108,19 @@ export default {
             this.login(payload)
                 .then(() => {
                     this.$router.push('projects')
+                })
+                .catch(error => {
+
+                    if (error.response && error.response.data.errors) {
+                        for (let key in error.response.data.errors) {
+                            let message = error.response.data.errors[key]                        
+                            this.errorMessage = message[0]
+                        }
+                    }
+
+                    this.state = 'ERROR'
+                    this.email = ''
+                    this.token = ''
                 })
         }
     }

@@ -15,7 +15,7 @@ const actions = {
         data.append('email', email)
         data.append('token', token)
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             Axios.post('/login', data)
                 .then(resp => {
                     if (resp.data.status === 'OK') {
@@ -24,18 +24,22 @@ const actions = {
                         resolve()
                     }
                 })
+                .catch(error => {
+                    // console.log(error) // eslint-disable-line no-console
+                    reject(error)
+                })
         })
     },
     logout ({ commit }) {
         commit('logout')
-    }
+    },
 }
 
 const getters = {
     isLoggedIn: () => () => {
         return localStorage.getItem('authKey') ? true : false
     },
-    authKey: () => {
+    authKey: () => () => {
         return localStorage.getItem('authKey')
     }
 }
