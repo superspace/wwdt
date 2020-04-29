@@ -26,7 +26,6 @@ const actions = {
 
             // Set Session
             dispatch('setSession', state.project.sessions[0])
-
         }
     },
 
@@ -36,6 +35,8 @@ const actions = {
         // Set recording
         if (session.recordings.length > 0) {
             commit('setRecording', session.recordings[0])
+        } else {
+            commit('setRecording')
         }
 
         // Set Arrangement

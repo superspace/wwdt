@@ -58,15 +58,19 @@ const actions = {
 
         let data = new FormData
         data.append('title', marker.title)
-        data.append('time', marker.time)
+        data.append('time', Math.round(marker.time))
         data.append('sessionId', store.state.project.session.id)
 
-        Axios.post('/marker/create', data)
-            .then(resp => {
-                if (resp.data.status === 'OK') {
-                    commit('createMarker', resp.data.result)
-                }
-            })
+        return new Promise((resolve) => {
+            Axios.post('/marker/create', data)
+                .then(resp => {
+                    if (resp.data.status === 'OK') {
+                        marker = resp.data.result
+                        commit('createMarker', marker)
+                        resolve()
+                    }
+                })
+        })
     },
 
     updateMarker ({ commit }, marker) {
@@ -81,11 +85,11 @@ const actions = {
     },
 
     deleteMarker ({ commit}, marker) {
-        const params = {
-            id: marker.id
-        }
+        let data = new FormData
+        data.append('id', marker.id)
+
         return new Promise((resolve) => {
-            Axios.get('/marker/delete', {params: params})
+            Axios.post('/marker/delete', data)
                 .then(() => {
                     commit('deleteMarker', marker.id)
                     resolve()
@@ -108,6 +112,10 @@ const actions = {
     },
  
     addAsset ({ commit }, {marker, id}) {
+
+        if (!marker.assets) {
+            marker.assets = []
+        }
 
         marker.assets.push(id)
 

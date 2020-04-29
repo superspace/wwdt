@@ -7,15 +7,15 @@ const state = {
     tmpAsset: {},
     assets: {},
     types: [
-        {value: 'FILE', text: 'File', types: '.doc,.docx,.pdf,.xls,.xlsx'},
-        {value: 'IMAGE', text: 'Image', types: '.jpeg,.jpg,.gif,.png'},
+        {value: 'FILE', text: 'File', types: ['doc','docx','pdf','xls','xlsx']},
+        {value: 'IMAGE', text: 'Image', types: ['jpeg','jpg','gif','png','svg']},
         {value: 'TEXT', text: 'Text'},
-        {value: 'VIDEO', text: 'Video', types: '.mp4'},
-        {value: 'AUDIO', text: 'Audio', types: '.mp3'},
+        {value: 'VIDEO', text: 'Video', types: ['mp4']},
+        {value: 'AUDIO', text: 'Audio', types: ['mp3']},
         {value: 'LABEL', text: 'Label'},
         {value: 'URL', text: 'Link'}
     ],
-    ranking: [1,2,3,4,5],
+    ranking: [1,2,3,4,5]
 }
 
 const getters = {
@@ -24,7 +24,12 @@ const getters = {
         let asset = (state.assets.hasOwnProperty(id)) ? state.assets[id] : {}
         asset.id = id
         return asset
-    }
+    },
+
+    allowedFileTypes: () => {
+        const index = state.types.findIndex(x => x.value === state.tmpAsset.type)
+        return state.types[index].types
+    },
 }
 
 const actions = {

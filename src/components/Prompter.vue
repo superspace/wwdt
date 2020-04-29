@@ -17,7 +17,7 @@ export default {
     },
     mounted: function () {
 
-        if (this.recording.id) {
+        if (this.recording && this.recording.id) {
 
             this.file = process.env.VUE_APP_HOST + this.recording.transcript
 

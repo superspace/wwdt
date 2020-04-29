@@ -30,7 +30,7 @@ export default {
     mounted: function () {
         const context = this
 
-        if (this.recording.id) {
+        if (this.recording && this.recording.id) {
             this.options['sources'] = [					{
                     src: process.env.VUE_APP_HOST + this.recording.file_path,
                     type: this.recording.type

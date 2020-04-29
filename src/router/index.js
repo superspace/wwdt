@@ -26,11 +26,6 @@ const router = new Router({
       name: 'projects',
       component: () => import('../views/ProjectsView.vue')
     },
-    {
-      path: '/capture',
-      name: 'capture',
-      component: () => import('../views/CaptureView.vue')
-    },
     { 
       path: '*', 
       redirect: '/' 
@@ -47,8 +42,6 @@ router.beforeEach((to, from, next) => {
   
   if (authRequired) {
 
-    // console.log("router:: logged in:: " + store.getters['user/isLoggedIn']()); // eslint-disable-line no-console
-
     if (!store.getters['user/isLoggedIn']()) {
     
       return next('/login');
@@ -57,7 +50,7 @@ router.beforeEach((to, from, next) => {
 
       const activeProject = store.state.project.project.id
 
-      if (!activeProject && to.path !== '/projects') {        
+      if (activeProject == undefined && to.path !== '/projects') {        
           return next('/projects')
       }
       return next()

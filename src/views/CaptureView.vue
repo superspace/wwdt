@@ -16,7 +16,7 @@
                 v-on:change="handleFilePreview()"
               />
               <label class="custom-file-label bg-primary text-white" for="fileupload">
-                      <b-icon-plus></b-icon-plus> Add Asset
+                <b-icon-plus></b-icon-plus> Add Asset
               </label>
             </div>
           </div>

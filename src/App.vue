@@ -4,14 +4,11 @@
 
         <div class="collapse navbar-collapse">
 
-          <a class="navbar-brand" href="#"><strong>/WWDT</strong></a>
+          <router-link class="navbar-brand" to="/"><strong>/WWDT</strong></router-link>
 
           <ul class="navbar-nav">
             <li class="nav-item">
-              <router-link class="nav-link" to="/">Composer</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/capture">Capture</router-link>
+              <router-link class="nav-link" to="/projects">Projects</router-link>
             </li>
           </ul>
 

@@ -35,12 +35,11 @@
                     <div class="col-md-6">
 
                         <div v-if="['IMAGE','FILE','AUDIO','VIDEO'].includes(tmpAsset.type)">
+                                    <!-- :accept="allowedFileTypes.join(',')" -->
 
                             <b-form-group label="Upload" label-for="file">
                                 <b-form-file
-                                    ref="fileupload"
                                     v-model="tmpAsset.upload"
-                                    :accept="allowedFileTypes"
                                     id="file"
                                     placeholder="Select file ..."
                                     drop-placeholder="Drop file here..."
@@ -79,7 +78,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
 
 import { VueEditor } from "vue2-editor";
 
@@ -118,11 +117,7 @@ export default {
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
         ...mapState('marker', ['marker']),
-
-        allowedFileTypes: function () {
-            const index = this.types.findIndex(x => x.value === this.tmpAsset.type)
-            return this.types[index].types
-        },
+        ...mapGetters('assets', ['allowedFileTypes']),
 
         filename: function () {
 
@@ -159,7 +154,6 @@ export default {
             reader.addEventListener(
                 "load",
                 function () {
-                    // this.showPreview = true
                     this.uploadSrc = reader.result
                 }.bind(this),
                 false
@@ -195,7 +189,7 @@ export default {
 
                 let payload = {
                     asset: this.tmpAsset,
-                    marker: this.marker ? this.marker : 0
+                    marker: this.marker.id ? this.marker : 0
                 }
 
                 this.createAsset(payload)
