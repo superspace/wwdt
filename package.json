@@ -13,7 +13,7 @@
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.6.0",
     "core-js": "^3.4.4",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "portal-vue": "^2.1.7",
     "video.js": "^7.7.5",
     "vtt.js": "^0.13.0",
