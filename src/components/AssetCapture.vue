@@ -1,101 +1,96 @@
 <template>
-  <div>
-    <div class="text-center">
+    <div>
+        <div class="text-center">
 
-      <pre class="mb-4"><b-icon-clock></b-icon-clock> {{ now | moment("HH:mm:ss") }} Uhr</pre>
+            <pre class="mb-4"><b-icon-clock></b-icon-clock> {{ now | moment("HH:mm:ss") }} Uhr</pre>
 
-        <div v-if="!preview">
-
-            <b-form-file 
+            <div v-if="!preview">
+                <b-form-file 
                     class="mb-4"
                     @input="handleFilePreview()"
                     v-model="tmpAsset.upload"></b-form-file>
-
-        </div>
-
-        <div v-if="1">
-            
-            <div class="mb-4">
-                <img :src="preview" class="img-fluid" />
             </div>
-            <b-form-group>
-                <b-form-input type="text" placeholder="Title" v-model="tmpAsset.title" />
-            </b-form-group>
-            <b-form-group>
-                <b-form-textarea placeholder="Description" v-model="tmpAsset.description" />
-            </b-form-group>
 
-            <b-button block variant="primary"
-                @click.prevent="handleCreateAssetSubmit">
-                <b-icon-plus></b-icon-plus> Add Asset
-            </b-button>
+            <div v-if="1">
+                <div class="mb-4">
+                        <img :src="preview" class="img-fluid" />
+                </div>
+                <b-form-group>
+                    <b-form-input type="text" placeholder="Title" v-model="tmpAsset.title" />
+                </b-form-group>
+                <b-form-group>
+                    <b-form-textarea placeholder="Description" v-model="tmpAsset.description" />
+                </b-form-group>
+
+                <b-button block variant="primary"
+                    @click.prevent="handleCreateAssetSubmit">
+                    <b-icon-plus></b-icon-plus> Add Asset
+                </b-button>
+            </div>
         </div>
     </div>
-  </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 
 export default {
-  name: "AssetCapture",
-  data: () => {
-    return {
-      preview: "",
-      filename: "",
-      now: 0,
-    };
-  },
-  created: function() {
-    let context = this;
-    context.now = Date.now();
-    setInterval(function() {
-      context.now = Date.now();
-    }, 1000);
-    this.setTmpAsset()
-  },
-  watch: {
-    'tmpAsset.upload': function () {
-      this.filename = ''
-      this.preview = ''
-    }
-  },
-  computed: {
-    ...mapState("assets", ["tmpAsset", "types", "ranking"]),
-    ...mapState("marker", ["marker"]),
-    ...mapState("timeline", ["start"]),
-
-  },
-  methods: {
-    ...mapActions("assets", ["createAsset","setTmpAsset"]),
-    ...mapActions("marker", ["createMarker"]),
-
-    handleCreateAssetSubmit: function () {
-
-        const time = Math.round((this.now - this.start)/1000)
-
-        let marker = {
-          title: 'Marker ' + time, 
-          time: time
+    name: "AssetCapture",
+    data: () => {
+        return {
+            preview: "",
+            filename: "",
+            now: 0,
+        };
+    },
+    created: function() {
+        let context = this;
+        context.now = Date.now();
+        setInterval(function() {
+            context.now = Date.now();
+        }, 1000);
+        this.setTmpAsset()
+    },
+    watch: {
+        'tmpAsset.upload': function () {
+            this.filename = ''
+            this.preview = ''
         }
-
-        this.createMarker(marker)
-            .then(() => {
-
-                const payload = {
-                    asset: this.tmpAsset,
-                    marker: this.marker
-                }
-
-                this.createAsset(payload)
-                  .then(() => {
-                    this.setTmpAsset()
-                  })
-            })
+    },
+    computed: {
+        ...mapState("assets", ["tmpAsset", "types", "ranking"]),
+        ...mapState("marker", ["marker"]),
+        ...mapState("timeline", ["start", 'time']),
 
     },
+    methods: {
+        ...mapActions("assets", ["createAsset","setTmpAsset"]),
+        ...mapActions("marker", ["createMarker"]),
 
-    handleFilePreview: function() {
+        handleCreateAssetSubmit: function () {
+
+            let marker = {
+                title: 'Marker ' + this.time, 
+                time: this.time
+            }
+
+            this.createMarker(marker)
+                .then(() => {
+
+                    const payload = {
+                        asset: this.tmpAsset,
+                        marker: this.marker
+                    }
+
+                    this.createAsset(payload)
+                        .then(() => {
+                            this.setTmpAsset()
+                        })
+                })
+
+        },
+
+        handleFilePreview: function() {
 
             let reader = new FileReader();
             reader.addEventListener(
@@ -118,15 +113,15 @@ export default {
                 }
             }
 
+        }
     }
-  }
 };
 </script>
 
 <style lang="scss" scoped>
 .custom-file-label {
-  &:after {
-    display: none !important;
-  }
+    &:after {
+        display: none !important;
+    }
 }
 </style>

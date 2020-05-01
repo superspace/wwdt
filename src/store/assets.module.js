@@ -145,6 +145,12 @@ const actions = {
 
 const mutations = {
 
+    reset (state) {
+        state.asset = {}
+        state.tmpAsset = {}
+        state.assets = []
+    },
+
     setAsset(state, asset) {
         state.asset = asset
     },

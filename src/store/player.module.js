@@ -20,6 +20,12 @@ const actions = {
 }
 
 const mutations = {
+
+    reset (state) {
+        state.position = 0
+        state.rate = 1
+    },
+
     setPosition(state, time) {
         state.position = time
     },

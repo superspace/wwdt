@@ -1,5 +1,5 @@
 <template>
-    <div class="card mb-3">
+    <div class="card mb-3" v-if="active">
         <video ref="videoPlayer" class="video-js c-video-player">
         </video>
     </div>    
@@ -8,7 +8,7 @@
 <script>
 import videojs from 'video.js';
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'VideoPlayer',
@@ -28,16 +28,17 @@ export default {
         }
     },
     mounted: function () {
+
+        if (!this.active) {
+            return
+        }
         const context = this
 
-        if (this.recording && this.recording.id) {
-            this.options['sources'] = [					{
-                    src: process.env.VUE_APP_HOST + this.recording.file_path,
-                    type: this.recording.type
-                }
-            ]        
-        }
-
+        this.options['sources'] = [					{
+                src: process.env.VUE_APP_HOST + this.recording.file_path,
+                type: this.recording.type
+            }
+        ]        
         this.player = videojs(this.$refs.videoPlayer, this.options)
 
         this.player.on('loadedmetadata', function () {
@@ -53,6 +54,7 @@ export default {
             context.stopPlayer()
         })
 
+
     },
     beforeDestroy() {
         if (this.player) {
@@ -62,7 +64,13 @@ export default {
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play','position', 'rate']),
-        ...mapState('project', ['recording'])
+        ...mapState('project', ['recording']),
+
+        ...mapGetters('project', ['sessionMode']),
+
+        active: function () {
+            return this.sessionMode == 'MODE_EDIT' ? true : false
+        }
     },
     methods: {
         ...mapActions('timeline', ['setDuration', 'setTime']),
@@ -70,7 +78,6 @@ export default {
     },
     watch: {
         position: function (val) {
-
             this.player.currentTime(val)
         },
         rate: function (val) {

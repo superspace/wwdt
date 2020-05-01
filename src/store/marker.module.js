@@ -34,6 +34,10 @@ const actions = {
             })
     },
 
+    setMarkers({ commit }, markers) {
+        commit('setMarkers', markers)
+    },
+
     setMarker ({ commit, dispatch }, marker) {
         if (marker == undefined) {
             marker = {
@@ -128,6 +132,13 @@ const actions = {
 }
 
 const mutations = {
+
+    reset (state) {
+        state.marker = {}
+        state.tmpMarker = {}
+        state.markers = []
+    },
+
     setMarker(state, marker) {
         state.marker = marker
     },
@@ -136,7 +147,7 @@ const mutations = {
         state.tmpMarker = Object.assign({}, marker)
     },
 
-    setMarkers(state, markers) {
+    setMarkers(state, markers=[]) {
         state.markers = markers
     },
 

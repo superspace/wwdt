@@ -69,7 +69,8 @@ export default {
     },
     computed: {
         ...mapState('marker', ['tmpMarker','deleteMarkerAlert']),
-        ...mapState('timeline', ['start','duration','time'])
+        ...mapState('timeline', ['start','duration','time']),
+
     },
     watch: {
     },

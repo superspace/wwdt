@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="active">
         <div class="row">
             <div class="col-md-12 mb-4 d-flex justify-content-between align-items-center" v-if="marker.id">
                 <h6>
@@ -98,9 +98,13 @@ export default {
     computed: {
         ...mapState('marker', ['markers','tmpMarker','marker',]),
         ...mapState('assets', ['tmpAsset', 'asset']),
-        ...mapState('timeline', ['start']),
+        ...mapState('timeline', ['start', 'time']),
 
         ...mapGetters('assets', ['getAsset']),
+
+        active: function () {
+            return this.time > 0;
+        },
 
         markerAssets: function () {
             let assets = [];

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="session.id">
     <asset-editor></asset-editor>
     <div class="d-sm-none">
       <div class="container-fluid">
@@ -14,7 +14,7 @@
             <marker-editor></marker-editor>
             <keyframe-editor></keyframe-editor>
             <timeline></timeline>
-            <div class="row">
+            <!-- <div class="row">
               <div class="col d-flex justify-content-end">
                 <b-form inline class="p-1">
                   <b-form-checkbox v-model="showActivity" switch>
@@ -24,12 +24,12 @@
                   </b-form-checkbox>
                 </b-form>
               </div>
-            </div>
-            <div class="row">
+            </div> -->
+            <!-- <div class="row">
               <div class="col">
                 <activity :visible="showActivity"></activity>
               </div>
-            </div>
+            </div> -->
             <div class="row flex-grow-1">
               <div class="col">
                 <b-tabs>
@@ -56,8 +56,8 @@
 
 <script>
 // @ is an alias to /src
-import Activity from "@/components/Activity";
 import VideoPlayer from "@/components/VideoPlayer";
+// import Activity from "@/components/Activity";
 import Timeline from "@/components/Timeline";
 import Arrangement from "@/components/Arrangement";
 import Prompter from "@/components/Prompter";
@@ -69,11 +69,13 @@ import MarkerList from "@/components/MarkerList";
 import MarkerEditor from "@/components/MarkerEditor";
 import KeyframeEditor from "@/components/KeyframeEditor";
 
+import { mapState } from 'vuex'
+
 export default {
   name: "HomeView",
   components: {
     Controls,
-    Activity,
+    // Activity,
     VideoPlayer,
     MarkerEditor,
     MarkerList,
@@ -90,6 +92,9 @@ export default {
       showAssets: false,
       showActivity: false
     };
+  },
+  computed: {
+    ...mapState('project', ['session'])
   }
 };
 </script>

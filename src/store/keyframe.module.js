@@ -153,7 +153,13 @@ const actions = {
 
 const mutations = {
 
-    setKeyframes (state, keyframes) {
+    reset (state) {
+        state.keyframe = {}
+        state.tmpKeyframe = {}
+        state.keyframes = []
+    },
+
+    setKeyframes (state, keyframes=[]) {
         state.keyframes = keyframes
         sortKeyframes(state)
     },

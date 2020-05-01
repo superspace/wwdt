@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="active">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-between align-items-center">
                 <h6 v-if="keyframe.id">{{ keyframe.title }} <b-badge variant="secondary"><b-icon-clock></b-icon-clock> {{ $timestamp(start, keyframe.time) }} Uhr</b-badge> </h6>
@@ -42,7 +42,8 @@ export default {
         DraggableAsset,
     },
     mounted: function () {
-        this.getArrangement(this.arrangements[0]['id'])
+        if (this.arrangements.length > 0)
+            this.getArrangement(this.arrangements[0]['id'])
     },
     data() {
         return {
@@ -53,10 +54,14 @@ export default {
         ...mapGetters('assets', ['getAsset']),
         ...mapState('arrangement', ['arrangement', 'arrangements']),
         ...mapState('keyframe', ['keyframes','keyframe']),
-        ...mapState('timeline', ['start']),
+        ...mapState('timeline', ['start', 'time']),
 
         dragOverClass: function () {
             return this.dragOver ? 'c-arrangement--dragover' : ''
+        },
+
+        active: function () {
+            return this.time > 0;
         }
     },
     methods: {

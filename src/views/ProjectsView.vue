@@ -54,6 +54,7 @@ export default {
         ...mapActions('project', ['setProject', 'getProjects']),
 
         setActiveProject: function (project) {
+
             this.setProject(project)
             router.push('/')
         }

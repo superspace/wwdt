@@ -1,5 +1,5 @@
 <template>
-    <b-alert variant="primary" show class="c-prompter text-center mt-3 p-4">
+    <b-alert variant="primary" show class="c-prompter text-center mt-3 p-4" v-if="active">
         <span style="white-space: pre;">{{ cue.text }}</span>
     </b-alert>
 </template>
@@ -8,7 +8,7 @@
 
 import vtt from 'vtt.js'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
     name: 'Prompter',
@@ -17,18 +17,19 @@ export default {
     },
     mounted: function () {
 
-        if (this.recording && this.recording.id) {
-
-            this.file = process.env.VUE_APP_HOST + this.recording.transcript
-
-            this.$http.get(this.file).then((response) => {
-                this.parseVTT(response.data)
-            })
-
+        if (!this.active) {
+            return
         }
+
+        this.file = process.env.VUE_APP_HOST + this.recording.transcript
+
+        this.$http.get(this.file).then((response) => {
+            this.parseVTT(response.data)
+        })
+
         
     },
-    data: function () {
+    data: () => {
         return {
             parser: null,
             file: '',
@@ -39,6 +40,12 @@ export default {
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('project', ['recording']),
+
+        ...mapGetters('project', ['sessionMode']),
+
+        active: function () {
+            return this.sessionMode == 'MODE_EDIT' ? true : false
+        }
     },
     watch: {
         time: function (val) {

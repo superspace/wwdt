@@ -2,17 +2,22 @@
     <div class="card mb-2 pt-3">
         <div class="card-body">
             <div class="row">
-                <div class="">
-                    <pre>{{ start | moment("HH:mm:ss") }}</pre>
+                <div>
+                    <pre v-if="start > 0">{{ start | moment("HH:mm:ss") }}</pre>
                 </div>
                 <div class="col">
                     <vue-slider
                         ref="slider"
                         v-model="value"
                         @change="onTimelineChange"
+                        :lazy="true"
+                        :duration="0.75"
                         :min="0"
+                        :adsorb="true"
                         :max="duration"
                         :interval="0.1"
+                        :silent="true"
+                        :clickable="sessionMode == 'MODE_EDIT'"
                         :process-style="{ backgroundColor: 'var(--primary)' }"
                         :tooltip="'always'">
 
@@ -44,7 +49,7 @@
                     </div>
 
                 </div>
-                <div>
+                <div v-if="sessionMode == 'MODE_EDIT'">
                     <pre>{{ end | moment("HH:mm:ss") }}</pre>
                 </div>
             </div>
@@ -58,7 +63,7 @@
 import VueSlider from 'vue-slider-component'
 import TimelineMarker from './TimelineMarker'
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 import 'vue-slider-component/theme/default.css'
 
@@ -71,11 +76,18 @@ export default {
     data: function () {
         return {
             value: 0,
-            width: 0
+            width: 0,
+            now: 0,
+            recInterval: null,
+            dataInterval: null
         }
     },
     created: function () {
-        this.setStart(Date.now())
+
+        if (this.session.start) {
+            this.setStart(this.session.start)
+        }
+
     },
     mounted: function () {
         window.addEventListener('resize', this.setWidth)
@@ -85,18 +97,40 @@ export default {
         }, 300)
     },
     computed: {
-        ...mapState('timeline', ['time','start','end','duration']),
+        ...mapState('timeline', ['time','start','end','duration', 'isRecording']),
         ...mapState('marker', ['markers']),
         ...mapState('keyframe', ['keyframes']),
+        ...mapState('project', ['recording', 'session']),
+
+        ...mapGetters('project', ['sessionMode']),
 
         formattime: function () {
-            return this.$timestamp(this.start, this.time)
+            return this.start > 0 ? this.$timestamp(this.start, this.time) : ''
         },
     },
     watch: {
+        now: function (val) {
+            let duration = Math.round((val - this.start)/1000*10)/10
+            this.setDuration(duration)
+            this.setTime(duration)
+        },
+
+        isRecording: function (val) {
+
+            if (this.sessionMode == 'MODE_RECORD') {
+
+                if (val == true) {
+                    this.startRecording()
+                } else {
+                    this.stopRecording()
+                }
+            }
+
+        },
+
         time: function (val) {
 
-            if (val <= this.duration) {
+            if (val < this.duration) {
                 this.value = val
             } else {
                 this.value = this.duration
@@ -114,26 +148,55 @@ export default {
                 this.setKeyframe()
             }
 
-            const markers = this.markers
-                .filter(marker => marker.time == Math.round(context.time))
+            if (this.sessionMode == 'MODE_EDIT') {
+                const markers = this.markers
+                    .filter(marker => marker.time == Math.round(context.time))
 
-            if (markers.length) {
-                const marker = markers.slice(-1)[0]
-                this.setMarker(marker)
-            } else {
-                this.setMarker()
+                if (markers.length) {
+                    const marker = markers.slice(-1)[0]
+                    this.setMarker(marker)
+                } else {
+                    this.setMarker()
+                }
             }
 
         }
     },
     methods: {
-        ...mapActions('timeline', ['setStart']),
+        ...mapActions('timeline', ['setStart', 'setDuration', 'setTime']),
         ...mapActions('player', ['setPosition']),
         ...mapActions('keyframe', ['setKeyframe']),
-        ...mapActions('marker', ['setMarker']),
+        ...mapActions('marker', ['setMarker','getMarkers']),
+
+        ...mapActions('assets', ['getAssets']),
 
         onTimelineChange: function () {
             this.setPosition(this.value)
+        },
+
+        startRecording: function () {
+
+            let context = this;
+            context.now = Date.now()
+
+            this.recInterval = setInterval(function() {
+                context.now = Date.now()
+            }, 500);
+
+            this.dataInterval = setInterval(function () {
+
+                context.getAssets()
+                    .then(()=>{
+                        context.getMarkers()
+                    })
+
+            }, 5000)
+
+        },
+
+        stopRecording: function () {
+            clearInterval(this.recInterval)
+            clearInterval(this.dataInterval)
         },
 
         setWidth: function () {
@@ -157,6 +220,8 @@ export default {
 .c-timeline-marker {
     width: auto;
     position: relative;
+    height: 20px;
+    overflow: hidden;
 }
 
 </style>

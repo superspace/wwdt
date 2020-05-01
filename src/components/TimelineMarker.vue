@@ -37,7 +37,7 @@
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable'
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'TimelineMarker',
@@ -63,6 +63,8 @@ export default {
     computed: {
         ...mapState('timeline', ['duration']),
 
+        ...mapGetters('project', ['sessionMode']),
+
         classNames: function () {
             return ['c-marker', 'c-marker--'+this.type]
         }
@@ -72,6 +74,9 @@ export default {
             this.setXPos()
         },
         width: function () {
+            this.setXPos()
+        },
+        duration: function () {
             this.setXPos()
         }
     },
@@ -108,8 +113,12 @@ export default {
         },
 
         handleClickOnMarker: function () {
-            this.stopPlayer();
-            this.setPosition(this.data.time)
+
+            if (this.sessionMode == 'MODE_EDIT') {
+                this.stopPlayer();
+                this.setPosition(this.data.time)
+            }
+
             if (this.type == 'upload') {
                 this.setMarker(this.data)
             }
@@ -144,10 +153,10 @@ export default {
     display: inline-block;
     text-align: center;
     transform: translateX(-50%);
-    transition: left 0.25s ease-out;
+    transition: left 0.5s ease-out;
 
     &.dragging {
-        opacity: 0.8;
+        opacity: 0.7;
     }
 
     &--upload {

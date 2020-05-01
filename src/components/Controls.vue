@@ -1,29 +1,42 @@
 <template>
     <vue-draggable-resizable 
         :resizable="false"
-        :w="230"
         :h="70"
         :z="1000"
+        :min-width="1"
         :x="x"
         :y="y"
-        class="c-controller">
+        class="c-controls">
 
         <div class="card">
-            <div class="card-body d-flex justify-content-center">
-                <div>
+            <div class="card-body d-flex justify-content-center" style="white-space: nowrap;">
 
-                    <b-button variant="primary" size="sm" v-show="!play" v-on:click="startPlayer">
+                <div v-if="sessionMode == 'MODE_RECORD'">
+
+                    <b-button variant="primary" size="sm" v-b-tooltip title="Start" @click="startRecording" v-if="!isRecording">
+                        <b-icon-clock-fill></b-icon-clock-fill>
+                    </b-button>
+
+                    <b-button variant="primary" size="sm" v-b-tooltip title="Stop" @click="stopRecording" v-if="isRecording">
+                        <b-icon-stop-fill></b-icon-stop-fill>
+                    </b-button>
+
+                </div>
+
+                <div v-if="sessionMode == 'MODE_EDIT'">
+
+                    <b-button variant="primary" size="sm" v-show="!play" @click="startPlayer">
                         <b-icon-play-fill></b-icon-play-fill>
                     </b-button>
-                    <b-button variant="primary" size="sm" v-show="play" v-on:click="stopPlayer">
+                    <b-button variant="primary" size="sm" v-show="play" @click="stopPlayer">
                         <b-icon-pause-fill></b-icon-pause-fill>
                     </b-button>
 
                     <b-button-group class="ml-2">   
-                        <b-button variant="secondary" size="sm" v-on:click="stopPlayer(); setPosition(0)">
+                        <b-button variant="secondary" size="sm" @click="stopPlayer(); setPosition(0)">
                             <b-icon-skip-start-fill></b-icon-skip-start-fill>
                         </b-button>
-                        <b-button variant="secondary" size="sm" v-on:click="stopPlayer(); setPosition(0)">
+                        <b-button variant="secondary" size="sm" @click="stopPlayer(); setPosition(0)">
                             <b-icon-skip-backward-fill></b-icon-skip-backward-fill>
                         </b-button>
                     </b-button-group>
@@ -45,7 +58,7 @@
 
 <script>
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 import VueDraggableResizable from 'vue-draggable-resizable'
 
@@ -66,17 +79,30 @@ export default {
     },
     computed: {
         ...mapState('player', ['play','rate']),
-        ...mapState('timeline', ['time','start']),
+        ...mapState('timeline', ['time', 'start', 'isRecording']),
+        ...mapGetters('project', ['sessionMode']),
     },
     methods: {
         ...mapActions('player', ['setPosition','setPlaybackRate','startPlayer','stopPlayer']),
+        ...mapActions('project', ['setSessionStart','setSessionEnd']),
+
+        startRecording: function () {
+            let start = Date.now()
+            this.setSessionStart(start)
+        },
+
+        stopRecording: function () {
+            let end = Date.now()
+            this.setSessionEnd(end)
+        }
+
 
     }
 }
 </script>
 
 <style lang="scss">
-.c-controller {
+.c-controls {
     background: white;
     border: none;
     box-shadow: 2px 2px 6px transparentize(black, 0.8);
