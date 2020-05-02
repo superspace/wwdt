@@ -16,7 +16,7 @@ const actions = {
         data.append('token', token)
 
         return new Promise((resolve, reject) => {
-            Axios.post('/login', data)
+            Axios.post('/user/login', data)
                 .then(resp => {
                     if (resp.data.status === 'OK') {
                         const user = resp.data.result.user

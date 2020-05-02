@@ -84,7 +84,7 @@ export default {
 
                 let data = new FormData
                 data.append('email', this.email)
-                Axios.post('/login/resend-login-link', data)
+                Axios.post('/user/resend-login-link', data)
                     .then((resp) => {
                         if (resp.data.status == 'OK') {
                             this.state = 'SUCCESS'

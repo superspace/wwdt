@@ -9,6 +9,7 @@
         :min-width="100"
         :min-height="50"
         :class="assetClass"
+        :grid="[10,10]"
         :handles="['tl','tr','br','bl']"
         :resizable="isResizable"
         @dragging="handleDragging"
@@ -23,7 +24,8 @@
             <div class="c-asset__toolbar d-flex flex-row align-end">
                 <span>
                     <b-button-group>
-                        <b-button size="sm" variant="primary" @click.prevent.stop="openUpdateAssetModal">
+                        <b-button size="sm" variant="primary" 
+                            @click.prevent.stop="openUpdateAssetModal">
                             <b-icon-pencil></b-icon-pencil>
                         </b-button>
                         <b-button size="sm" variant="light">
@@ -36,7 +38,6 @@
                             <b-icon-x ></b-icon-x>
                         </b-button>
                     </b-button-group>
-                    {{props.z}}
                 </span> 
             </div>
         </div>
@@ -45,8 +46,11 @@
 
         <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
 
-        <figure v-show="asset.file" >
-            <img @load="handleLoad" :src="src" :alt="asset.title" class="img-fluid" ref="image" /> 
+        <figure v-show="src">
+            <img @load="handleLoad" :src="src" 
+            :alt="asset.title" v-b-tooltip.hover.bottom
+            :title="asset.title"
+            class="img-fluid" ref="image" /> 
         </figure>
 
     </vue-draggable-resizable>
@@ -96,7 +100,7 @@ export default {
         ...mapState('arrangement', ['keyframes','keyframe']),
 
         src: function () {
-            return (this.asset.file) ? process.env.VUE_APP_HOST + this.asset.file.src : ''
+            return (this.asset.file.thumb) ? process.env.VUE_APP_HOST + this.asset.file.thumb : ''
         },
 
         assetClass: function () {

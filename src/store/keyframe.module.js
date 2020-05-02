@@ -6,6 +6,11 @@ const sortKeyframes = function (state) {
     state.keyframes.sort((a,b) => a.time > b.time ? 1 : -1 )
 }
 
+const sortAssets = function (state) {
+    if (state.keyframe.assets)
+        state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
+}
+
 const state = {
     keyframe: {},
     tmpKeyframe: {},
@@ -43,13 +48,13 @@ const actions = {
                     if (resp.data.status === 'OK') {
                         let keyframe = resp.data.result
                         keyframe.assets = []
-                        for (let item of state.keyframe.assets) {
-                            let asset = {
-                                id: item.id,
-                                props: Object.assign({}, item.props)
-                            }
-                            keyframe.assets.push(asset)
-                        }
+                        // for (let item of state.keyframe.assets) {
+                        //     let asset = {
+                        //         id: item.id,
+                        //         props: Object.assign({}, item.props)
+                        //     }
+                        //     keyframe.assets.push(asset)
+                        // }
                         commit('createKeyframe', keyframe)
                         resolve()
                     }
@@ -174,6 +179,7 @@ const mutations = {
             }
         }
         state.keyframe = keyframe
+        sortAssets(state)
         sortKeyframes(state)
     },
 
@@ -205,6 +211,7 @@ const mutations = {
             id: parseInt(asset.id),
             props: props
         }
+        keyframe.assets = keyframe.assets ? keyframe.assets : []
         state.keyframe.assets.push(data)
     },
 

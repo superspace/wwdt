@@ -153,7 +153,7 @@ export default {
     display: inline-block;
     text-align: center;
     transform: translateX(-50%);
-    transition: left 0.5s ease-out;
+    transition: left 0.5s linear;
 
     &.dragging {
         opacity: 0.7;

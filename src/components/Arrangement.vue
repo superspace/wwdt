@@ -19,7 +19,7 @@
                     v-if="arrangement">
 
                     <draggable-asset 
-                        v-for="asset in keyframe.assets" v-bind:key="asset.id" :set="asset.data = getAsset(asset.id)"
+                        v-for="asset in keyframe.assets" :key="asset.id" :set="asset.data = getAsset(asset.id)"
                         :asset="asset.data" :props="asset.props">
                     </draggable-asset>
 
@@ -111,6 +111,25 @@ export default {
 
 .c-arrangement {
     height: calc(100vh - 340px);
+
+    &:before {
+        content: "\0020";
+        position: absolute;
+        display: block;
+        left: 30px;
+        right: 30px;
+        top: 50%;
+        border-bottom: 1px solid transparentize(black, 0.85);
+    }
+    &:after {
+        content: "\0020";
+        position: absolute;
+        display: block;
+        top: 30px;
+        bottom: 30px;
+        right: 50%;
+        border-left: 1px solid transparentize(black, 0.85);
+    }
 
     &--dragover {
         &.card {

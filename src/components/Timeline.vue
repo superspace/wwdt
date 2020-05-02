@@ -11,7 +11,6 @@
                         v-model="value"
                         @change="onTimelineChange"
                         :lazy="true"
-                        :duration="0.75"
                         :min="0"
                         :adsorb="true"
                         :max="duration"
