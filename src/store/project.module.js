@@ -79,9 +79,23 @@ const actions = {
     },
 
     setSessionStart ({ commit }, start) {
+
         commit('setSessionStart', start)
         commit('timeline/setStart', start, {root: true})
         commit('timeline/setIsRecording', true, {root: true})
+
+        // let data = new FormData
+        // data.append('id', state.session.id)
+        // data.append('start', start)
+
+        // return new Promise((resolve) => {
+        //     Axios.post('/project/session/update', data)
+        //         .then(resp => {
+        //             if (resp.data.status === 'OK') {
+        //                 resolve()
+        //             }
+        //         })
+        // })
     },
 
     setSessionEnd ({ commit }, end) {

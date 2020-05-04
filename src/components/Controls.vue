@@ -87,12 +87,12 @@ export default {
         ...mapActions('project', ['setSessionStart','setSessionEnd']),
 
         startRecording: function () {
-            let start = Date.now()
+            let start = this.$moment().format('YYYY-MM-DD HH:mm:ss')
             this.setSessionStart(start)
         },
 
         stopRecording: function () {
-            let end = Date.now()
+            let end = this.$moment().format('YYYY-MM-DD HH:mm:ss')
             this.setSessionEnd(end)
         }
 
