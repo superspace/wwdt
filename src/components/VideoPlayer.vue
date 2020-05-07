@@ -35,7 +35,7 @@ export default {
         const context = this
 
         this.options['sources'] = [					{
-                src: process.env.VUE_APP_HOST + this.recording.file_path,
+                src: process.env.VUE_APP_ADMIN_HOST + this.recording.file_path,
                 type: this.recording.type
             }
         ]        

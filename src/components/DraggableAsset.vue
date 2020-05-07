@@ -100,7 +100,7 @@ export default {
         ...mapState('arrangement', ['keyframes','keyframe']),
 
         src: function () {
-            return (this.asset.file.thumb) ? process.env.VUE_APP_HOST + this.asset.file.thumb : ''
+            return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
         },
 
         assetClass: function () {

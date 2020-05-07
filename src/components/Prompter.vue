@@ -21,7 +21,7 @@ export default {
             return
         }
 
-        this.file = process.env.VUE_APP_HOST + this.recording.transcript
+        this.file = process.env.VUE_APP_ADMIN_HOST + this.recording.transcript
 
         this.$http.get(this.file).then((response) => {
             this.parseVTT(response.data)

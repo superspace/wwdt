@@ -136,7 +136,7 @@ export default {
             let src = ''
 
             if (this.tmpAsset.file && this.tmpAsset.file.thumb) {
-                src = process.env.VUE_APP_HOST + this.tmpAsset.file.thumb
+                src = process.env.VUE_APP_ADMIN_HOST + this.tmpAsset.file.thumb
             }
 
             src = this.uploadSrc ? this.uploadSrc : src

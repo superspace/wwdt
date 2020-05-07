@@ -41,7 +41,7 @@ export default {
         ...mapState('assets', ['tmpAsset', 'asset']),
 
         src: function () {
-            return (this.asset.file) ? process.env.VUE_APP_HOST + this.asset.file.src : ''
+            return (this.asset.file) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.src : ''
         },
 
     },
