@@ -40,15 +40,9 @@ export default {
         return {
             preview: "",
             filename: "",
-            now: 0,
         };
     },
     created: function() {
-        let context = this;
-        context.now = Date.now();
-        setInterval(function() {
-            context.now = Date.now();
-        }, 1000);
         this.setTmpAsset()
     },
     watch: {
@@ -60,7 +54,7 @@ export default {
     computed: {
         ...mapState("assets", ["tmpAsset", "types", "ranking"]),
         ...mapState("marker", ["marker"]),
-        ...mapState("timeline", ["start", 'time']),
+        ...mapState("timeline", ["start", 'time', 'now']),
 
     },
     methods: {

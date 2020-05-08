@@ -6,12 +6,13 @@
         :min-width="1"
         :x="x"
         :y="y"
-        class="c-controls">
+        class="c-controls"
+        v-if="active">
 
         <div class="card">
             <div class="card-body d-flex justify-content-center" style="white-space: nowrap;">
 
-                <div v-if="sessionMode == 'MODE_RECORD'">
+                <!-- <div v-if="sessionMode == 'MODE_RECORD'">
 
                     <b-button variant="primary" size="sm" v-b-tooltip title="Start" @click="startRecording" v-if="!isRecording">
                         <b-icon-clock-fill></b-icon-clock-fill>
@@ -21,7 +22,7 @@
                         <b-icon-stop-fill></b-icon-stop-fill>
                     </b-button>
 
-                </div>
+                </div> -->
 
                 <div v-if="sessionMode == 'MODE_EDIT'">
 
@@ -81,6 +82,10 @@ export default {
         ...mapState('player', ['play','rate']),
         ...mapState('timeline', ['time', 'start', 'isRecording']),
         ...mapGetters('project', ['sessionMode']),
+
+        active: function () {
+            return this.sessionMode == 'MODE_EDIT'
+        }
     },
     methods: {
         ...mapActions('player', ['setPosition','setPlaybackRate','startPlayer','stopPlayer']),

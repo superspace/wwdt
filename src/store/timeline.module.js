@@ -4,7 +4,8 @@ const state = {
     end: 0,
     duration: 0,
     now: 0,
-    isRecording: false
+    isRecording: false,
+    timeInterval: null
 }
 
 const actions = {
@@ -23,6 +24,14 @@ const actions = {
 
     setIsRecording({ commit }, isRecording) {
         commit('setIsRecording', isRecording)
+    },
+
+    startTimer({ commit }) {
+        commit('startTimer')
+    },
+
+    stopTimer() {
+        clearInterval(state.timeInterval)
     }
 
 }
@@ -34,6 +43,13 @@ const mutations = {
         state.start = 0
         state.end = 0
         state.duration = 0
+    },
+
+    startTimer(state) {
+        state.isRecording = true;
+        state.timeInterval = setInterval(function() {
+            state.now = Date.now()
+        }, 500);
     },
 
     setTime(state, time) {

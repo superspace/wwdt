@@ -1,4 +1,5 @@
 import Axios from "axios"
+import Vue from "vue"
 
 const state = {
     projects: [],
@@ -53,10 +54,6 @@ const actions = {
     },
 
     setSession ({ commit, dispatch }, session) {
-
-        if (session.recordings.length) {
-            session.start = Date.now() //TODO: Get starttime from API
-        }
 
         commit('setSession', session)
 
@@ -123,6 +120,8 @@ const mutations = {
 
     setSession(state, session={}) {
         state.session = session
+        state.session.start = parseInt(Vue.moment(session.start).format('x'))
+        state.session.end = parseInt(Vue.moment(session.end).format('x'))
     },
 
     setSessionStart(state, start) {

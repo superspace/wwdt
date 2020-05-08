@@ -76,8 +76,6 @@ export default {
         return {
             value: 0,
             width: 0,
-            now: 0,
-            recInterval: null,
             dataInterval: null
         }
     },
@@ -94,9 +92,12 @@ export default {
         setTimeout(function () {
             context.setWidth();
         }, 300)
+        if (this.sessionMode == 'MODE_RECORD') {
+            this.startRecording()
+        }
     },
     computed: {
-        ...mapState('timeline', ['time','start','end','duration', 'isRecording']),
+        ...mapState('timeline', ['time','start','end','duration', 'isRecording', 'now']),
         ...mapState('marker', ['markers']),
         ...mapState('keyframe', ['keyframes']),
         ...mapState('project', ['recording', 'session']),
@@ -109,9 +110,12 @@ export default {
     },
     watch: {
         now: function (val) {
-            let duration = Math.round((val - this.start)/1000*10)/10
-            this.setDuration(duration)
-            this.setTime(duration)
+
+            if (this.isRecording) {
+                let duration = Math.round((val - this.start)/1000*10)/10
+                this.setDuration(duration)
+                this.setTime(duration)
+            }
         },
 
         isRecording: function (val) {
@@ -162,7 +166,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('timeline', ['setStart', 'setDuration', 'setTime']),
+        ...mapActions('timeline', ['setStart', 'setDuration', 'setTime', 'startTimer']),
         ...mapActions('player', ['setPosition']),
         ...mapActions('keyframe', ['setKeyframe']),
         ...mapActions('marker', ['setMarker','getMarkers']),
@@ -175,13 +179,9 @@ export default {
 
         startRecording: function () {
 
+            this.startTimer()
+
             let context = this;
-            context.now = Date.now()
-
-            this.recInterval = setInterval(function() {
-                context.now = Date.now()
-            }, 500);
-
             this.dataInterval = setInterval(function () {
 
                 context.getAssets()
@@ -194,7 +194,6 @@ export default {
         },
 
         stopRecording: function () {
-            clearInterval(this.recInterval)
             clearInterval(this.dataInterval)
         },
 
