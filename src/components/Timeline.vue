@@ -85,6 +85,13 @@ export default {
             this.setStart(this.session.start)
         }
 
+        if (this.sessionMode == 'MODE_RECORD') {
+            this.startRecording()
+        }
+
+    },
+    destroyed: function () {
+        this.stopRecording()
     },
     mounted: function () {
         window.addEventListener('resize', this.setWidth)
@@ -92,9 +99,7 @@ export default {
         setTimeout(function () {
             context.setWidth();
         }, 300)
-        if (this.sessionMode == 'MODE_RECORD') {
-            this.startRecording()
-        }
+
     },
     computed: {
         ...mapState('timeline', ['time','start','end','duration', 'isRecording', 'now']),
@@ -166,7 +171,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('timeline', ['setStart', 'setDuration', 'setTime', 'startTimer']),
+        ...mapActions('timeline', ['setDuration', 'setTime', 'setStart', 'startTimer']),
         ...mapActions('player', ['setPosition']),
         ...mapActions('keyframe', ['setKeyframe']),
         ...mapActions('marker', ['setMarker','getMarkers']),
@@ -181,20 +186,21 @@ export default {
 
             this.startTimer()
 
-            let context = this;
-            this.dataInterval = setInterval(function () {
-
-                context.getAssets()
-                    .then(()=>{
-                        context.getMarkers()
-                    })
-
-            }, 5000)
+            if (!this.dataInterval) {
+                let context = this;
+                this.dataInterval = setInterval(function () {
+                    context.getAssets()
+                        .then(()=>{
+                            context.getMarkers()
+                        })
+                }, 7000)
+            }
 
         },
 
         stopRecording: function () {
-            clearInterval(this.dataInterval)
+            if (this.dataInterval)
+                clearInterval(this.dataInterval)
         },
 
         setWidth: function () {

@@ -43,6 +43,12 @@ const mutations = {
         state.start = 0
         state.end = 0
         state.duration = 0
+        if (state.timeInterval) {
+            clearInterval(state.timeInterval)
+        }
+        state.isRecording = false
+        state.timeInterval = null
+        state.now = 0
     },
 
     startTimer(state) {
