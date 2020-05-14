@@ -4,9 +4,12 @@ import router from './router'
 import store from './store'
 
 import TimeFormatter from './services/formatter'
+// import Truncate from './services/formatter'
 
 Vue.use(require('vue-moment'))
 Vue.use(TimeFormatter)
+
+// Vue.use(Truncate)
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 

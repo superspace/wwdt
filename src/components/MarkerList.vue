@@ -30,7 +30,7 @@
 
         <div class="row">
 
-            <div class="col-md-8">
+            <div class="col-md-12">
 
                 <b-alert variant="danger" :show="showRemoveAssetAlert" class="d-flex flex-row justify-content-between">
                     <span>Remove <strong>{{ tmpAsset.title }}</strong> from {{ marker.title }} ?</span>
@@ -40,42 +40,58 @@
                     </b-button-group>
                 </b-alert>
 
-                <drop no-header no-body class="card mb-3" 
+                <drop no-header no-body class="card mb-3 p-3" 
                     :class="dragOverClass" 
                     @dragover="handleDragOver"
                     @dragleave="dragOver = false"
                     @drop="handleDrop"
                     v-if="marker.id">
 
-                    <b-list-group flush>
-                            <b-list-group-item href="#" 
-                                @click.prevent="setAsset(item)"
-                                class="d-flex justify-content-between align-items-center" 
-                                v-for="item in markerAssets" :key="item.id">
-                                <div>
-                                    <b-icon-file-earmark></b-icon-file-earmark> {{ item.title }}
-                                </div>
+                        <b-card-group columns>
+
+                            <b-card class="c-card" no-body v-for="item in markerAssets" :key="item.id">
+
                                 <b-button-group>
+                                    <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(item)">
+                                        <b-icon-pencil></b-icon-pencil>
+                                    </b-button>
                                     <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)">
                                         <b-icon-x></b-icon-x>
                                     </b-button>
                                 </b-button-group>
-                            </b-list-group-item>
-                    </b-list-group>
+
+                                <b-card-img
+                                    v-if="item.type == 'IMAGE'"
+                                    :src="host + item.file.thumb"
+                                    :alt="item.title"></b-card-img>
+
+                                <b-card-body :title="item.title"
+                                    :sub-title="item.description">
+
+                                    <b-card-text>
+                                        <b-badge class="mr-1" variant="primary" v-for="tag in item.tags" :key="tag">{{tag}}</b-badge>
+                                        <p><small>Added {{ item.creationdate | moment('DD.MM.YYYY HH:mm:ss')}} by {{item.author}}</small></p>
+
+                                        <div v-if="item.type == 'TEXT'" v-html="item.content"></div>
+
+                                        <a v-if="item.type == 'URL'" :href="item.content" target="_blank">{{ item.content }}</a>
+                                    
+                                    </b-card-text>
+
+                                    <b-button v-if="item.file.src" :href="host + item.file.src" size="sm" variant="primary"  target="_blank"><b-icon-file-earmark></b-icon-file-earmark> Download</b-button>
+
+
+                                </b-card-body>
+
+
+                            </b-card>
+
+                        </b-card-group>
 
                 </drop>    
 
             </div>
 
-            <div class="col-md-4" v-if="asset.id">
-
-                <b-card>
-
-                <asset-viewer></asset-viewer>
-
-                </b-card>
-            
-            </div>    
         </div>
 
     </div>
@@ -85,12 +101,12 @@
 
 import { mapState, mapActions, mapGetters } from 'vuex'
 
-import AssetViewer from "@/components/AssetViewer";
+// import AssetViewer from "@/components/AssetViewer";
 
 export default {
     name: 'MarkerList',
     components: {
-        AssetViewer
+        // AssetViewer
     },
     data: function () {
         return {
@@ -107,6 +123,10 @@ export default {
         ...mapState('timeline', ['start', 'time']),
 
         ...mapGetters('assets', ['getAsset']),
+
+        host: function () {
+            return process.env.VUE_APP_ADMIN_HOST
+        },
 
         active: function () {
             return this.time > 0;
@@ -137,6 +157,11 @@ export default {
                 'setDeleteMarkerAlert']),
 
         ...mapActions('assets', ['setTmpAsset', 'setAsset']),
+
+        openUpdateAssetModal: function (asset) {
+            this.setTmpAsset(asset)
+            this.$bvModal.show('modal-update-asset')  
+        },
 
         // Delete Marker
 
@@ -225,13 +250,8 @@ export default {
 
 <style lang="scss" scoped>
 
-.card-fixed-height {
-    height: 200px;
-    overflow-y: scroll
-}
-
 .c-card--dragover {
-    background: pink;
+    background: var(--light)
 }
 
 </style>

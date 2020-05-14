@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         ...mapActions('assets', ['setAsset', 'setTmpAsset', 'deleteAsset']),
-        ...mapActions('marker', ['setMarker']),
+        ...mapActions('marker', ['setMarker', 'getMarkers']),
 
         openUpdateAssetModal: function (asset) {
             this.setTmpAsset(asset)
@@ -81,6 +81,7 @@ export default {
                 .then(() => {
                     this.setTmpAsset()
                     this.showDeleteAssetAlert = false
+                    this.getMarkers()
                 })
         },
 
