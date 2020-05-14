@@ -45,7 +45,7 @@ export default {
         if (this.arrangements.length > 0)
             this.getArrangement(this.arrangements[0]['id'])
     },
-    data() {
+    data: function () {
         return {
             dragOver: false
         }

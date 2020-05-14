@@ -40,7 +40,12 @@
                     </b-button-group>
                 </b-alert>
 
-                <b-card no-header no-body class="mb-3" v-if="marker.id">
+                <drop no-header no-body class="card mb-3" 
+                    :class="dragOverClass" 
+                    @dragover="handleDragOver"
+                    @dragleave="dragOver = false"
+                    @drop="handleDrop"
+                    v-if="marker.id">
 
                     <b-list-group flush>
                             <b-list-group-item href="#" 
@@ -58,7 +63,7 @@
                             </b-list-group-item>
                     </b-list-group>
 
-                </b-card>    
+                </drop>    
 
             </div>
 
@@ -91,6 +96,7 @@ export default {
         return {
             showRemoveAssetAlert: false,
             showDeleteMarkerAlert: false,
+            dragOver: false
         }
     },
     mounted: function () {
@@ -104,6 +110,10 @@ export default {
 
         active: function () {
             return this.time > 0;
+        },
+
+        dragOverClass: function () {
+            return this.dragOver ? 'c-card--dragover' : ''
         },
 
         markerAssets: function () {
@@ -135,6 +145,32 @@ export default {
             this.setDeleteMarkerAlert(true)
         },
 
+        // Add Asst per drag'n'drop
+
+        handleDragOver: function (asset, event) {
+            
+            if (this.marker.assets.findIndex(x => x === asset.id) !== -1) {
+                event.dataTransfer.dropEffect = 'none';
+            } else {
+                this.dragOver = true
+            }
+
+        },
+
+        handleDrop: function (asset) {
+
+            this.dragOver = false;
+
+            let payload = {
+                marker: this.marker,
+                id: asset.id
+            }
+
+            if (this.marker.id) {
+                this.addAsset(payload)
+            }
+
+        },
 
         // Remove Asset
 
@@ -183,16 +219,19 @@ export default {
             this.$bvModal.show('modal-update-marker')
         },
 
-
     }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .card-fixed-height {
     height: 200px;
     overflow-y: scroll
+}
+
+.c-card--dragover {
+    background: pink;
 }
 
 </style>

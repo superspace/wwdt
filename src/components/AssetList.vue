@@ -1,15 +1,22 @@
 <template>
     <div>
+        <b-alert variant="danger" :show="showDeleteAssetAlert" class="d-flex flex-row justify-content-between">
+            <span>Remove <strong>{{ tmpAsset.title }}</strong>? It will be permanently removed everywhere.</span>
+            <b-button-group>
+                <b-button variant="danger" size="sm" @click="handleDeleteAsset">Yes</b-button>
+                <b-button variant="" size="sm" @click="handleCancelDeleteAsset">No</b-button>
+            </b-button-group>
+        </b-alert>
+
         <b-card no-body class="mb-3">
+
             <b-card-header class="d-flex justify-content-between align-items-center">
-                <div>
-                </div>
+                <div></div>
                 <b-button-group>
                     <b-button variant="primary" size="sm" @click.prevent="openCreateAssetModal()"><b-icon-plus></b-icon-plus> Add Asset</b-button>
                 </b-button-group>
 
             </b-card-header>
-                    <!-- @drag="onDrag(asset)" -->
 
             <b-list-group flush>
                 <drag class="list-group-item d-flex justify-content-between align-items-center" href="#"
@@ -24,7 +31,7 @@
                         <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(asset)">
                             <b-icon-pencil></b-icon-pencil>
                         </b-button>
-                        <!-- <b-button variant="light" size="sm" @click.prevent.stop=""><b-icon-trash></b-icon-trash></b-button> -->
+                        <b-button variant="light" size="sm" @click.prevent.stop="handleDeleteAssetAlert(asset)"><b-icon-trash></b-icon-trash></b-button>
                     </b-button-group>
                 </drag>
             </b-list-group>
@@ -42,15 +49,15 @@ export default {
     },
     data: function () {
         return {
-            data: {}
+            showDeleteAssetAlert: false
         }
     },
     computed: {
-        ...mapState('assets', ['assets']),
+        ...mapState('assets', ['assets', 'tmpAsset']),
         ...mapGetters('assets', ['getAsset']),
     },
     methods: {
-        ...mapActions('assets', ['setAsset', 'setTmpAsset']),
+        ...mapActions('assets', ['setAsset', 'setTmpAsset', 'deleteAsset']),
         ...mapActions('marker', ['setMarker']),
 
         openUpdateAssetModal: function (asset) {
@@ -64,10 +71,22 @@ export default {
             this.$bvModal.show('modal-update-asset')  
         },
 
-        onDrag: function () {
+        handleDeleteAssetAlert: function (asset) {
+            this.setTmpAsset(asset)
+            this.showDeleteAssetAlert = true
+        },
 
-            
-            // console.log(asset); // eslint-disable-line no-console
+        handleDeleteAsset: function () {
+            this.deleteAsset(this.tmpAsset.id)
+                .then(() => {
+                    this.setTmpAsset()
+                    this.showDeleteAssetAlert = false
+                })
+        },
+
+        handleCancelDeleteAsset: function () {
+            this.setTmpAsset()
+            this.showDeleteAssetAlert = false
         }
 
     }
