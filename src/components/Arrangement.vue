@@ -1,5 +1,5 @@
 <template>
-    <div v-if="active">
+    <div>
         <div class="row">
             <div class="col-md-12 d-flex justify-content-between align-items-center">
                 <h6 v-if="keyframe.id">{{ keyframe.title }} 
@@ -20,7 +20,6 @@
                     @dragover="handleDragOver"
                     @dragleave="dragOver = false"
                     @drop="handleDrop"
-                    @resize="setParentSize"
                     v-if="arrangement">
 
                     <draggable-asset 
@@ -28,7 +27,7 @@
                         :key="asset.id" 
                         :set="asset.data = getAsset(asset.id)"
                         :asset="asset.data" 
-                        :parent="parentSize"
+                        :parent="dropzone"
                         :props="asset.props">
                     </draggable-asset>
 
@@ -54,18 +53,13 @@ export default {
         if (this.arrangements.length > 0) {
             this.getArrangement(this.arrangements[0]['id'])
         }
-        // window.addEventListener('resize', this.setParentSize)
-    },
-    created: function () {
-        // if (this.$refs.arrangements) {
-        //     this.width = this.$refs.arrangement.offsetWidth
-        //     this.height = this.$refs.arrangement.offsetHeight
-        // }
+        this.setParentSize()
+        window.addEventListener('resize', this.setParentSize)
     },
     data: function () {
         return {
             dragOver: false,
-            parentSize: {
+            dropzone: {
                 width: 0,
                 height: 0
             }
@@ -96,8 +90,8 @@ export default {
 
         setParentSize: function () {
             if (this.$refs.arrangement) {
-                this.parentSize.width = this.$refs.arrangement.$el.offsetWidth
-                this.parentSize.height = this.$refs.arrangement.$el.offsetHeight
+                this.dropzone.width = this.$refs.arrangement.$el.offsetWidth
+                this.dropzone.height = this.$refs.arrangement.$el.offsetHeight
             }
         },
 
@@ -115,11 +109,14 @@ export default {
 
             this.dragOver = false;
 
+            let x = Math.round((event.offsetX - this.dropzone.width / 2)/10)*10
+            let y = Math.round((event.offsetY - this.dropzone.height / 2)/10)*10
+
             let payload = {
                 asset: asset,
                 props: {
-                    x: event.offsetX,
-                    y: event.offsetY,
+                    x: x,
+                    y: y,
                     z: 1,
                     scale: 1
                 }
@@ -139,6 +136,7 @@ export default {
 
 .c-arrangement {
     height: calc(100vh - 340px);
+    overflow: hidden;
 
     &:before {
         content: "\0020";

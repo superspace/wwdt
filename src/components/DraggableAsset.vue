@@ -1,18 +1,20 @@
 <template>
-        <!-- :x="props.x"
-        :y="props.y" -->
+        <!-- :parent="true" -->
     <vue-draggable-resizable
-        :parent="true"
         :w="w"
         :h="h"
+        :x="xpos"
+        :y="ypos"
         :z="props.z"
+        :lockAspectRatio="true"
         :min-width="50"
         :min-height="50"
         :class="assetClass"
-        :style="{left: props.x+'px', top: props.y+'px'}"
         :grid="[10,10]"
+        :key="componentKey"
         :handles="['tl','tr','br','bl']"
         :resizable="isResizable"
+        :active="active"
         @dragging="handleDragging"
         @dragstop="handleDragStop"
         @resizing="handleResize"
@@ -42,11 +44,6 @@
                 </span> 
             </div>
         </div>
-
-        <small><pre>{{ props }} 
-            Ratio: {{ ratio }}
-            {{parent}}
-        </pre></small>
 
         <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
 
@@ -82,9 +79,7 @@ export default {
     },
     data: function () {
         return {
-            // width: 0,
-            // height: 0,
-            w: 200,
+            w: 100,
             h: 100,
             ratio: 1,
             dragging: false,
@@ -92,6 +87,7 @@ export default {
             visible: true,
             active: false,
             initalWidth: 200,
+            componentKey: 0
         }
     },
     mounted: function () {
@@ -100,14 +96,25 @@ export default {
         'props.scale': function () {
             this.setSize()
         },
-        'props.x': function () {
-
+        parent: {
+            deep: true,
+            handler: function () {
+                this.forceUpdate()
+            }
         }
     },
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
         ...mapState('arrangement', ['keyframes','keyframe']),
+
+        xpos: function () {
+            return this.parent.width / 2  + this.props.x
+        },
+
+        ypos: function () {
+            return this.parent.height / 2 + this.props.y
+        },
 
         src: function () {
             return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
@@ -168,6 +175,10 @@ export default {
             this.setSize()
         },
 
+        forceUpdate: function () {
+            this.componentKey += 1
+        },
+
         handleIncreaseZ: function () {
             this.props.z += 1
 
@@ -206,15 +217,33 @@ export default {
         handleDragStop: function (x, y) {
             this.dragging = false
 
-            if (this.props.x != x || this.props.y != y) {    
+            if (x != this.xpos || y != this.ypos) {    
+                this.active = false
+
+                let xpos = x - this.parent.width / 2;
+                let ypos = y - this.parent.height / 2;
+
+                if (xpos > this.parent.width / 2 || xpos < this.parent.width / 2 * -1) {
+                    xpos = this.props.x;
+                }
+                if (ypos > this.parent.height / 2 || ypos < this.parent.height / 2 * -1) {
+                    ypos = this.props.y;
+                }
+
+                this.props.x = xpos;
+                this.props.y = ypos;
+
+
                 const payload = {
                     asset: this.asset,
-                    props: {
-                        x: x,
-                        y: y
-                    }
+                    props: this.props
                 }
+
                 this.updateProperties(payload)
+                    .then(()=> {
+                        this.forceUpdate()
+                    })
+
             }
 
         },
@@ -225,7 +254,7 @@ export default {
 
         handleResizeStop: function (x, y, width) {
             this.resize = false
-            const scale = Math.round((width / this.initalWidth)*100)/100;
+            const scale = Math.round((width / this.initalWidth)*1000)/1000;
 
             const payload = {
                 asset: this.asset,
@@ -236,9 +265,9 @@ export default {
 
             this.updateProperties(payload)
 
-            if (this.ratio > 0) {
-                this.h = Math.round(width * this.ratio)
-            }
+            // if (this.ratio > 0) {
+            //     this.h = Math.round(width * this.ratio)
+            // }
         },
 
         handleActivation: function () {

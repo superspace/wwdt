@@ -40,7 +40,7 @@
                     </b-button-group>
                 </b-alert>
 
-                <drop no-header no-body class="card mb-3 p-3" 
+                <drop no-header no-body class="card p-3" 
                     :class="dragOverClass" 
                     @dragover="handleDragOver"
                     @dragleave="dragOver = false"

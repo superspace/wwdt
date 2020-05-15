@@ -2,76 +2,76 @@
     <div>
 
         <b-modal id="modal-update-asset" size="lg" title="" @ok="handleUpdateAssetModalOk">
+            <b-overlay :show="inProgress">
+                <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateAssetSubmit">
 
-            <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateAssetSubmit">
+                    <div class="row">
+                        <div class="col-md-6">
 
-                <div class="row">
-                    <div class="col-md-6">
-
-                        <b-form-group label="Type" label-for="type">
-                            <b-form-select id="type" v-model="tmpAsset.type" :options="types" required />
-                        </b-form-group>
-
-                        <b-form-group label="Titel" label-for="title" 
-                            :state="titleState" 
-                            invalid-feedback="Name is required">
-                            <b-form-input id="title" v-model="tmpAsset.title" type="text" required />
-                        </b-form-group>
-
-                        <b-form-group label="Beschreibung" label-for="description">
-                            <b-form-textarea id="description" v-model="tmpAsset.description" />
-                        </b-form-group>
-
-                        <b-form-group label="Tags" label-for="tags">
-                            <b-form-tags id="tags" v-model="tmpAsset.tags" />
-                        </b-form-group>
-
-                        <b-form-group label="Ranking">
-                            <b-form-radio-group :options="ranking" v-model="tmpAsset.rank">
-                            </b-form-radio-group>
-                        </b-form-group>
-
-                    </div>
-                    <div class="col-md-6">
-
-                        <div v-if="['IMAGE','FILE','AUDIO','VIDEO'].includes(tmpAsset.type)">
-                                    <!-- :accept="allowedFileTypes.join(',')" -->
-
-                            <b-form-group label="Upload" label-for="file">
-                                <b-form-file
-                                    v-model="tmpAsset.upload"
-                                    id="file"
-                                    placeholder="Select file ..."
-                                    drop-placeholder="Drop file here..."
-                                    @input="handleFilePreview()"
-                                ></b-form-file>
+                            <b-form-group label="Type" label-for="type">
+                                <b-form-select id="type" v-model="tmpAsset.type" :options="types" required />
                             </b-form-group>
 
-                            <div class="card mb-4" v-if="preview">
-                                <div class="card-body">
-                                <img :src="preview" class="img-fluid" />
+                            <b-form-group label="Titel" label-for="title" 
+                                :state="titleState" 
+                                invalid-feedback="Name is required">
+                                <b-form-input id="title" v-model="tmpAsset.title" type="text" required />
+                            </b-form-group>
+
+                            <b-form-group label="Beschreibung" label-for="description">
+                                <b-form-textarea id="description" v-model="tmpAsset.description" />
+                            </b-form-group>
+
+                            <b-form-group label="Tags" label-for="tags">
+                                <b-form-tags id="tags" v-model="tmpAsset.tags" />
+                            </b-form-group>
+
+                            <b-form-group label="Ranking">
+                                <b-form-radio-group :options="ranking" v-model="tmpAsset.rank">
+                                </b-form-radio-group>
+                            </b-form-group>
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div v-if="['IMAGE','FILE','AUDIO','VIDEO'].includes(tmpAsset.type)">
+                                        <!-- :accept="allowedFileTypes.join(',')" -->
+
+                                <b-form-group label="Upload" label-for="file">
+                                    <b-form-file
+                                        v-model="tmpAsset.upload"
+                                        id="file"
+                                        placeholder="Select file ..."
+                                        drop-placeholder="Drop file here..."
+                                        @input="handleFilePreview()"
+                                    ></b-form-file>
+                                </b-form-group>
+
+                                <div class="card mb-4" v-if="preview">
+                                    <div class="card-body">
+                                    <img :src="preview" class="img-fluid" />
+                                    </div>
                                 </div>
+
+                                <small v-if="filename"><b-icon-file-earmark></b-icon-file-earmark> {{ filename }}</small>
+
                             </div>
 
-                            <small v-if="filename"><b-icon-file-earmark></b-icon-file-earmark> {{ filename }}</small>
+                            <div v-if="tmpAsset.type=='URL'">
+                                <b-form-group label="URL" label-for="content">
+                                    <b-form-input id="content" v-model="tmpAsset.content" type="url" required />
+                                </b-form-group>
+                            </div>
+
+                            <div v-if="tmpAsset.type=='TEXT'">
+                                <vue-editor v-model="tmpAsset.content" :editorToolbar="customToolbar"></vue-editor>
+                            </div>
 
                         </div>
-
-                        <div v-if="tmpAsset.type=='URL'">
-                            <b-form-group label="URL" label-for="content">
-                                <b-form-input id="content" v-model="tmpAsset.content" type="url" required />
-                            </b-form-group>
-                        </div>
-
-                        <div v-if="tmpAsset.type=='TEXT'">
-                            <vue-editor v-model="tmpAsset.content" :editorToolbar="customToolbar"></vue-editor>
-                        </div>
-
                     </div>
-                </div>
 
-            </b-form>
-
+                </b-form>
+            </b-overlay>
         </b-modal>
 
     </div>
@@ -94,6 +94,7 @@ export default {
     data: function () {
         return {
             titleState: null,
+            inProgress: false,
             uploadSrc: '',
             uploadFilename: '',
             customToolbar: [
@@ -185,6 +186,8 @@ export default {
                 return
             }
 
+            this.inProgress = true;
+
             if (this.tmpAsset.id == undefined) {
 
                 let payload = {
@@ -195,6 +198,7 @@ export default {
                 this.createAsset(payload)
                     .then(() => {
                         this.$bvModal.hide('modal-update-asset')
+                        this.inProgress = false;
                     })
 
             } else {
@@ -202,6 +206,7 @@ export default {
                 this.updateAsset(this.tmpAsset)
                     .then(() => {
                         this.$bvModal.hide('modal-update-asset')
+                        this.inProgress = false;
                     })
 
             }

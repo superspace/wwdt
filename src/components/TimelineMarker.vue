@@ -85,6 +85,7 @@ export default {
         ...mapActions('player', ['stopPlayer', 'setPosition']),
         ...mapActions('marker', ['setMarker', 'updateMarker', 'setTmpMarker','setDeleteMarkerAlert']),
         ...mapActions('keyframe', ['updateKeyframe', 'setTmpKeyframe', 'setDeleteKeyframeAlert']),
+        ...mapActions('arrangement', {activateArrangement:'setActive'}),
 
         setXPos: function () {
             const left = this.width / this.duration * this.data.time
@@ -121,6 +122,9 @@ export default {
 
             if (this.type == 'upload') {
                 this.setMarker(this.data)
+                this.activateArrangement(false)
+            } else {
+                this.activateArrangement(true)
             }
         },
 

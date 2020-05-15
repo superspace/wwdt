@@ -123,9 +123,9 @@ export default {
         randomData: function () {
 
             let data = []
-            for (let i = 1; i <= this.duration; i+=15) {
-                data.push(Math.floor(Math.random()*50)+50);
-            }
+            // for (let i = 1; i <= this.duration; i++) {
+            //     data.push(Math.floor(Math.random()*5)+1);
+            // }
 
             return data;
         }
@@ -136,7 +136,7 @@ export default {
                 {
                     name: 'Assets',
                     type: 'line',
-                    data: [] //this.markerData
+                    data: this.markerData
                 },
                 {
                     name: 'Acitivity',

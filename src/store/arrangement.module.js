@@ -3,12 +3,17 @@ import Axios from "axios"
 const state = {
     arrangement: {},
     arrangements: [],
+    active: true
 }
 
 const actions = {
 
     reset ({ commit }) {
         commit('reset')
+    },
+
+    setActive ({ commit }, active) {
+        commit('setActive', active)
     },
 
     setArrangements ( {commit}, arrangements) {
@@ -20,18 +25,23 @@ const actions = {
     },
 
     getArrangement ({ commit, dispatch }, id) {
-        Axios.get('/arrangement/'+id)
-            .then(resp=> {
-                let arrangement = resp.data
-                let keyframes = arrangement.keyframes
-                delete arrangement.keyframes
-                commit('setArrangement', arrangement)
 
-                dispatch('keyframe/setKeyframes', keyframes, {root: true}) 
-                dispatch('keyframe/setKeyframe', {}, {root: true}) 
+        return new Promise((resolve) => {
+            Axios.get('/arrangement/'+id)
+                .then(resp=> {
+                    let arrangement = resp.data
+                    let keyframes = arrangement.keyframes
+                    delete arrangement.keyframes
+                    commit('setArrangement', arrangement)
 
+                    dispatch('keyframe/setKeyframes', keyframes, {root: true}) 
+                    dispatch('keyframe/setKeyframe', {}, {root: true}) 
+                    
+                    resolve()
+
+                })
             })
-    },
+        },
 }
 
 const mutations = {
@@ -39,6 +49,10 @@ const mutations = {
     reset (state) {
         state.arrangement = {}
         state.arrangements = []
+    },
+
+    setActive (state, active) {
+        state.active = active
     },
 
     setArrangements (state, arrangements) {

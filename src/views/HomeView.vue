@@ -14,7 +14,7 @@
             <marker-editor></marker-editor>
             <keyframe-editor></keyframe-editor>
             <timeline></timeline>
-            <!-- <div class="row">
+            <div class="row">
               <div class="col d-flex justify-content-end">
                 <b-form inline class="p-1">
                   <b-form-checkbox v-model="showActivity" switch>
@@ -24,19 +24,19 @@
                   </b-form-checkbox>
                 </b-form>
               </div>
-            </div> -->
-            <!-- <div class="row">
+            </div>
+            <div class="row">
               <div class="col">
                 <activity :visible="showActivity"></activity>
               </div>
-            </div> -->
+            </div>
             <div class="row flex-grow-1">
               <div class="col">
-                <b-tabs>
-                  <b-tab title="Arrangement" active>
+                <b-tabs @input="handleTabInput">
+                  <b-tab title="Arrangement" :active="active">
                     <arrangement class="pt-3"></arrangement>
                   </b-tab>
-                  <b-tab title="Marker">
+                  <b-tab title="Marker" :active="!active">
                     <marker-list class="pt-3"></marker-list>
                   </b-tab>
                 </b-tabs>
@@ -57,7 +57,7 @@
 <script>
 // @ is an alias to /src
 import VideoPlayer from "@/components/VideoPlayer";
-// import Activity from "@/components/Activity";
+import Activity from "@/components/Activity";
 import Timeline from "@/components/Timeline";
 import Arrangement from "@/components/Arrangement";
 import Prompter from "@/components/Prompter";
@@ -75,7 +75,7 @@ export default {
   name: "HomeView",
   components: {
     Controls,
-    // Activity,
+    Activity,
     VideoPlayer,
     MarkerEditor,
     MarkerList,
@@ -94,7 +94,13 @@ export default {
     };
   },
   computed: {
-    ...mapState('project', ['session'])
+    ...mapState('project', ['session']),
+    ...mapState('arrangement', ['active']),
+  },
+  methods: {
+    handleTabInput: function () {
+      //console.log('tab is active:: ' + e) // eslint-disable-line no-console
+    }
   }
 };
 </script>

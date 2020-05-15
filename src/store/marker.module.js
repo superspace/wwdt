@@ -6,7 +6,7 @@ function doUpdateMarker (commit, marker, data) {
         Axios.post('/marker/update', data)
             .then(resp => {
                 if (resp.data.status === 'OK') {
-                    commit('updateMarker', marker)
+                    commit('updateMarker', resp.data.result)
                     resolve()
                 }
             })
@@ -104,7 +104,7 @@ const actions = {
 
     removeAsset ({ commit }, {marker, id}) {
 
-        let index = marker.assets.indexOf(id)
+        let index = marker.assets.indexOf(parseInt(id))
         if (index != -1)
             marker.assets.splice(index, 1)
 

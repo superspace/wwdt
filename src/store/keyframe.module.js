@@ -7,8 +7,8 @@ const sortKeyframes = function () {
 }
 
 const sortAssets = function () {
-    // if (state.keyframe.assets)
-    //     state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
+    if (state.keyframe.assets)
+        state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
 }
 
 const state = {
@@ -82,17 +82,14 @@ const actions = {
 
     deleteKeyframe({ commit }, keyframe) {
 
-        const params = {
-            id: keyframe.id
-        }
+        let data = new FormData
+        data.append('id', keyframe.id)
 
         return new Promise((resolve) => {
-            Axios.get('/keyframe/delete', {params: params})
-                .then(resp => {
-                    if (resp.data.status === 'OK') {
-                        commit('deleteKeyframe', keyframe)
-                        resolve()
-                    }
+            Axios.post('/keyframe/delete', data)
+                .then(() => {
+                    commit('deleteKeyframe', keyframe)
+                    resolve()
                 })
         })
     },
