@@ -3,24 +3,19 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import TimeFormatter from './services/formatter'
-// import Truncate from './services/formatter'
+import filters from './filters'
+Vue.use(filters)
 
+import TimeFormatter from './services/timeformatter'
 Vue.use(require('vue-moment'))
 Vue.use(TimeFormatter)
 
-// Vue.use(Truncate)
-
+// BootstrapVue
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-
-// Install BootstrapVue
 Vue.use(BootstrapVue)
-
-// Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 
 import VueDragDrop from 'vue-drag-drop';
-
 Vue.use(VueDragDrop)
 
 // import Toast from './services/toast'

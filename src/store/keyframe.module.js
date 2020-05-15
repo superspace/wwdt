@@ -2,13 +2,13 @@ import Axios from "axios"
 import Vue from "vue"
 import store from "."
 
-const sortKeyframes = function (state) {
+const sortKeyframes = function () {
     state.keyframes.sort((a,b) => a.time > b.time ? 1 : -1 )
 }
 
-const sortAssets = function (state) {
-    if (state.keyframe.assets)
-        state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
+const sortAssets = function () {
+    // if (state.keyframe.assets)
+    //     state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
 }
 
 const state = {

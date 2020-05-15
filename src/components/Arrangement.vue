@@ -2,7 +2,11 @@
     <div v-if="active">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-between align-items-center">
-                <h6 v-if="keyframe.id">{{ keyframe.title }} <b-badge variant="secondary"><b-icon-clock></b-icon-clock> {{ $timestamp(start, keyframe.time) }} Uhr</b-badge> </h6>
+                <h6 v-if="keyframe.id">{{ keyframe.title }} 
+                    <b-badge variant="secondary">
+                        <b-icon-clock></b-icon-clock> {{ $timestamp(start, keyframe.time) }} Uhr
+                    </b-badge>
+                </h6>
                 <span></span>
                 <b-button class="mb-3" size="sm" variant="primary" @click.prevent="openCreateKeyframeModal">
                     <b-icon-plus></b-icon-plus> Add Keyframe
@@ -11,16 +15,21 @@
         </div>
         <div class="row c-arrangement__wrapper">
             <div class="col">
-                <drop class="card mb-3 c-arrangement"
+                <drop class="card mb-3 c-arrangement" ref="arrangement"
                     :class="dragOverClass" 
                     @dragover="handleDragOver"
                     @dragleave="dragOver = false"
                     @drop="handleDrop"
+                    @resize="setParentSize"
                     v-if="arrangement">
 
                     <draggable-asset 
-                        v-for="asset in keyframe.assets" :key="asset.id" :set="asset.data = getAsset(asset.id)"
-                        :asset="asset.data" :props="asset.props">
+                        v-for="asset in keyframe.assets" 
+                        :key="asset.id" 
+                        :set="asset.data = getAsset(asset.id)"
+                        :asset="asset.data" 
+                        :parent="parentSize"
+                        :props="asset.props">
                     </draggable-asset>
 
                 </drop>
@@ -42,12 +51,24 @@ export default {
         DraggableAsset,
     },
     mounted: function () {
-        if (this.arrangements.length > 0)
+        if (this.arrangements.length > 0) {
             this.getArrangement(this.arrangements[0]['id'])
+        }
+        // window.addEventListener('resize', this.setParentSize)
+    },
+    created: function () {
+        // if (this.$refs.arrangements) {
+        //     this.width = this.$refs.arrangement.offsetWidth
+        //     this.height = this.$refs.arrangement.offsetHeight
+        // }
     },
     data: function () {
         return {
-            dragOver: false
+            dragOver: false,
+            parentSize: {
+                width: 0,
+                height: 0
+            }
         }
     },
     computed: {
@@ -71,6 +92,13 @@ export default {
         openCreateKeyframeModal: function () {
             this.setTmpKeyframe()
             this.$bvModal.show('modal-create-keyframe')
+        },
+
+        setParentSize: function () {
+            if (this.$refs.arrangement) {
+                this.parentSize.width = this.$refs.arrangement.$el.offsetWidth
+                this.parentSize.height = this.$refs.arrangement.$el.offsetHeight
+            }
         },
 
         handleDragOver: function (asset, event) {

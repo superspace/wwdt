@@ -1,14 +1,15 @@
 <template>
+        <!-- :x="props.x"
+        :y="props.y" -->
     <vue-draggable-resizable
         :parent="true"
         :w="w"
         :h="h"
-        :x="props.x"
-        :y="props.y"
         :z="props.z"
-        :min-width="100"
+        :min-width="50"
         :min-height="50"
         :class="assetClass"
+        :style="{left: props.x+'px', top: props.y+'px'}"
         :grid="[10,10]"
         :handles="['tl','tr','br','bl']"
         :resizable="isResizable"
@@ -42,6 +43,11 @@
             </div>
         </div>
 
+        <small><pre>{{ props }} 
+            Ratio: {{ ratio }}
+            {{parent}}
+        </pre></small>
+
         <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
 
         <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
@@ -71,7 +77,8 @@ export default {
     },
     props: {
         asset: Object,
-        props: Object
+        props: Object,
+        parent: Object
     },
     data: function () {
         return {
@@ -84,7 +91,7 @@ export default {
             resize: false,
             visible: true,
             active: false,
-            initalWidth: 200
+            initalWidth: 200,
         }
     },
     mounted: function () {
@@ -92,6 +99,9 @@ export default {
     watch: {
         'props.scale': function () {
             this.setSize()
+        },
+        'props.x': function () {
+
         }
     },
     computed: {
@@ -185,8 +195,8 @@ export default {
         },
 
         setSize: function () {
-            this.w = this.initalWidth * this.props.scale
-            this.h = this.w * this.ratio 
+            // this.w = this.initalWidth * this.props.scale
+            // this.h = this.w * this.ratio 
         },
 
         handleDragging: function () {

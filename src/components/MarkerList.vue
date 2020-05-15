@@ -72,7 +72,7 @@
                                         <b-badge class="mr-1" variant="primary" v-for="tag in item.tags" :key="tag">{{tag}}</b-badge>
                                         <p><small>Added {{ item.creationdate | moment('DD.MM.YYYY HH:mm:ss')}} by {{item.author}}</small></p>
 
-                                        <div v-if="item.type == 'TEXT'" v-html="item.content"></div>
+                                        <div v-if="item.type == 'TEXT'" v-html="$options.filters.truncate(item.content, 250)"></div>
 
                                         <a v-if="item.type == 'URL'" :href="item.content" target="_blank">{{ item.content }}</a>
                                     
