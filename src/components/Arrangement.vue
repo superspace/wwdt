@@ -109,14 +109,18 @@ export default {
 
             this.dragOver = false;
 
-            let x = Math.round((event.offsetX - this.dropzone.width / 2)/10)*10
-            let y = Math.round((event.offsetY - this.dropzone.height / 2)/10)*10
+            // let x = Math.round((event.offsetX - this.dropzone.width / 2)/10)*10
+            // let y = Math.round((event.offsetY - this.dropzone.height / 2)/10)*10
+
+            const relativeX = Math.round(100 / this.dropzone.width / 2 * event.offsetX * 100) / 100
+            const relativeY = Math.round(100 / this.dropzone.height / 2 * event.offsetY * 100) / 100
+
 
             let payload = {
                 asset: asset,
                 props: {
-                    x: x,
-                    y: y,
+                    x: relativeX,
+                    y: relativeY,
                     z: 1,
                     scale: 1
                 }

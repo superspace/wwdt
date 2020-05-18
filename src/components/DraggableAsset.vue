@@ -1,31 +1,37 @@
 <template>
         <!-- :parent="true" -->
-    <vue-draggable-resizable
-        :w="w"
-        :h="h"
-        :x="xpos"
-        :y="ypos"
-        :z="props.z"
-        :lockAspectRatio="true"
-        :min-width="50"
-        :min-height="50"
-        :class="assetClass"
-        :grid="[10,10]"
-        :key="componentKey"
-        :handles="['tl','tr','br','bl']"
-        :resizable="isResizable"
-        :active="active"
-        @dragging="handleDragging"
-        @dragstop="handleDragStop"
-        @resizing="handleResize"
-        @resizestop="handleResizeStop"
-        @activated="handleActivation"
-        @deactivated="handleDeactivation"
-        v-show="visible">
+    <!-- <transition 
+        @enter="onEnterHandler" 
+        :css="false">
+    </transition> -->
+            <!-- :key="componentKey" -->
+            <!-- ref="draggable" -->
+        <vue-draggable-resizable
+            :w="w"
+            :h="h"
+            :x="xpos"
+            :y="ypos"
+            :z="props.z"
+            :lockAspectRatio="true"
+            :min-width="50"
+            :min-height="50"
+            :grid="[10,10]"
+            :handles="['bm','mr','br']"
+            :resizable="isResizable"
+            :active="active"
+            :class="assetClass"
+            @dragging="handleDragging"
+            @dragstop="handleDragStop"
+            @resizing="handleResize"
+            @resizestop="handleResizeStop"
+            @activated="handleActivation"
+            @deactivated="handleDeactivation"
+            v-show="visible"
+            >
 
-        <div v-show="active">
-            <div class="c-asset__toolbar d-flex flex-row align-end">
-                <span>
+            <div v-show="active">
+                <div class="c-asset__toolbar d-flex flex-row align-end">
+                    <span>
                     <b-button-group>
                         <b-button size="sm" variant="primary" 
                             @click.prevent.stop="openUpdateAssetModal">
@@ -41,22 +47,24 @@
                             <b-icon-x ></b-icon-x>
                         </b-button>
                     </b-button-group>
-                </span> 
+                    </span> 
+                </div>
             </div>
-        </div>
 
-        <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
+            <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
 
-        <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
+            <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
 
-        <figure v-show="src">
-            <img @load="handleLoad" :src="src" 
-            :alt="asset.title" v-b-tooltip.hover.bottom
-            :title="asset.title"
-            class="img-fluid" ref="image" /> 
-        </figure>
+            <figure v-show="src">
+                <img @load="handleLoad" :src="src" 
+                :alt="asset.title" v-b-tooltip.hover.bottom
+                :title="asset.title"
+                class="img-fluid" ref="image" /> 
+            </figure>
 
-    </vue-draggable-resizable>
+            <small><pre>{{ xpos }} / {{ ypos }}</pre></small>
+
+        </vue-draggable-resizable>
 </template>
 
 <script>
@@ -66,6 +74,8 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
 import { mapState, mapActions } from 'vuex'
+
+// import { TimelineLite } from 'gsap'
 
 export default {
     name: 'DraggableAsset',
@@ -80,21 +90,32 @@ export default {
     data: function () {
         return {
             w: 100,
-            h: 100,
+            h: 200,
+            xpos: 0,
+            ypos: 0,
             ratio: 1,
             dragging: false,
             resize: false,
             visible: true,
             active: false,
             initalWidth: 200,
-            componentKey: 0
+            componentKey: 0,
+            // timeline: null,
         }
     },
     mounted: function () {
+        // this.timeline = new TimelineLite()
+        this.updatePosition()
     },
+
     watch: {
-        'props.scale': function () {
-            this.setSize()
+        props: {
+            deep: true,
+            handler: function () {
+
+                this.updatePosition()
+
+            }
         },
         parent: {
             deep: true,
@@ -108,13 +129,17 @@ export default {
         ...mapState('player', ['play']),
         ...mapState('arrangement', ['keyframes','keyframe']),
 
-        xpos: function () {
-            return this.parent.width / 2  + this.props.x
-        },
+        // xpos: function () {
+        //     const parentWidth = this.parent.width / 2
+        //     const x = Math.round(parentWidth / 100 * this.props.x + parentWidth)
+        //     return x
+        // },
 
-        ypos: function () {
-            return this.parent.height / 2 + this.props.y
-        },
+        // ypos: function () {
+        //     const parentHeight = this.parent.height / 2
+        //     const y = Math.round(parentHeight / 100 * this.props.y + parentHeight)
+        //     return y
+        // },
 
         src: function () {
             return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
@@ -163,6 +188,17 @@ export default {
         ...mapActions('keyframe', ['updateProperties','removeAssetFromKeyframe']),
         ...mapActions('assets', ['setTmpAsset']),
 
+        updatePosition: function () {
+            const parentWidth = this.parent.width / 2
+            const parentHeight = this.parent.height / 2
+
+            const x = Math.round(parentWidth / 100 * this.props.x + parentWidth)
+            const y = Math.round(parentHeight / 100 * this.props.y + parentHeight)
+
+            this.xpos = x
+            this.ypos = y
+        },
+
         handleLoad: function (e) {
             let image = e.currentTarget
             let height = image.naturalWidth
@@ -176,7 +212,7 @@ export default {
         },
 
         forceUpdate: function () {
-            this.componentKey += 1
+            // this.componentKey += 1
         },
 
         handleIncreaseZ: function () {
@@ -218,21 +254,27 @@ export default {
             this.dragging = false
 
             if (x != this.xpos || y != this.ypos) {    
+
                 this.active = false
 
-                let xpos = x - this.parent.width / 2;
-                let ypos = y - this.parent.height / 2;
+                const parentWidth = this.parent.width / 2;
+                const parentHeight = this.parent.height / 2;
 
-                if (xpos > this.parent.width / 2 || xpos < this.parent.width / 2 * -1) {
-                    xpos = this.props.x;
+                let x2 = x - parentWidth;
+                let y2 = y - parentHeight;
+
+                if (x2 > parentWidth || x2 < parentWidth * -1) {
+                    x2 = this.props.x;
                 }
-                if (ypos > this.parent.height / 2 || ypos < this.parent.height / 2 * -1) {
-                    ypos = this.props.y;
+                if (y2 > parentHeight || y2 < parentHeight * -1) {
+                    y2 = this.props.y;
                 }
 
-                this.props.x = xpos;
-                this.props.y = ypos;
+                const relativeX = Math.round(100 / parentWidth * x2 * 100) / 100
+                const relativeY = Math.round(100 / parentHeight * y2 * 100) / 100
 
+                this.props.x = relativeX;
+                this.props.y = relativeY;
 
                 const payload = {
                     asset: this.asset,
@@ -265,9 +307,6 @@ export default {
 
             this.updateProperties(payload)
 
-            // if (this.ratio > 0) {
-            //     this.h = Math.round(width * this.ratio)
-            // }
         },
 
         handleActivation: function () {
@@ -291,12 +330,14 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .c-asset {
     background: white;
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
     position: relative;
+
+    transform: translateX(-50%) translateY(-50%);
 
     &--animate {
         transition: all 0.5s ease-in-out;
@@ -315,6 +356,11 @@ export default {
         position: absolute;
         top: -32px;
         height: 32px;
+    }
+
+    .img-fluid {
+        max-width: none;
+        width: 100%;
     }
 }
 
