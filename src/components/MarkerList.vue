@@ -16,6 +16,9 @@
                     <b-button variant="primary" size="sm" @click.prevent="openCreateAssetModal">
                         <b-icon-plus></b-icon-plus> Add Asset
                     </b-button>
+                    <b-button size="sm" class="ml-3" variant="primary" @click.prevent="openCreateMarkerModal">
+                        <b-icon-plus></b-icon-plus> Add Marker
+                    </b-button>
                 </b-button-group>
 
             </div>
@@ -61,14 +64,17 @@
                                 </b-button-group>
 
                                 <b-card-img
+                                    @click.prevent="openViewAssetModal(item)"
                                     v-if="item.type == 'IMAGE'"
                                     :src="host + item.file.thumb"
                                     :alt="item.title"></b-card-img>
 
-                                <b-card-body :title="item.title"
+                                <b-card-body 
+                                    @click.prevent="openViewAssetModal(item)"
+                                    :title="item.title"
                                     :sub-title="item.description">
 
-                                    <b-card-text>
+                                    <!-- <b-card-text>
                                         <b-badge class="mr-1" variant="primary" v-for="tag in item.tags" :key="tag">{{tag}}</b-badge>
                                         <p><small>Added {{ item.creationdate | moment('DD.MM.YYYY HH:mm:ss')}} by {{item.author}}</small></p>
 
@@ -78,7 +84,9 @@
                                     
                                     </b-card-text>
 
-                                    <b-button v-if="item.file.src" :href="host + item.file.src" size="sm" variant="primary"  target="_blank"><b-icon-file-earmark></b-icon-file-earmark> Download</b-button>
+                                    <b-button v-if="item.file.src" :href="host + item.file.src" size="sm" variant="primary"  target="_blank">
+                                        <b-icon-file-earmark></b-icon-file-earmark> Download
+                                    </b-button> -->
 
 
                                 </b-card-body>
@@ -157,6 +165,11 @@ export default {
                 'setDeleteMarkerAlert']),
 
         ...mapActions('assets', ['setTmpAsset', 'setAsset']),
+
+        openViewAssetModal: function (asset) {
+            this.setAsset(asset)
+            this.$bvModal.show('modal-view-asset')  
+        },
 
         openUpdateAssetModal: function (asset) {
             this.setTmpAsset(asset)

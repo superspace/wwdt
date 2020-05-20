@@ -1,6 +1,6 @@
 <template>
-    <b-alert variant="primary" show class="c-prompter text-center mt-3 p-4" v-if="active">
-        <span style="white-space: pre;">{{ cue.text }}</span>
+    <b-alert variant="primary" show class="c-prompter text-center mt-3 p-4">
+        <em style="white-space: pre;">{{ cue.text }}</em>
     </b-alert>
 </template>
 
@@ -43,9 +43,6 @@ export default {
 
         ...mapGetters('project', ['sessionMode']),
 
-        active: function () {
-            return this.sessionMode == 'MODE_EDIT' ? true : false
-        }
     },
     watch: {
         time: function (val) {

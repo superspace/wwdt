@@ -33,12 +33,12 @@
 
         </b-modal>
 
-        <b-modal id="modal-create-keyframe" title="Add Keyframe" @ok="handleCreateKeyframeModalOK">
+        <b-modal id="modal-create-keyframe" title="Add Keyframe" @ok="handleCreateKeyframeModalOK" @show="handleModalShow()">
 
             <b-form @submit.stop.prevent="handleCreateKeyframeSubmit">
 
                 <b-alert class="p-2 text-center" variant="secondary" show>
-                    <pre class="mb-0"> <b-icon-clock></b-icon-clock> {{ $timestamp(start, time) }}</pre>
+                    <pre class="mb-0"> <b-icon-clock></b-icon-clock> {{ $timestamp(start, tmpKeyframe.time) }}</pre>
                 </b-alert>
 
                 <b-form-group label="Title" label-for="title" 
@@ -83,6 +83,11 @@ export default {
             'setDeleteKeyframeAlert'
         ]),
 
+        handleModalShow: function () {
+            this.tmpKeyframe.title = 'KEYFRAME'
+            this.tmpKeyframe.time = Math.round(this.time)
+        },
+
         // Create Keyframe
 
         handleCreateKeyframeModalOK: function (e) {
@@ -91,8 +96,6 @@ export default {
         },
 
         handleCreateKeyframeSubmit: function () {
-
-            this.tmpKeyframe.time = Math.round(this.time)
 
             this.createKeyframe(this.tmpKeyframe)
                 .then(() => {

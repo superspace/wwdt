@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <b-modal id="modal-update-asset" size="lg" title="" @ok="handleUpdateAssetModalOk">
+        <b-modal id="modal-update-asset" size="lg" :scrollable="true" title="" @hidden="handleHideModal" @ok="handleUpdateAssetModalOk">
             <b-overlay :show="inProgress">
                 <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateAssetSubmit">
 
@@ -14,7 +14,7 @@
 
                             <b-form-group label="Titel" label-for="title" 
                                 :state="titleState" 
-                                invalid-feedback="Name is required">
+                                invalid-feedback="Title is required">
                                 <b-form-input id="title" v-model="tmpAsset.title" type="text" required />
                             </b-form-group>
 
@@ -35,7 +35,6 @@
                         <div class="col-md-6">
 
                             <div v-if="['IMAGE','FILE','AUDIO','VIDEO'].includes(tmpAsset.type)">
-                                        <!-- :accept="allowedFileTypes.join(',')" -->
 
                                 <b-form-group label="Upload" label-for="file">
                                     <b-form-file
@@ -106,14 +105,6 @@ export default {
         }
     },
     watch: {
-        // tmpAsset: {
-        //     handler () {
-        //         this.tmpAsset.upload = undefined
-        //         this.uploadSrc = ''
-        //         this.uploadFilename = ''
-        //     },
-        //     deep: true
-        // }
     },
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
@@ -134,20 +125,21 @@ export default {
         },
 
         preview: function () {
-            let src = ''
-
-            if (this.tmpAsset.file && this.tmpAsset.file.thumb) {
-                src = process.env.VUE_APP_ADMIN_HOST + this.tmpAsset.file.thumb
-            }
-
-            src = this.uploadSrc ? this.uploadSrc : src
-
-            return src
+            let src = (this.tmpAsset.file && this.tmpAsset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.tmpAsset.file.thumb : ''
+            return this.uploadSrc ? this.uploadSrc : src
         }
     },
     methods: {
 
         ...mapActions('assets', ['updateAsset','deleteAsset', 'createAsset', 'setTmpAsset']),
+
+        reset: function () {
+            this.setTmpAsset()
+            this.titleState = null
+            this.inProgress = false
+            this.uploadSrc =  ''
+            this.uploadFilename =  ''
+        },
 
         handleFilePreview: function () {
 
@@ -213,9 +205,9 @@ export default {
 
         },
 
-        // handleRemoveAsset: function () {
-        //     this.$emit('remove', this.asset)
-        // }
+        handleHideModal: function () {
+            this.reset()
+        }
 
     }
     

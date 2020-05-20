@@ -8,7 +8,7 @@
         </b-alert>
 
         <b-alert variant="success" :show="state == 'SUCCESS'">
-            Hat geklappt.
+            Der Login-Link wurde per E-Mail versendet und kann einmalig verwendet werden.
         </b-alert>
 
         <b-form ref="formSendLoginLink" @submit.stop.prevent="handleSendLoginLink" novalidate v-if="state == 'INITIAL' || state == 'ERROR'">

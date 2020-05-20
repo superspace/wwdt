@@ -33,12 +33,12 @@
 
         </b-modal>
 
-        <b-modal id="modal-create-marker" title="Add Marker" @ok="handleCreateMarkerModalOK">
+        <b-modal id="modal-create-marker" title="Add Marker" @show="handleModalShow" @ok="handleCreateMarkerModalOK">
 
             <b-form @submit.stop.prevent="handleCreateMarkerSubmit">
 
                 <b-alert class="p-2 text-center" variant="secondary" show>
-                    <pre class="mb-0"> <b-icon-clock></b-icon-clock> {{ $timestamp(start, time) }}</pre>
+                    <pre class="mb-0"> <b-icon-clock></b-icon-clock> {{ $timestamp(start, this.tmpMarker.time) }}</pre>
                 </b-alert>
 
                 <b-form-group label="Title" label-for="title" 
@@ -85,14 +85,17 @@ export default {
 
         // Create Marker
 
+        handleModalShow: function () {
+            this.tmpMarker.title = 'MARKER'
+            this.tmpMarker.time = Math.round(this.time)
+        },
+
         handleCreateMarkerModalOK: function (e) {
             e.preventDefault();
             this.handleCreateMarkerSubmit()
         },
 
         handleCreateMarkerSubmit: function () {
-
-            this.tmpMarker.time = Math.round(this.time)
 
             this.createMarker(this.tmpMarker)
                 .then(() => {

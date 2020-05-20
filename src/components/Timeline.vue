@@ -98,7 +98,7 @@ export default {
         let context = this;
         setTimeout(function () {
             context.setWidth();
-        }, 300)
+        }, 500)
 
     },
     computed: {
@@ -144,19 +144,20 @@ export default {
                 this.value = this.duration
             }
 
-            let context = this
-
-            const keyframes = this.keyframes
-                .filter(keyframe => keyframe.time <= context.time)
-
-            if (keyframes.length) {
-                const keyframe = keyframes.slice(-1)[0]
-                this.setKeyframe(keyframe)
-            } else {
-                this.setKeyframe()
-            }
-
             if (this.sessionMode == 'MODE_EDIT') {
+
+                let context = this
+
+                const keyframes = this.keyframes
+                    .filter(keyframe => keyframe.time <= context.time)
+
+                if (keyframes.length) {
+                    const keyframe = keyframes.slice(-1)[0]
+                    this.setKeyframe(keyframe)
+                } else {
+                    this.setKeyframe()
+                }
+
                 const markers = this.markers
                     .filter(marker => marker.time == Math.round(context.time))
 

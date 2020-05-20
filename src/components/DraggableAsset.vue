@@ -1,13 +1,11 @@
 <template>
-    <!-- <transition name="move">
-    </transition> -->
         <vue-draggable-resizable
             :w="w"
             :h="h"
             :x="xpos"
             :y="ypos"
             :z="props.z"
-            :lock-aspect-ratio="true"
+            :lock-aspect-ratio="lockRatio"
             :min-width="50"
             :min-height="50"
             :grid="[10,10]"
@@ -17,7 +15,7 @@
             :class="assetClass"
             :key="componentKey"
             :style="style"
-            @dragging="handleDragging"
+            :onDragStart="onDragStartCallback"
             @dragstop="handleDragStop"
             @resizing="handleResize"
             @resizestop="handleResizeStop"
@@ -33,6 +31,9 @@
                         <b-button size="sm" variant="primary" 
                             @click.prevent.stop="openUpdateAssetModal">
                             <b-icon-pencil></b-icon-pencil>
+                        </b-button>
+                        <b-button variant="light" size="sm" @click.prevent="openViewAssetModal">
+                            <b-icon-eye></b-icon-eye>
                         </b-button>
                         <b-button size="sm" variant="light">
                             <b-icon-arrow-up-short @click.prevent.stop="handleIncreaseZ"></b-icon-arrow-up-short>
@@ -50,7 +51,7 @@
 
             <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
 
-            <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
+            <div v-if="asset.type == 'TEXT'" v-html="$options.filters.truncate(asset.content, 180)"></div>
 
             <figure v-show="src">
                 <img @load="handleLoad" :src="src" 
@@ -69,7 +70,7 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'DraggableAsset',
@@ -98,6 +99,7 @@ export default {
         }
     },
     mounted: function () {
+        // console.log('DraggableAsset::mounted'); // eslint-disable-line no-console
         this.updatePosition()
     },
 
@@ -119,6 +121,9 @@ export default {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
         ...mapState('arrangement', ['keyframes','keyframe']),
+        ...mapState('project', ['MODE_EDIT','MODE_RECORD']),
+
+        ...mapGetters('project', ['sessionMode']),
 
         src: function () {
             return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
@@ -157,6 +162,18 @@ export default {
             return className
         },
 
+        lockRatio: function () {
+
+            let lock = false;
+
+            if (this.asset.type == 'IMAGE') {
+                lock = true;   
+            }
+
+            return lock
+
+        },
+
         isResizable: function () {
             return (this.asset.type == 'LABEL') ? false : true
         },
@@ -171,7 +188,7 @@ export default {
     methods: {
 
         ...mapActions('keyframe', ['updateProperties','removeAssetFromKeyframe']),
-        ...mapActions('assets', ['setTmpAsset']),
+        ...mapActions('assets', ['setTmpAsset', 'setAsset']),
 
         updatePosition: function () {
 
@@ -186,9 +203,14 @@ export default {
 
             this.setSize()
 
-            this.$nextTick(()=>function () {
-                this.forceUpdate()
-            })
+            // if (this.sessionMode == this.MODE_RECORD) {
+            //     this.forceUpdate()
+            // }
+
+            const context = this;
+            setTimeout(function () {
+                context.forceUpdate()
+            }, 500)
 
         },
 
@@ -236,11 +258,16 @@ export default {
 
         setSize: function () {
             this.w = Math.round(this.initalWidth * this.props.scale)
-            this.h = Math.round(this.w * this.ratio) 
+            if (this.lockRatio) {
+                this.h = Math.round(this.w * this.ratio) 
+            }
         },
 
-        handleDragging: function () {
+        onDragStartCallback: function () {
             this.style = {}
+
+            // console.log('onDragStartCallback:: ' + e.currentTarget.style.left); // eslint-disable-line no-console
+
             this.dragging = true
         },
 
@@ -316,6 +343,11 @@ export default {
             this.removeAssetFromKeyframe(this.asset)
         },
 
+        openViewAssetModal: function () {
+            this.setAsset(this.asset)
+            this.$bvModal.show('modal-view-asset')  
+        },
+
         openUpdateAssetModal: function () {
             this.setTmpAsset(this.asset)
             this.$bvModal.show('modal-update-asset')  
@@ -327,30 +359,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.move {
-    
-    &-enter {
-    }
-
-    &-enter-active {
-        transition: all 0.8s ease-out;
-        transition-property: width, height, top, left;
-    }
-
-    &-enter-to {
-    }
-
-    &-leave {
-    }
-
-    &-leave-active {
-    }
-
-    &-leave-to {
-    }
-    
-}
-
 
 .c-asset {
     background: white;
@@ -359,7 +367,7 @@ export default {
     transform: translateX(-50%) translateY(-50%);
 
     &--animate {
-        transition: all 0.5s ease-in-out;
+        transition: all 0.4s ease-in-out;
         transition-property: width, height, top, left;
     }
 

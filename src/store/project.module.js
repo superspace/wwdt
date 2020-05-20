@@ -5,13 +5,15 @@ const state = {
     projects: [],
     project: {},
     session: {},
-    recording: {}
+    recording: {},
+    MODE_EDIT: 'MODE_EDIT',
+    MODE_RECORD: 'MODE_RECORD'
 }
 
 const getters = {
 
     sessionMode: function () {
-        return state.recording.id ? 'MODE_EDIT' : 'MODE_RECORD'
+        return state.recording.id ? state.MODE_EDIT : state.MODE_RECORD
     }    
 }
 

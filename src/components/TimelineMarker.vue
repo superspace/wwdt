@@ -84,7 +84,7 @@ export default {
 
         ...mapActions('player', ['stopPlayer', 'setPosition']),
         ...mapActions('marker', ['setMarker', 'updateMarker', 'setTmpMarker','setDeleteMarkerAlert']),
-        ...mapActions('keyframe', ['updateKeyframe', 'setTmpKeyframe', 'setDeleteKeyframeAlert']),
+        ...mapActions('keyframe', ['updateKeyframe', 'setKeyframe', 'setTmpKeyframe', 'setDeleteKeyframeAlert']),
         ...mapActions('arrangement', {activateArrangement:'setActive'}),
 
         setXPos: function () {
@@ -118,6 +118,10 @@ export default {
             if (this.sessionMode == 'MODE_EDIT') {
                 this.stopPlayer();
                 this.setPosition(this.data.time)
+            } else {
+                if (this.type !== 'upload') {
+                    this.setKeyframe(this.data)
+                }
             }
 
             if (this.type == 'upload') {
@@ -159,12 +163,18 @@ export default {
     transform: translateX(-50%);
     transition: left 0.5s linear;
 
+    &.active {
+        a {
+            color: var(--primary)
+        }
+    } 
+
     &.dragging {
         opacity: 0.7;
     }
 
     &--upload {
-        color: var(--primary);
+        color: var(--secondary);
     }
 
     &--keyframe {

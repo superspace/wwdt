@@ -1,17 +1,37 @@
 <template>
-    <div class="card mb-3" v-if="active">
-        <video ref="videoPlayer" class="video-js c-video-player">
-        </video>
-    </div>    
+    <div v-if="active">
+        <div class="mb-3" >
+            <video ref="videoPlayer" class="video-js c-video-player"></video>
+        </div>    
+        <prompter v-show="showPrompter"></prompter>
+        <div class="d-flex justify-content-between align-items-center">
+            <div></div>
+            <b-button-group class="mb-3">
+                <b-button size="sm" class="ml-2" @click="handleMuteToggleClick">
+                    <b-icon-volume-mute-fill v-if="muted"></b-icon-volume-mute-fill>
+                    <b-icon-volume-up-fill v-if="!muted"></b-icon-volume-up-fill>
+                </b-button>
+                <b-button size="sm" class="ml-2" @click="handlePrompterToggleClick">
+                    <b-icon-chat-square-dots v-if="!showPrompter"></b-icon-chat-square-dots>
+                    <b-icon-chat-square-dots-fill v-if="showPrompter"></b-icon-chat-square-dots-fill>
+                </b-button>
+            </b-button-group>
+        </div>
+    </div>
 </template>
 
 <script>
 import videojs from 'video.js';
 
+import Prompter from "@/components/Prompter";
+
 import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'VideoPlayer',
+    components: {
+        Prompter,
+    },
     props: {
     },
     data: function () {
@@ -24,7 +44,8 @@ export default {
                 muted: true
             },
             volume: 0.5,
-            muted: true
+            muted: true,
+            showPrompter: false
         }
     },
     mounted: function () {
@@ -74,7 +95,16 @@ export default {
     },
     methods: {
         ...mapActions('timeline', ['setDuration', 'setTime']),
-        ...mapActions('player', ['stopPlayer'])
+        ...mapActions('player', ['stopPlayer']),
+
+        handleMuteToggleClick: function () {
+            this.muted = !this.muted
+        },
+
+        handlePrompterToggleClick: function () {
+            this.showPrompter = !this.showPrompter
+        }
+
     },
     watch: {
         position: function (val) {

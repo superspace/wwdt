@@ -25,7 +25,6 @@ const actions = {
                     }
                 })
                 .catch(error => {
-                    // console.log(error) // eslint-disable-line no-console
                     reject(error)
                 })
         })

@@ -1,16 +1,33 @@
-<template>
-    <b-collapse v-model="visible">
-        <line-chart height="80" type="line" ref="chart"
-            :options="chartOptions" 
-            :series="series"></line-chart>
-    </b-collapse>
+<template>         
+<div v-if="active">   
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+        <b-form inline class="p-1">
+            <b-form-checkbox v-model="showActivity" switch>
+            <small>
+                <strong>Activity</strong>
+            </small>
+            </b-form-checkbox>
+        </b-form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <b-collapse v-model="showActivity">
+                <line-chart height="80" type="line" ref="chart"
+                    :options="chartOptions" 
+                    :series="series"></line-chart>
+            </b-collapse>
+        </div>
+    </div>
+</div>
 </template>
 
 <script>
 
 import VueApexCharts from "vue-apexcharts"
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
     name: 'Activity',
@@ -18,11 +35,10 @@ export default {
         lineChart: VueApexCharts
     },
     props: {
-        visible: Boolean
     },
     data: function () {
         return {
-            // visible: false,
+            showActivity: false,
             series: [
             ],
             chartOptions: {
@@ -67,7 +83,7 @@ export default {
                     show: false
                 },
                 colors: [
-                    '#007BFF',
+                    '#3BC28A',
                     '#EDEDED'
                 ],
                 markers: {
@@ -77,10 +93,7 @@ export default {
                         size: 8
                     },
                     strokeOpacity: 1,
-                    radius: 0,
-                    onClick: function (e) {
-                        console.log(e); // eslint-disable-line no-console
-                    } 
+                    radius: 0
                 },
                 stroke: {
                     width: 3,
@@ -96,6 +109,7 @@ export default {
     computed: {
         ...mapState('marker', ['markers']),
         ...mapState('timeline', ['duration','time']),
+        ...mapGetters('project', ['sessionMode']),
 
         markerData: function () {
 
@@ -115,20 +129,24 @@ export default {
                 }
             }
 
-            // console.log('Activity::markerData'); // eslint-disable-line no-console
-
-            return data;
+            return this.simplifyData(data)
         },
 
         randomData: function () {
 
             let data = []
-            // for (let i = 1; i <= this.duration; i++) {
-            //     data.push(Math.floor(Math.random()*5)+1);
-            // }
+            for (let i = 1; i <= this.duration; i++) {
+                data.push(Math.floor(Math.random()*5)+1);
+            }
 
-            return data;
+            return this.simplifyData(data)
+        },
+
+        active: function () {
+            return this.sessionMode == 'MODE_EDIT' ? true : false
+
         }
+
     },
     methods: {
         updateSeries: function () {
@@ -144,7 +162,26 @@ export default {
                     data: this.randomData
                 }
             ]
-        } 
+        },
+        simplifyData (data) {
+        
+            const max = 40
+            const steps = Math.ceil(data.length/max)
+
+            if (steps == 1)
+                return data
+            
+            let normalized = []
+            let sum = 0;
+            for (let i = 1; i <= data.length; i++) {
+                sum += data[i]
+                if (i%steps == 0) {
+                    normalized.push(sum)
+                    sum = 0
+                }
+            } 
+            return normalized;
+        }
     },
     watch: {
         duration: function () {
@@ -159,8 +196,10 @@ export default {
         },
 
         time: function () {
-            let chart = this.$refs.chart;            
-            chart.chart.toggleDataPointSelection(0, Math.round(this.time-1));
+            let chart = this.$refs.chart;
+            if (chart) {
+                chart.chart.toggleDataPointSelection(0, Math.round(this.time-1));
+            }
         }
     }
 }

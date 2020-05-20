@@ -36,27 +36,48 @@ const actions = {
         commit('setDeleteKeyframeAlert', show)
     },
 
-    createKeyframe ({ commit }, keyframe) {
+    createKeyframe ({ commit, dispatch }, keyframe) {
         let data = new FormData
         data.append('title', keyframe.title)
-        data.append('time', keyframe.time)
+        data.append('time', parseInt(keyframe.time))
         data.append('arrangementId', store.state.arrangement.arrangement.id)
 
         return new Promise((resolve) => {
             Axios.post('/keyframe/create', data)
                 .then(resp => {
                     if (resp.data.status === 'OK') {
-                        let keyframe = resp.data.result
-                        keyframe.assets = []
-                        // for (let item of state.keyframe.assets) {
-                        //     let asset = {
-                        //         id: item.id,
-                        //         props: Object.assign({}, item.props)
-                        //     }
-                        //     keyframe.assets.push(asset)
-                        // }
-                        commit('createKeyframe', keyframe)
-                        resolve()
+
+                        if (state.keyframe.assets && state.keyframe.assets.length) {
+
+                            // Get asset from current keyframe
+                            const assets = state.keyframe.assets.slice()
+
+                            // Get new created keyframe
+                            let keyframe = resp.data.result
+                            keyframe.assets = []
+                            commit('createKeyframe', keyframe)
+
+                            let collection = []
+
+                            // Add assets from previous keyframe
+                            for (let asset of assets) {
+                                let payload = {
+                                    assetId: asset.id,
+                                    keyframeId: keyframe.id,
+                                    props: Object.assign({}, asset.props)
+                                }
+                                collection.push(dispatch('addPropertiesToKeyframe', payload))
+                            }
+                            Promise.all(collection)
+                                .then(()=> {
+                                    resolve()
+                                })
+
+                        } else {
+
+                            resolve()
+                        }
+
                     }
                 })
         })
@@ -104,37 +125,43 @@ const actions = {
         if (props.z) data.append('z', props.z)
         if (props.scale) data.append('scale', props.scale)
 
-        Axios.post('/keyframe/properties/update', data)
-            .then(resp => {
-                if (resp.data.status === 'OK') {
-                    const payload = {
-                        asset: asset,
-                        props: props
+        return new Promise((resolve) => {
+            Axios.post('/keyframe/properties/update', data)
+                .then(resp => {
+                    if (resp.data.status === 'OK') {
+                        const payload = {
+                            asset: asset,
+                            props: props
+                        }
+                        commit('updateProperties', payload)
+                        resolve()
                     }
-                    commit('updateProperties', payload)
-                }
-            })
+                })
+        })
     },
 
-    addPropertiesToKeyframe({ commit }, {asset, props}) {
+    addPropertiesToKeyframe({ commit }, {assetId, keyframeId, props}) {
         let data = new FormData
-        data.append('keyframeId', state.keyframe.id)
-        data.append('assetId', asset.id)
+        data.append('keyframeId', keyframeId)
+        data.append('assetId', assetId)
         data.append('x', props.x)
         data.append('y', props.y)
         data.append('z', props.z)
         data.append('scale', props.scale)
 
-        Axios.post('/keyframe/properties/add', data)
-            .then(resp => {
-                if (resp.data.status === 'OK') {
-                    const payload = {
-                        asset: asset,
-                        props: props
+        return new Promise((resolve) => {
+            Axios.post('/keyframe/properties/add', data)
+                .then(resp => {
+                    if (resp.data.status === 'OK') {
+                        const payload = {
+                            assetId: assetId,
+                            props: props
+                        }
+                        commit('addPropertiesToKeyframe', payload)
+                        resolve()
                     }
-                    commit('addPropertiesToKeyframe', payload)
-                }
-            })
+                })
+        })
 
     },
 
@@ -203,9 +230,9 @@ const mutations = {
         state.keyframe = state.tmpKeyframe = {}
     },
 
-    addPropertiesToKeyframe (state, {asset, props}) {
+    addPropertiesToKeyframe (state, {assetId, props}) {
         let data = {
-            id: parseInt(asset.id),
+            id: parseInt(assetId),
             props: props
         }
         keyframe.assets = keyframe.assets ? keyframe.assets : []
@@ -220,8 +247,10 @@ const mutations = {
     updateProperties (state, {asset, props}) {
         const i = state.keyframe.assets.findIndex(x => x.id === asset.id)
         const currentAsset = state.keyframe.assets[i];
-        const newProps = Object.assign(currentAsset.props, props)
-        Vue.set(currentAsset, 'props', newProps)
+        if (currentAsset) {
+            const newProps = Object.assign(currentAsset.props, props)
+            Vue.set(currentAsset, 'props', newProps)
+        }
     },
 
     setDeleteKeyframeAlert(state, show) {

@@ -105,29 +105,33 @@ export default {
 
         },
 
-        handleDrop: function (asset, event) {
+        handleDrop: function (asset) {
 
             this.dragOver = false;
 
-            // let x = Math.round((event.offsetX - this.dropzone.width / 2)/10)*10
-            // let y = Math.round((event.offsetY - this.dropzone.height / 2)/10)*10
+            const xpos = event.offsetX - this.dropzone.width / 2
+            const ypos = event.offsetY - this.dropzone.width / 2
 
-            const relativeX = Math.round(100 / this.dropzone.width / 2 * event.offsetX * 100) / 100
-            const relativeY = Math.round(100 / this.dropzone.height / 2 * event.offsetY * 100) / 100
-
-
-            let payload = {
-                asset: asset,
-                props: {
-                    x: relativeX,
-                    y: relativeY,
-                    z: 1,
-                    scale: 1
-                }
-            }
+            const x = Math.round(100 / this.dropzone.width / 2 * xpos * 100) / 100
+            const y = Math.round(100 / this.dropzone.height / 2 * ypos * 100) / 100
 
             if (this.keyframe.id) {
+
+                let payload = {
+                    assetId: asset.id,
+                    keyframeId: this.keyframe.id,
+                    props: {
+                        x: x,
+                        y: y,
+                        z: 1,
+                        scale: 1
+                    }
+                }
+
                 this.addPropertiesToKeyframe(payload)
+                    .then(()=> {
+
+                    })
             }
 
         }

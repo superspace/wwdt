@@ -24,7 +24,7 @@
                     :setid="asset.id = id"
                     :transfer-data="asset" 
                     @click.prevent="setAsset(asset)">
-                    <div>
+                    <div @click.prevent="openViewAssetModal(asset)">
                         <b-icon-file-earmark></b-icon-file-earmark> {{ asset.title }}
                     </div>
                     <b-button-group>
@@ -59,6 +59,12 @@ export default {
     methods: {
         ...mapActions('assets', ['setAsset', 'setTmpAsset', 'deleteAsset']),
         ...mapActions('marker', ['setMarker', 'getMarkers']),
+
+
+        openViewAssetModal: function (asset) {
+            this.setAsset(asset)
+            this.$bvModal.show('modal-view-asset')  
+        },
 
         openUpdateAssetModal: function (asset) {
             this.setTmpAsset(asset)

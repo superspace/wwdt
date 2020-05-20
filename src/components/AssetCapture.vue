@@ -1,5 +1,6 @@
 <template>
     <div>
+        <b-overlay :show="inProgress">
         <div class="text-center">
 
             <pre class="mb-4"><b-icon-clock></b-icon-clock> {{ now | moment("HH:mm:ss") }} Uhr</pre>
@@ -11,13 +12,17 @@
                     v-model="tmpAsset.upload"></b-form-file>
             </div>
 
-            <div v-if="1">
+            <b-form ref="formCreateAsset">
+
                 <div class="mb-4">
                         <img :src="preview" class="img-fluid" />
                 </div>
-                <b-form-group>
-                    <b-form-input type="text" placeholder="Title" v-model="tmpAsset.title" />
+
+                <b-form-group label-for="title" :state="titleState"
+                    invalid-feedback="Title is required">
+                    <b-form-input id="title" placeholder="Title" v-model="tmpAsset.title" type="text" required />
                 </b-form-group>
+
                 <b-form-group>
                     <b-form-textarea placeholder="Description" v-model="tmpAsset.description" />
                 </b-form-group>
@@ -26,8 +31,9 @@
                     @click.prevent="handleCreateAssetSubmit">
                     <b-icon-plus></b-icon-plus> Add Asset
                 </b-button>
-            </div>
+            </b-form>
         </div>
+        </b-overlay>
     </div>
 </template>
 
@@ -40,6 +46,8 @@ export default {
         return {
             preview: "",
             filename: "",
+            inProgress: false,
+            titleState: true
         };
     },
     created: function() {
@@ -61,7 +69,26 @@ export default {
         ...mapActions("assets", ["createAsset","setTmpAsset"]),
         ...mapActions("marker", ["createMarker"]),
 
+        reset: function () {
+            this.inProgress = false
+            this.titleState = true
+            this.preview = ''
+            this.setTmpAsset()
+        },
+
+        checkCreateAssetValidity: function () {
+            const valid = this.$refs.formCreateAsset.checkValidity()
+            this.titleState = valid
+            return valid
+        },
+
         handleCreateAssetSubmit: function () {
+
+            if (!this.checkCreateAssetValidity()) {
+                return
+            }
+
+            this.inProgress = true
 
             let marker = {
                 title: 'Marker ' + this.time, 
@@ -78,7 +105,7 @@ export default {
 
                     this.createAsset(payload)
                         .then(() => {
-                            this.setTmpAsset()
+                            this.reset()
                         })
                 })
 
