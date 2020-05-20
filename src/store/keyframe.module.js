@@ -47,15 +47,15 @@ const actions = {
                 .then(resp => {
                     if (resp.data.status === 'OK') {
 
-                        if (state.keyframe.assets && state.keyframe.assets.length) {
+                        // Get asset from current keyframe
+                        const assets = state.keyframe.assets ? state.keyframe.assets.slice() : []
 
-                            // Get asset from current keyframe
-                            const assets = state.keyframe.assets.slice()
+                        // Get new created keyframe
+                        let keyframe = resp.data.result
+                        keyframe.assets = []
+                        commit('createKeyframe', keyframe)
 
-                            // Get new created keyframe
-                            let keyframe = resp.data.result
-                            keyframe.assets = []
-                            commit('createKeyframe', keyframe)
+                        if (assets.length) {
 
                             let collection = []
 

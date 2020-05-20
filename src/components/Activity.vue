@@ -136,7 +136,7 @@ export default {
 
             let data = []
             for (let i = 1; i <= this.duration; i++) {
-                data.push(Math.floor(Math.random()*5)+1);
+                data.push(Math.floor(Math.random()*10)/10 - 0.3);
             }
 
             return this.simplifyData(data)

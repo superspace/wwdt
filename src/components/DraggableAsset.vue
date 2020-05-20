@@ -361,7 +361,7 @@ export default {
 
 
 .c-asset {
-    background: white;
+    background: transparent;
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
     position: relative;
     transform: translateX(-50%) translateY(-50%);

@@ -47,6 +47,7 @@
                         <b-dropdown-item v-on:click="setPlaybackRate(1)">1x</b-dropdown-item>
                         <b-dropdown-item v-on:click="setPlaybackRate(2)">2x</b-dropdown-item>
                         <b-dropdown-item v-on:click="setPlaybackRate(5)">5x</b-dropdown-item>
+                        <b-dropdown-item v-on:click="setPlaybackRate(10)">10x</b-dropdown-item>
                     </b-dropdown>
 
                 </div>
