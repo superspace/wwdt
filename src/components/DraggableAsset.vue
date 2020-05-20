@@ -1,32 +1,29 @@
 <template>
-        <!-- :parent="true" -->
-    <!-- <transition 
-        @enter="onEnterHandler" 
-        :css="false">
+    <!-- <transition name="move">
     </transition> -->
-            <!-- :key="componentKey" -->
-            <!-- ref="draggable" -->
         <vue-draggable-resizable
             :w="w"
             :h="h"
             :x="xpos"
             :y="ypos"
             :z="props.z"
-            :lockAspectRatio="true"
+            :lock-aspect-ratio="true"
             :min-width="50"
             :min-height="50"
             :grid="[10,10]"
-            :handles="['bm','mr','br']"
+            :handles="['tl','tr','bl','br']"
             :resizable="isResizable"
             :active="active"
             :class="assetClass"
+            :key="componentKey"
+            :style="style"
             @dragging="handleDragging"
             @dragstop="handleDragStop"
             @resizing="handleResize"
             @resizestop="handleResizeStop"
             @activated="handleActivation"
             @deactivated="handleDeactivation"
-            v-show="visible"
+            v-show="xpos"
             >
 
             <div v-show="active">
@@ -62,9 +59,8 @@
                 class="img-fluid" ref="image" /> 
             </figure>
 
-            <small><pre>{{ xpos }} / {{ ypos }}</pre></small>
-
         </vue-draggable-resizable>
+
 </template>
 
 <script>
@@ -74,8 +70,6 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
 import { mapState, mapActions } from 'vuex'
-
-// import { TimelineLite } from 'gsap'
 
 export default {
     name: 'DraggableAsset',
@@ -89,7 +83,7 @@ export default {
     },
     data: function () {
         return {
-            w: 100,
+            w: 200,
             h: 200,
             xpos: 0,
             ypos: 0,
@@ -100,11 +94,10 @@ export default {
             active: false,
             initalWidth: 200,
             componentKey: 0,
-            // timeline: null,
+            style: {}
         }
     },
     mounted: function () {
-        // this.timeline = new TimelineLite()
         this.updatePosition()
     },
 
@@ -112,15 +105,13 @@ export default {
         props: {
             deep: true,
             handler: function () {
-
                 this.updatePosition()
-
             }
         },
         parent: {
             deep: true,
             handler: function () {
-                this.forceUpdate()
+                this.updatePosition()
             }
         }
     },
@@ -128,18 +119,6 @@ export default {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
         ...mapState('arrangement', ['keyframes','keyframe']),
-
-        // xpos: function () {
-        //     const parentWidth = this.parent.width / 2
-        //     const x = Math.round(parentWidth / 100 * this.props.x + parentWidth)
-        //     return x
-        // },
-
-        // ypos: function () {
-        //     const parentHeight = this.parent.height / 2
-        //     const y = Math.round(parentHeight / 100 * this.props.y + parentHeight)
-        //     return y
-        // },
 
         src: function () {
             return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
@@ -180,6 +159,12 @@ export default {
 
         isResizable: function () {
             return (this.asset.type == 'LABEL') ? false : true
+        },
+        parentWidth: function () {
+            return this.parent.width / 2
+        },
+        parentHeight: function () {
+            return this.parent.height / 2
         }
 
     },
@@ -189,14 +174,22 @@ export default {
         ...mapActions('assets', ['setTmpAsset']),
 
         updatePosition: function () {
-            const parentWidth = this.parent.width / 2
-            const parentHeight = this.parent.height / 2
 
-            const x = Math.round(parentWidth / 100 * this.props.x + parentWidth)
-            const y = Math.round(parentHeight / 100 * this.props.y + parentHeight)
+            const x = Math.round(this.parentWidth / 100 * this.props.x + this.parentWidth)
+            const y = Math.round(this.parentHeight / 100 * this.props.y + this.parentHeight)
+
+            this.style.left = x + 'px'
+            this.style.top = y + 'px'
 
             this.xpos = x
             this.ypos = y
+
+            this.setSize()
+
+            this.$nextTick(()=>function () {
+                this.forceUpdate()
+            })
+
         },
 
         handleLoad: function (e) {
@@ -212,7 +205,7 @@ export default {
         },
 
         forceUpdate: function () {
-            // this.componentKey += 1
+            this.componentKey += 1
         },
 
         handleIncreaseZ: function () {
@@ -242,11 +235,12 @@ export default {
         },
 
         setSize: function () {
-            // this.w = this.initalWidth * this.props.scale
-            // this.h = this.w * this.ratio 
+            this.w = Math.round(this.initalWidth * this.props.scale)
+            this.h = Math.round(this.w * this.ratio) 
         },
 
         handleDragging: function () {
+            this.style = {}
             this.dragging = true
         },
 
@@ -257,21 +251,18 @@ export default {
 
                 this.active = false
 
-                const parentWidth = this.parent.width / 2;
-                const parentHeight = this.parent.height / 2;
+                let xpos = x - this.parentWidth;
+                let ypos = y - this.parentHeight;
 
-                let x2 = x - parentWidth;
-                let y2 = y - parentHeight;
-
-                if (x2 > parentWidth || x2 < parentWidth * -1) {
-                    x2 = this.props.x;
+                if (xpos > this.parentWidth || xpos < this.parentWidth * -1) {
+                    xpos = this.props.x;
                 }
-                if (y2 > parentHeight || y2 < parentHeight * -1) {
-                    y2 = this.props.y;
+                if (ypos > this.parentHeight || ypos < this.parentHeight * -1) {
+                    ypos = this.props.y;
                 }
 
-                const relativeX = Math.round(100 / parentWidth * x2 * 100) / 100
-                const relativeY = Math.round(100 / parentHeight * y2 * 100) / 100
+                const relativeX = Math.round(100 / this.parentWidth * xpos * 100) / 100
+                const relativeY = Math.round(100 / this.parentHeight * ypos * 100) / 100
 
                 this.props.x = relativeX;
                 this.props.y = relativeY;
@@ -283,7 +274,7 @@ export default {
 
                 this.updateProperties(payload)
                     .then(()=> {
-                        this.forceUpdate()
+                        this.updatePosition()
                     })
 
             }
@@ -291,12 +282,13 @@ export default {
         },
 
         handleResize: function () {
+            this.style = {}
             this.resize = true
         },
 
         handleResizeStop: function (x, y, width) {
             this.resize = false
-            const scale = Math.round((width / this.initalWidth)*1000)/1000;
+            const scale = Math.round((width / this.initalWidth)*100)/100;
 
             const payload = {
                 asset: this.asset,
@@ -306,6 +298,9 @@ export default {
             }
 
             this.updateProperties(payload)
+                .then(()=> {
+                    this.updatePosition()
+                })
 
         },
 
@@ -332,25 +327,50 @@ export default {
 
 <style lang="scss" scoped>
 
+.move {
+    
+    &-enter {
+    }
+
+    &-enter-active {
+        transition: all 0.8s ease-out;
+        transition-property: width, height, top, left;
+    }
+
+    &-enter-to {
+    }
+
+    &-leave {
+    }
+
+    &-leave-active {
+    }
+
+    &-leave-to {
+    }
+    
+}
+
+
 .c-asset {
     background: white;
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
     position: relative;
-
     transform: translateX(-50%) translateY(-50%);
 
     &--animate {
         transition: all 0.5s ease-in-out;
+        transition-property: width, height, top, left;
     }
 
-    &--autosize {
-        width: auto !important;
-        height: auto !important;
-        padding: 10px 15px;
-        box-shadow: none;
-        background: none;
-        border: none;
-    }
+    // &--autosize {
+    //     width: auto !important;
+    //     height: auto !important;
+    //     padding: 10px 15px;
+    //     box-shadow: none;
+    //     background: none;
+    //     border: none;
+    // }
 
     &__toolbar {
         position: absolute;

@@ -7,8 +7,8 @@ const sortKeyframes = function () {
 }
 
 const sortAssets = function () {
-    if (state.keyframe.assets)
-        state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
+    // if (state.keyframe.assets)
+    //     state.keyframe.assets.sort((a,b) => a.id > b.id ? 1 : -1 )
 }
 
 const state = {
