@@ -51,13 +51,27 @@
 
             <h2 :class="['mb-0', textClass]" v-if="asset.type == 'LABEL'">{{ asset.title }}</h2>
 
-            <div v-if="asset.type == 'TEXT'" v-html="$options.filters.truncate(asset.content, 180)"></div>
+            <div v-if="asset.type == 'TEXT'" class="p-2" 
+                v-html="$options.filters.truncate(asset.content, 180)"></div>
+
+            <div v-if="asset.type == 'AUDIO'" class="p-2">
+                <b-icon-volume-up-fill size="lg"></b-icon-volume-up-fill> {{ asset.title }}
+            </div>
+
+            <div v-if="asset.type == 'VIDEO'" class="p-2">
+                <b-icon-camera-video-fill size="lg"></b-icon-camera-video-fill> {{ asset.title }}
+            </div>
+
+            <div v-if="asset.type == 'FILE'" class="p-2">
+                <b-icon-file-earmark size="lg"></b-icon-file-earmark> {{ asset.title }}
+            </div>
 
             <figure v-show="src">
                 <img @load="handleLoad" :src="src" 
                 :alt="asset.title" v-b-tooltip.hover.bottom
                 :title="asset.title"
                 class="img-fluid" ref="image" /> 
+                <!-- <div style="position: absolute; top: 0; background: white"><pre>{{ratio}} {{props.scale}}</pre></div> -->
             </figure>
 
         </vue-draggable-resizable>
@@ -84,8 +98,8 @@ export default {
     },
     data: function () {
         return {
-            w: 200,
-            h: 200,
+            w: null,
+            h: null,
             xpos: 0,
             ypos: 0,
             ratio: 1,
@@ -95,11 +109,11 @@ export default {
             active: false,
             initalWidth: 200,
             componentKey: 0,
-            style: {}
+            style: {},
+            loaded: false
         }
     },
     mounted: function () {
-        // console.log('DraggableAsset::mounted'); // eslint-disable-line no-console
         this.updatePosition()
     },
 
@@ -115,18 +129,31 @@ export default {
             handler: function () {
                 this.updatePosition()
             }
+        },
+        dragging: function (val) {
+            if (val) {
+                this.lock()
+            } else {
+                this.unlock()
+            }
+        },
+        resize: function (val) {
+            if (val) {
+                this.lock()
+            } else {
+                this.unlock()
+            }
         }
     },
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
-        ...mapState('arrangement', ['keyframes','keyframe']),
         ...mapState('project', ['MODE_EDIT','MODE_RECORD']),
 
         ...mapGetters('project', ['sessionMode']),
 
         src: function () {
-            return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
+            return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.ratio : ''
         },
 
         assetClass: function () {
@@ -135,8 +162,11 @@ export default {
             if (!this.resize && !this.dragging) 
                 classNames += ' c-asset--animate'            
 
-            if (!this.isResizable)
-                classNames += ' c-asset--autosize'
+            // if (!this.isResizable)
+            //     classNames += ' c-asset--autosize'
+
+            if (this.asset.type == 'IMAGE' && !this.loaded)
+                classNames += ' c-asset--hidden'
 
             return classNames
         },
@@ -175,7 +205,7 @@ export default {
         },
 
         isResizable: function () {
-            return (this.asset.type == 'LABEL') ? false : true
+            return (this.asset.type == 'IMAGE') ? true : false
         },
         parentWidth: function () {
             return this.parent.width / 2
@@ -189,23 +219,24 @@ export default {
 
         ...mapActions('keyframe', ['updateProperties','removeAssetFromKeyframe']),
         ...mapActions('assets', ['setTmpAsset', 'setAsset']),
+        ...mapActions('arrangement', ['lock', 'unlock']),
 
         updatePosition: function () {
 
             const x = Math.round(this.parentWidth / 100 * this.props.x + this.parentWidth)
             const y = Math.round(this.parentHeight / 100 * this.props.y + this.parentHeight)
 
-            this.style.left = x + 'px'
-            this.style.top = y + 'px'
 
             this.xpos = x
             this.ypos = y
 
             this.setSize()
 
-            // if (this.sessionMode == this.MODE_RECORD) {
-            //     this.forceUpdate()
-            // }
+            this.style.left = x + 'px'
+            this.style.top = y + 'px'
+            this.style.width = this.w + 'px'
+            this.style.height = this.h + 'px'
+
 
             const context = this;
             setTimeout(function () {
@@ -223,7 +254,13 @@ export default {
                 this.ratio = Math.round((width/height)*100)/100;
             }
 
-            this.setSize()
+            if (!this.loaded) {
+
+                this.loaded = true
+                this.updatePosition()
+                this.forceUpdate()
+            }
+
         },
 
         forceUpdate: function () {
@@ -265,9 +302,10 @@ export default {
 
         onDragStartCallback: function () {
             this.style = {}
-
-            // console.log('onDragStartCallback:: ' + e.currentTarget.style.left); // eslint-disable-line no-console
-
+            if (!this.isResizable) {
+                this.style.minWidth = '200px'
+                this.style.height = 'auto'
+            }
             this.dragging = true
         },
 
@@ -361,14 +399,19 @@ export default {
 
 
 .c-asset {
-    background: transparent;
+    background: transparentize(black, 0.95);
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
     position: relative;
     transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
 
     &--animate {
         transition: all 0.4s ease-in-out;
         transition-property: width, height, top, left;
+    }
+
+    &--hidden {
+        opacity: 0;
     }
 
     // &--autosize {

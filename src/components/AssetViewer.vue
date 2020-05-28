@@ -21,13 +21,21 @@
                 <img v-if="src" :src="src" :alt="asset.title" class="img-fluid" />
             </figure>
 
-            <b-button :href="src" size="sm" variant="primary" v-if="src" target="_blank">
-                <b-icon-file-earmark></b-icon-file-earmark> Download
-            </b-button>
+            <div v-if="asset.type === 'VIDEO'" class="mb-3">
+                <video-js :src="src" :type="asset.file.type"></video-js>
+            </div>
+
+            <div v-if="asset.type === 'AUDIO'" class="mb-3">
+                <audio-player :src="src"></audio-player>
+            </div>
 
             <div v-if="asset.type == 'TEXT'" v-html="asset.content"></div>
 
             <a v-if="asset.type == 'URL'" :href="asset.content" target="_blank">{{ asset.content }}</a>
+
+            <b-button :href="src" size="sm" variant="primary" v-if="src" target="_blank">
+                <b-icon-file-earmark></b-icon-file-earmark> Download
+            </b-button>
 
         </b-modal>
 
@@ -36,12 +44,16 @@
 
 <script>
 
+import VideoJS from '@/components/VideoJS'
+import AudioPlayer from '@/components/AudioPlayer'
+
 import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'AssetViewer',
     components: {
-
+        VideoJs: VideoJS,
+        AudioPlayer
     },
     computed: {
         ...mapState('assets', ['tmpAsset', 'asset']),

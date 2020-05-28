@@ -25,7 +25,13 @@
                     :transfer-data="asset" 
                     @click.prevent="setAsset(asset)">
                     <div @click.prevent="openViewAssetModal(asset)">
-                        <b-icon-file-earmark></b-icon-file-earmark> {{ asset.title }}
+                        <b-icon-file-earmark v-if="asset.type === 'FILE'"></b-icon-file-earmark> 
+                        <b-icon-card-image v-if="asset.type === 'IMAGE'"></b-icon-card-image> 
+                        <b-icon-volume-up-fill v-if="asset.type === 'AUDIO'"></b-icon-volume-up-fill> 
+                        <b-icon-camera-video-fill v-if="asset.type === 'VIDEO'"></b-icon-camera-video-fill> 
+                        <b-icon-file-text v-if="asset.type === 'TEXT'"></b-icon-file-text> 
+                        
+                        {{ asset.title }}
                     </div>
                     <b-button-group>
                         <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(asset)">

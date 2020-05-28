@@ -108,22 +108,28 @@ export default {
     },
     watch: {
         position: function (val) {
-            this.player.currentTime(val)
+            if (this.player)
+                this.player.currentTime(val)
         },
         rate: function (val) {
-            this.player.playbackRate(val)
+            if (this.player)
+                this.player.playbackRate(val)
         },
         volume: function (val) {
-            this.player.setVolume(val)  
+            if (this.player)
+                this.player.setVolume(val)  
         },
         muted: function (val) {
-            this.player.muted(val)
+            if (this.player)
+                this.player.muted(val)
         },
         play: function (val) {
-            if (val === true) {
-                this.player.play();
-            } else {
-                this.player.pause();
+            if (this.player) {
+                if (val === true) {
+                    this.player.play();
+                } else {
+                    this.player.pause();
+                }
             }
         }
     }

@@ -36,6 +36,14 @@ const actions = {
         commit('setDeleteKeyframeAlert', show)
     },
 
+    resetKeyframe ( { commit } ) {
+        if (state.keyframe.id) {
+            const i = state.keyframes.findIndex(x => state.keyframe.id === x.id)
+            const keyframe = state.keyframes[i]
+            commit('setKeyframe', keyframe)
+        }
+    },
+
     createKeyframe ({ commit, dispatch }, keyframe) {
         let data = new FormData
         data.append('title', keyframe.title)
@@ -190,6 +198,7 @@ const mutations = {
 
     setKeyframes (state, keyframes=[]) {
         state.keyframes = keyframes
+        
         sortKeyframes(state)
     },
 

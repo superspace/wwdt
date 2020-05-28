@@ -14,9 +14,10 @@
 
         </div>
 
+        <span><b-icon-person-fill></b-icon-person-fill> {{ firstname }} {{ lastname }}</span> 
         <ul class="navbar-nav">
           <li class="nav-item" v-if="isLoggedIn()">
-            <router-link class="nav-link" to="/login?logout=1">Logout</router-link>
+            <router-link class="btn btn-primary btn-sm ml-4" to="/login?logout=1">Logout</router-link>
           </li>
         </ul>
 
@@ -30,14 +31,21 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
   name: 'App',
+  mounted: function () {
+    this.getUser()
+  },
   components: {
   },
   computed: {
+    ...mapState('user', ['firstname', 'lastname']),
     ...mapGetters('user', ['isLoggedIn'])
+  },
+  methods: {
+    ...mapActions('user', ['getUser'])
   }
 }
 </script>

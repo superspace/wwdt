@@ -23,6 +23,14 @@ const getters = {
     getAsset: (state) => (id) => {
         let asset = (state.assets.hasOwnProperty(id)) ? state.assets[id] : {}
         asset.id = id
+
+        if (asset.file) {
+            const thumb = asset.file.thumb.replace('crop', 'aspect').replace('300','size')
+            asset.file['crop'] = thumb.replace('aspect', 'crop').replace('size','600')
+            asset.file['ratio'] = thumb.replace('aspect', 'ratio').replace('size','600')
+            asset.file['preview'] = thumb.replace('aspect', 'ratio').replace('size','1200')
+        }
+
         return asset
     },
 
@@ -30,6 +38,7 @@ const getters = {
         const index = state.types.findIndex(x => x.value === state.tmpAsset.type)
         return state.types[index].types
     },
+
 }
 
 const actions = {

@@ -65,14 +65,15 @@
 
                                 <b-card-img
                                     @click.prevent="openViewAssetModal(item)"
-                                    v-if="item.type == 'IMAGE'"
-                                    :src="host + item.file.thumb"
+                                    v-if="item.type === 'IMAGE'"
+                                    :src="host + item.file.ratio"
                                     :alt="item.title"></b-card-img>
 
                                 <b-card-body 
                                     @click.prevent="openViewAssetModal(item)"
                                     :title="item.title"
                                     :sub-title="item.description">
+
 
                                     <!-- <b-card-text>
                                         <b-badge class="mr-1" variant="primary" v-for="tag in item.tags" :key="tag">{{tag}}</b-badge>
@@ -90,6 +91,10 @@
 
 
                                 </b-card-body>
+
+                                <div v-if="item.type === 'VIDEO'">
+                                    <video-js :src="host + item.file.src" :type="item.file.type"></video-js>
+                                </div>
 
 
                             </b-card>
@@ -109,12 +114,12 @@
 
 import { mapState, mapActions, mapGetters } from 'vuex'
 
-// import AssetViewer from "@/components/AssetViewer";
+import VideoJS from '@/components/VideoJS'
 
 export default {
     name: 'MarkerList',
     components: {
-        // AssetViewer
+        VideoJs: VideoJS
     },
     data: function () {
         return {

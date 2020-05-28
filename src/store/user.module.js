@@ -29,9 +29,24 @@ const actions = {
                 })
         })
     },
+
     logout ({ commit }) {
         commit('logout')
     },
+
+    getUser({commit}) {
+        return new Promise((resolve) => {
+            Axios.get('/user')
+                .then(resp => {
+                    if (resp.data.status === 'OK') {
+                        const user = resp.data.result.user
+                        commit('setUser', user)
+                        resolve()
+                    }
+                })
+        })
+
+    }
 }
 
 const getters = {
@@ -44,6 +59,15 @@ const getters = {
 }
 
 const mutations = {
+
+    setUser (state, user) {
+        state.id = user.id
+        state.firstname = user.firstname
+        state.lastname = user.lastname
+        state.email = user.email
+        state.role = user.role
+    },
+
     login (state, user) {
 
         localStorage.setItem('authKey', user.authKey)

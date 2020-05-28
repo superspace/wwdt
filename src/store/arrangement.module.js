@@ -3,13 +3,22 @@ import Axios from "axios"
 const state = {
     arrangement: {},
     arrangements: [],
-    active: true
+    active: true,
+    locked: false
 }
 
 const actions = {
 
     reset ({ commit }) {
         commit('reset')
+    },
+
+    lock ({ commit }) {
+        commit('setLocked', true)
+    },
+
+    unlock ({ commit }) {
+        commit('setLocked', false)
     },
 
     setActive ({ commit }, active) {
@@ -33,9 +42,9 @@ const actions = {
                     let keyframes = arrangement.keyframes
                     delete arrangement.keyframes
                     commit('setArrangement', arrangement)
-
-                    dispatch('keyframe/setKeyframes', keyframes, {root: true}) 
-                    dispatch('keyframe/setKeyframe', {}, {root: true}) 
+                    dispatch('keyframe/setKeyframes', keyframes, {root: true})
+                    if (!state.locked)
+                        dispatch('keyframe/resetKeyframe', null, {root: true}) 
                     
                     resolve()
 
@@ -49,6 +58,10 @@ const mutations = {
     reset (state) {
         state.arrangement = {}
         state.arrangements = []
+    },
+
+    setLocked (state, locked) {
+        state.locked = locked
     },
 
     setActive (state, active) {

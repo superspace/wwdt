@@ -86,7 +86,15 @@ export default {
         }
 
         if (this.sessionMode == 'MODE_RECORD') {
-            this.startRecording()
+
+            if (this.session.end > Date.now()) {
+                this.startRecording()
+            } else {
+                const duration = Math.round((this.session.end - this.session.start)/1000*10)/10
+                this.setDuration(duration)
+                this.value = this.duration
+                this.setTime(this.duration)
+            }
         }
 
     },
@@ -106,6 +114,7 @@ export default {
         ...mapState('marker', ['markers']),
         ...mapState('keyframe', ['keyframes']),
         ...mapState('project', ['recording', 'session']),
+        ...mapState('arrangement', {arrangement:'arrangement', arrangementLocked:'locked'}),
 
         ...mapGetters('project', ['sessionMode']),
 
@@ -176,6 +185,7 @@ export default {
         ...mapActions('player', ['setPosition']),
         ...mapActions('keyframe', ['setKeyframe']),
         ...mapActions('marker', ['setMarker','getMarkers']),
+        ...mapActions('arrangement', ['getArrangement']),
 
         ...mapActions('assets', ['getAssets']),
 
@@ -188,13 +198,18 @@ export default {
             this.startTimer()
 
             if (!this.dataInterval) {
+
+
                 let context = this;
                 this.dataInterval = setInterval(function () {
                     context.getAssets()
                         .then(()=>{
                             context.getMarkers()
+                            if (!context.arrangementLocked) {
+                                context.getArrangement(context.arrangement.id)
+                            }
                         })
-                }, 7000)
+                }, 5000)
             }
 
         },

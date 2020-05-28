@@ -5,7 +5,7 @@ const state = {
     duration: 0,
     now: 0,
     isRecording: false,
-    timeInterval: null
+    timeInterval: null,
 }
 
 const actions = {
@@ -32,7 +32,7 @@ const actions = {
 
     stopTimer() {
         clearInterval(state.timeInterval)
-    }
+    },
 
 }
 

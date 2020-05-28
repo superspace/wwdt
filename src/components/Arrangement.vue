@@ -83,6 +83,11 @@ export default {
         ...mapActions('arrangement', ['getArrangement']),
         ...mapActions('keyframe', ['setTmpKeyframe','addPropertiesToKeyframe']),
 
+        getProp: function (asset, prop) {
+            console.log(prop + ' :: ' + asset.props[prop]); // eslint-disable-line no-console
+            return asset.props[prop]
+        },
+
         openCreateKeyframeModal: function () {
             this.setTmpKeyframe()
             this.$bvModal.show('modal-create-keyframe')
