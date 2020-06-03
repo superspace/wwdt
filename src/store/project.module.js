@@ -27,6 +27,7 @@ const actions = {
         commit('marker/reset', {}, {root: true})
         commit('player/reset', {}, {root: true})
         commit('timeline/reset', {}, {root: true})
+        commit('user/reset', {}, {root: true})
     },
 
     getProjects ({ commit }) {
@@ -47,6 +48,8 @@ const actions = {
 
         // Set new project
         commit('setProject', project)
+
+        dispatch('user/getUserRole', project.id, {root: true})
 
         if (project.sessions.length > 0) {
 

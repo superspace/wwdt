@@ -9,6 +9,11 @@ const state = {
 }
 
 const actions = {
+
+    reset ({commit}) {
+        commit('reset')
+    },
+
     login ({ commit }, {email, token}) {
 
         let data = new FormData
@@ -46,6 +51,20 @@ const actions = {
                 })
         })
 
+    },
+
+    getUserRole ({ commit }, projectId) {
+        return new Promise((resolve) => {
+
+            Axios.get('/user/role/'+ projectId)
+                .then(resp => {
+                    if (resp.data.userId == state.id) {
+                        const role = resp.data.role
+                        commit('setUserRole', role)
+                    }
+                    resolve()
+                })
+        })
     }
 }
 
@@ -60,12 +79,19 @@ const getters = {
 
 const mutations = {
 
+    reset (state) {
+        state.role = ''
+    },
+
     setUser (state, user) {
         state.id = user.id
         state.firstname = user.firstname
         state.lastname = user.lastname
         state.email = user.email
-        state.role = user.role
+    },
+
+    setUserRole (state, role) {
+        state.role = role
     },
 
     login (state, user) {

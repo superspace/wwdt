@@ -1,12 +1,12 @@
 <template>
     <div>
-        <b-alert variant="danger" :show="deleteKeyframeAlert" class="d-flex flex-row justify-content-between">
+        <!-- <b-alert variant="danger" :show="deleteKeyframeAlert" class="d-flex flex-row justify-content-between">
             <span><b-icon-trash></b-icon-trash> Delete keyframe <strong>{{ tmpKeyframe.title }}</strong> ?</span>
             <b-button-group>
                 <b-button variant="danger" size="sm" @click="handleDeleteKeyframe">Yes</b-button>
                 <b-button variant="" size="sm" @click="handleCancelDeleteKeyframe">No</b-button>
             </b-button-group>
-        </b-alert>
+        </b-alert> -->
 
         <b-modal id="modal-update-keyframe" size="md" title="Update Keyframe" @ok="handleUpdateKeyframeModalOK">
 
@@ -68,7 +68,7 @@ export default {
     mounted: function () {
     },
     computed: {
-        ...mapState('keyframe', ['tmpKeyframe','deleteKeyframeAlert']),
+        ...mapState('keyframe', ['tmpKeyframe']),
         ...mapState('timeline', ['time','start','duration']),
 
     },

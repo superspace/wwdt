@@ -14,7 +14,9 @@
 
         </div>
 
-        <span><b-icon-person-fill></b-icon-person-fill> {{ firstname }} {{ lastname }}</span> 
+        <span class="d-none d-md-block">
+          <b-icon-person-fill></b-icon-person-fill> {{ firstname }} {{ lastname }} <b-badge pill v-if="role">{{ role }}</b-badge>
+        </span> 
         <ul class="navbar-nav">
           <li class="nav-item" v-if="isLoggedIn()">
             <router-link class="btn btn-primary btn-sm ml-4" to="/login?logout=1">Logout</router-link>
@@ -41,7 +43,7 @@ export default {
   components: {
   },
   computed: {
-    ...mapState('user', ['firstname', 'lastname']),
+    ...mapState('user', ['firstname', 'lastname', 'role']),
     ...mapGetters('user', ['isLoggedIn'])
   },
   methods: {

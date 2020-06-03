@@ -23,14 +23,6 @@ const getters = {
     getAsset: (state) => (id) => {
         let asset = (state.assets.hasOwnProperty(id)) ? state.assets[id] : {}
         asset.id = id
-
-        if (asset.file) {
-            const thumb = asset.file.thumb.replace('crop', 'aspect').replace('300','size')
-            asset.file['crop'] = thumb.replace('aspect', 'crop').replace('size','600')
-            asset.file['ratio'] = thumb.replace('aspect', 'ratio').replace('size','600')
-            asset.file['preview'] = thumb.replace('aspect', 'ratio').replace('size','1200')
-        }
-
         return asset
     },
 
@@ -67,9 +59,9 @@ const actions = {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                .then(data => {
-                    if (data.data.status === 'OK') {
-                        commit('updateAsset', asset)
+                .then(resp => {
+                    if (resp.data.status === 'OK') {
+                        commit('updateAsset', resp.data.result)
                         resolve()
                     }
                 })
@@ -175,7 +167,7 @@ const mutations = {
 
     deleteAsset(state, id) {
         if (state.assets.hasOwnProperty(id)) {
-            delete state.assets[id]
+            Vue.delete(state.assets, id)
         }
     },
 

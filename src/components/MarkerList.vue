@@ -55,9 +55,9 @@
                             <b-card class="c-card" no-body v-for="item in markerAssets" :key="item.id">
 
                                 <b-button-group>
-                                    <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(item)">
+                                    <!-- <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(item)">
                                         <b-icon-pencil></b-icon-pencil>
-                                    </b-button>
+                                    </b-button> -->
                                     <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)">
                                         <b-icon-x></b-icon-x>
                                     </b-button>
@@ -66,7 +66,7 @@
                                 <b-card-img
                                     @click.prevent="openViewAssetModal(item)"
                                     v-if="item.type === 'IMAGE'"
-                                    :src="host + item.file.ratio"
+                                    :src="host + item.file.thumb"
                                     :alt="item.title"></b-card-img>
 
                                 <b-card-body 
@@ -167,7 +167,8 @@ export default {
                 'addAsset',
                 'removeAsset',
                 'setTmpMarker',
-                'setDeleteMarkerAlert']),
+                'deleteMarker'
+                ]),
 
         ...mapActions('assets', ['setTmpAsset', 'setAsset']),
 
@@ -184,8 +185,17 @@ export default {
         // Delete Marker
 
         handleDeleteMarkerAlert: function () {
-            this.setTmpMarker(this.marker)
-            this.setDeleteMarkerAlert(true)
+                this.setTmpMarker(this.marker)
+                this.$bvModal.msgBoxConfirm('Really remove «' + this.tmpMarker.title + '»?')
+                    .then(value => {
+                        if (value === true) {
+                            this.deleteMarker(this.tmpMarker.id)
+                                .then(() => {
+                                    this.setTmpMarker()
+                                })
+                        } 
+                    })
+
         },
 
         // Add Asst per drag'n'drop

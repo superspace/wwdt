@@ -1,38 +1,47 @@
 <template>
     <div>
         <b-overlay :show="inProgress">
-        <div class="text-center">
+            <div class="text-center">
 
-            <pre class="mb-4"><b-icon-clock></b-icon-clock> {{ now | moment("HH:mm:ss") }} Uhr</pre>
+                <pre class="mb-4"><b-icon-clock></b-icon-clock> {{ now | moment("HH:mm:ss") }} Uhr</pre>
 
-            <div v-if="!preview">
-                <b-form-file 
-                    class="mb-4"
-                    @input="handleFilePreview()"
-                    v-model="tmpAsset.upload"></b-form-file>
-            </div>
-
-            <b-form ref="formCreateAsset">
-
-                <div class="mb-4">
-                        <img :src="preview" class="img-fluid" />
+                <div v-if="!filename">
+                    <b-form-file 
+                        class="mb-4"
+                        :placeholder="'UPLOAD'"
+                        @input="handleFilePreview()"
+                        v-model="tmpAsset.upload">
+                    </b-form-file>
                 </div>
 
-                <b-form-group label-for="title" :state="titleState"
-                    invalid-feedback="Title is required">
-                    <b-form-input id="title" placeholder="Title" v-model="tmpAsset.title" type="text" required />
-                </b-form-group>
+                <b-form ref="formCreateAsset" v-if="filename">
 
-                <b-form-group>
-                    <b-form-textarea placeholder="Description" v-model="tmpAsset.description" />
-                </b-form-group>
+                    <div class="mb-4" v-if="preview">
+                        <img :src="preview" class="img-fluid" />
+                    </div>
 
-                <b-button block variant="primary"
-                    @click.prevent="handleCreateAssetSubmit">
-                    <b-icon-plus></b-icon-plus> Add Asset
-                </b-button>
-            </b-form>
-        </div>
+                    <b-form-group label-for="title" :state="titleState"
+                        invalid-feedback="Title is required">
+
+                        <b-form-input id="title" placeholder="Title" v-model="tmpAsset.title" type="text" required />
+
+                    </b-form-group>
+
+                    <b-form-group>
+                        <b-form-textarea placeholder="Description" v-model="tmpAsset.description" />
+                    </b-form-group>
+
+                    <b-button block variant="primary"
+                        @click.prevent="handleCreateAssetSubmit">
+                        <b-icon-plus></b-icon-plus> Add Asset
+                    </b-button>
+
+                    <b-button block variant="secondary"
+                        @click.prevent="reset">
+                        Cancel
+                    </b-button>
+                </b-form>
+            </div>
         </b-overlay>
     </div>
 </template>
@@ -54,10 +63,10 @@ export default {
         this.setTmpAsset()
     },
     watch: {
-        'tmpAsset.upload': function () {
-            this.filename = ''
-            this.preview = ''
-        }
+        // 'tmpAsset.upload': function () {
+        //     this.filename = ''
+        //     this.preview = ''
+        // }
     },
     computed: {
         ...mapState("assets", ["tmpAsset", "types", "ranking"]),
@@ -73,6 +82,7 @@ export default {
             this.inProgress = false
             this.titleState = true
             this.preview = ''
+            this.filename = ''
             this.setTmpAsset()
         },
 
@@ -91,7 +101,7 @@ export default {
             this.inProgress = true
 
             let marker = {
-                title: 'Marker ' + this.time, 
+                title: 'MARKER',
                 time: this.time
             }
 
@@ -122,8 +132,11 @@ export default {
                 false
             );
 
+            console.log(this.tmpAsset.upload); // eslint-disable-line no-console
+
             if (this.tmpAsset.upload) {
                 this.filename = this.tmpAsset.upload.name
+                this.tmpAsset.title = this.filename
                 let extension = this.filename.split('.').pop().toLowerCase()
 
                 const index = this.types.findIndex(x => x.types.includes(extension))
@@ -139,10 +152,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
 .custom-file-label {
+
+    background-color: var(--primary) !important;
+    border: none !important;
+    color: #FFF !important;
+
     &:after {
         display: none !important;
     }
 }
+
 </style>

@@ -20,8 +20,12 @@ const state = {
 
 const actions = {
 
-    setKeyframes({ commit }, keyframes) {
-        commit('setKeyframes', keyframes)
+    setKeyframes({ commit, dispatch }, keyframes) {
+        if (keyframes.length === 0) {
+            dispatch('createKeyframe', {title: 'START', time: 0})
+        } else {
+            commit('setKeyframes', keyframes)
+        }
     },
 
     setKeyframe({ commit }, keyframe) {
@@ -109,15 +113,15 @@ const actions = {
         })
     },
 
-    deleteKeyframe({ commit }, keyframe) {
+    deleteKeyframe({ commit }, id) {
 
         let data = new FormData
-        data.append('id', keyframe.id)
+        data.append('id', id)
 
         return new Promise((resolve) => {
             Axios.post('/keyframe/delete', data)
                 .then(() => {
-                    commit('deleteKeyframe', keyframe)
+                    commit('deleteKeyframe', id)
                     resolve()
                 })
         })
@@ -233,8 +237,8 @@ const mutations = {
         state.keyframe = keyframe
     },
 
-    deleteKeyframe (state, keyframe) {
-        const i = state.keyframes.findIndex(x => x.id === keyframe.id)
+    deleteKeyframe (state, id) {
+        const i = state.keyframes.findIndex(x => x.id === id)
         state.keyframes.splice(i, 1)
         state.keyframe = state.tmpKeyframe = {}
     },

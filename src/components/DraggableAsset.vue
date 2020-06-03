@@ -153,7 +153,7 @@ export default {
         ...mapGetters('project', ['sessionMode']),
 
         src: function () {
-            return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.ratio : ''
+            return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
         },
 
         assetClass: function () {

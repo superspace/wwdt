@@ -62,6 +62,8 @@ export default {
     },
     computed: {
         ...mapState('timeline', ['duration']),
+        ...mapState('marker', ['tmpMarker']),
+        ...mapState('keyframe', ['tmpKeyframe']),
 
         ...mapGetters('project', ['sessionMode']),
 
@@ -83,8 +85,8 @@ export default {
     methods: {
 
         ...mapActions('player', ['stopPlayer', 'setPosition']),
-        ...mapActions('marker', ['setMarker', 'updateMarker', 'setTmpMarker','setDeleteMarkerAlert']),
-        ...mapActions('keyframe', ['updateKeyframe', 'setKeyframe', 'setTmpKeyframe', 'setDeleteKeyframeAlert']),
+        ...mapActions('marker', ['setMarker', 'updateMarker', 'setTmpMarker', 'deleteMarker']),
+        ...mapActions('keyframe', ['updateKeyframe', 'setKeyframe', 'setTmpKeyframe','deleteKeyframe']),
         ...mapActions('arrangement', {activateArrangement:'setActive'}),
 
         setXPos: function () {
@@ -145,10 +147,29 @@ export default {
         handleDeleteMarkerAlert: function () {
             if (this.type == 'upload') {
                 this.setTmpMarker(this.data)
-                this.setDeleteMarkerAlert(true)
+
+                this.$bvModal.msgBoxConfirm('Really remove «' + this.tmpMarker.title + '»?')
+                    .then(value => {
+                        if (value === true) {
+                            this.deleteMarker(this.tmpMarker.id)
+                                .then(() => {
+                                    this.setTmpMarker()
+                                })
+                        } 
+                    })
+
             } else if (this.type == 'keyframe') {
                 this.setTmpKeyframe(this.data)
-                this.setDeleteKeyframeAlert(true)            
+                this.$bvModal.msgBoxConfirm('Really remove «' + this.tmpKeyframe.title + '»?')
+                    .then(value => {
+                        if (value === true) {
+                            this.deleteKeyframe(this.tmpKeyframe.id)
+                                .then(() => {
+                                    this.setTmpMarker()
+                                })
+                        } 
+                    })
+
             }
         }
     }

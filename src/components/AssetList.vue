@@ -1,13 +1,5 @@
 <template>
     <div>
-        <b-alert variant="danger" :show="showDeleteAssetAlert" class="d-flex flex-row justify-content-between">
-            <span>Remove <strong>{{ tmpAsset.title }}</strong>? It will be permanently removed everywhere.</span>
-            <b-button-group>
-                <b-button variant="danger" size="sm" @click="handleDeleteAsset">Yes</b-button>
-                <b-button variant="" size="sm" @click="handleCancelDeleteAsset">No</b-button>
-            </b-button-group>
-        </b-alert>
-
         <b-card no-body class="mb-3">
 
             <b-card-header class="d-flex justify-content-between align-items-center">
@@ -55,7 +47,6 @@ export default {
     },
     data: function () {
         return {
-            showDeleteAssetAlert: false
         }
     },
     computed: {
@@ -85,22 +76,17 @@ export default {
 
         handleDeleteAssetAlert: function (asset) {
             this.setTmpAsset(asset)
-            this.showDeleteAssetAlert = true
-        },
-
-        handleDeleteAsset: function () {
-            this.deleteAsset(this.tmpAsset.id)
-                .then(() => {
-                    this.setTmpAsset()
-                    this.showDeleteAssetAlert = false
-                    this.getMarkers()
+            this.$bvModal.msgBoxConfirm('Really remove «' + this.tmpAsset.title + '»? This is permanent.')
+                .then(value => {
+                    if (value === true) {
+                        this.deleteAsset(this.tmpAsset.id)
+                            .then(() => {
+                                this.setTmpAsset()
+                            })
+                    } 
                 })
         },
 
-        handleCancelDeleteAsset: function () {
-            this.setTmpAsset()
-            this.showDeleteAssetAlert = false
-        }
 
     }
 }

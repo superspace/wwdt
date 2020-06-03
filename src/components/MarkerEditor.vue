@@ -1,13 +1,5 @@
 <template>
     <div>
-        <b-alert variant="danger" :show="deleteMarkerAlert" class="d-flex flex-row justify-content-between">
-            <span><b-icon-trash></b-icon-trash> Delete marker <strong>{{ tmpMarker.title }}</strong> ?</span>
-            <b-button-group>
-                <b-button variant="danger" size="sm" @click="handleDeleteMarker">Yes</b-button>
-                <b-button variant="" size="sm" @click="handleCancelDeleteMarker">No</b-button>
-            </b-button-group>
-        </b-alert>
-
         <b-modal id="modal-update-marker" size="md" title="Update Marker" @ok="handleUpdateMarkerModalOK">
 
             <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateMarkerSubmit">
@@ -68,7 +60,7 @@ export default {
     mounted: function () {
     },
     computed: {
-        ...mapState('marker', ['tmpMarker','deleteMarkerAlert']),
+        ...mapState('marker', ['tmpMarker']),
         ...mapState('timeline', ['start','duration','time']),
 
     },
@@ -78,9 +70,7 @@ export default {
         ...mapActions('marker', [
                 'createMarker',
                 'updateMarker',
-                'deleteMarker',
-                'setTmpMarker',
-                'setDeleteMarkerAlert'
+                'setTmpMarker'
             ]),
 
         // Create Marker
@@ -119,28 +109,6 @@ export default {
                     this.$bvModal.hide('modal-update-marker')
                 })   
         },
-
-        // Delete Marker
-
-        handleCancelDeleteMarker: function () {
-            this.setTmpMarker({})
-            this.setDeleteMarkerAlert(false)
-        },
-
-        handleDeleteMarker: function () {
-            const data = {
-                id: this.tmpMarker.id
-            }
-
-            this.deleteMarker(data)
-                .then(() => {
-                    this.setTmpMarker({})
-                    this.setDeleteMarkerAlert(false)
-                })   
-
-        },
-
-
 
     }
 }

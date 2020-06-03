@@ -88,14 +88,14 @@ const actions = {
 
     },
 
-    deleteMarker ({ commit}, marker) {
+    deleteMarker ({ commit}, id) {
         let data = new FormData
-        data.append('id', marker.id)
+        data.append('id', id)
 
         return new Promise((resolve) => {
             Axios.post('/marker/delete', data)
                 .then(() => {
-                    commit('deleteMarker', marker.id)
+                    commit('deleteMarker', id)
                     resolve()
                 })
         })

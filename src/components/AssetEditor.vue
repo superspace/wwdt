@@ -24,6 +24,7 @@
 
                             <b-form-group label="Tags" label-for="tags">
                                 <b-form-tags id="tags" v-model="tmpAsset.tags" />
+                                <b-form-select :options="session.tags" />
                             </b-form-group>
 
                             <b-form-group label="Ranking">
@@ -51,8 +52,6 @@
                                     <img :src="preview" class="img-fluid" />
                                     </div>
                                 </div>
-
-                                <small v-if="filename"><b-icon-file-earmark></b-icon-file-earmark> {{ filename }}</small>
 
                             </div>
 
@@ -109,20 +108,8 @@ export default {
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
         ...mapState('marker', ['marker']),
+        ...mapState('project', ['session']),
         ...mapGetters('assets', ['allowedFileTypes']),
-
-        filename: function () {
-
-            let filename = ''
-
-            if (this.tmpAsset.file && this.tmpAsset.file.src) {
-                filename = this.tmpAsset.file.src.split('/').pop()
-            }
-            
-            filename = this.uploadFilename ? this.uploadFilename : filename
-
-            return filename
-        },
 
         preview: function () {
             let src = (this.tmpAsset.file && this.tmpAsset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.tmpAsset.file.thumb : ''
