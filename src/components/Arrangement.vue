@@ -150,7 +150,7 @@ export default {
 .c-arrangement {
     height: calc(100vh - 340px);
     overflow: hidden;
-
+    
     &:before {
         content: "\0020";
         position: absolute;

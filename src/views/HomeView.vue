@@ -19,10 +19,16 @@
             <div class="row flex-grow-1">
               <div class="col">
                 <b-tabs>
-                  <b-tab title="Arrangement" :active="active">
+                  <b-tab :active="active">
+                    <template v-slot:title>
+                      <b-icon-circle-fill style="width: 16px; height: 16px;"></b-icon-circle-fill> Arrangement  
+                    </template>
                     <arrangement class="pt-3"></arrangement>
                   </b-tab>
-                  <b-tab title="Marker" :active="!active">
+                  <b-tab :active="!active">
+                    <template v-slot:title>
+                      <b-icon-triangle-fill style="width: 16px; height: 16px;"></b-icon-triangle-fill>  Marker
+                    </template>
                     <marker-list class="pt-3"></marker-list>
                   </b-tab>
                 </b-tabs>

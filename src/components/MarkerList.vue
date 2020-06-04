@@ -35,15 +35,7 @@
 
             <div class="col-md-12">
 
-                <b-alert variant="danger" :show="showRemoveAssetAlert" class="d-flex flex-row justify-content-between">
-                    <span>Remove <strong>{{ tmpAsset.title }}</strong> from {{ marker.title }} ?</span>
-                    <b-button-group>
-                        <b-button variant="danger" size="sm" @click="handleRemoveAsset">Yes</b-button>
-                        <b-button variant="" size="sm" @click="handleCancelRemoveAsset">No</b-button>
-                    </b-button-group>
-                </b-alert>
-
-                <drop no-header no-body class="card p-3" 
+                <drop no-header no-body class="card p-3 c-marker-list" 
                     :class="dragOverClass" 
                     @dragover="handleDragOver"
                     @dragleave="dragOver = false"
@@ -55,10 +47,7 @@
                             <b-card class="c-card" no-body v-for="item in markerAssets" :key="item.id">
 
                                 <b-button-group>
-                                    <!-- <b-button variant="primary" size="sm" @click.prevent.stop="openUpdateAssetModal(item)">
-                                        <b-icon-pencil></b-icon-pencil>
-                                    </b-button> -->
-                                    <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAssetAlert(item)">
+                                    <b-button variant="light" size="sm" @click.prevent.stop="handleRemoveAsset(item)">
                                         <b-icon-x></b-icon-x>
                                     </b-button>
                                 </b-button-group>
@@ -73,22 +62,6 @@
                                     @click.prevent="openViewAssetModal(item)"
                                     :title="item.title"
                                     :sub-title="item.description">
-
-
-                                    <!-- <b-card-text>
-                                        <b-badge class="mr-1" variant="primary" v-for="tag in item.tags" :key="tag">{{tag}}</b-badge>
-                                        <p><small>Added {{ item.creationdate | moment('DD.MM.YYYY HH:mm:ss')}} by {{item.author}}</small></p>
-
-                                        <div v-if="item.type == 'TEXT'" v-html="$options.filters.truncate(item.content, 250)"></div>
-
-                                        <a v-if="item.type == 'URL'" :href="item.content" target="_blank">{{ item.content }}</a>
-                                    
-                                    </b-card-text>
-
-                                    <b-button v-if="item.file.src" :href="host + item.file.src" size="sm" variant="primary"  target="_blank">
-                                        <b-icon-file-earmark></b-icon-file-earmark> Download
-                                    </b-button> -->
-
 
                                 </b-card-body>
 
@@ -123,8 +96,6 @@ export default {
     },
     data: function () {
         return {
-            showRemoveAssetAlert: false,
-            showDeleteMarkerAlert: false,
             dragOver: false
         }
     },
@@ -227,17 +198,8 @@ export default {
 
         // Remove Asset
 
-        handleRemoveAssetAlert: function (asset) {
+        handleRemoveAsset: function (asset) {
             this.setTmpAsset(asset)
-            this.showRemoveAssetAlert = true
-        },
-
-        handleCancelRemoveAsset: function () {
-            this.setTmpAsset()
-            this.showRemoveAssetAlert = false
-        },
-
-        handleRemoveAsset: function () {
 
             const data = {
                 marker: this.marker,
@@ -247,7 +209,6 @@ export default {
             this.removeAsset(data)
                 .then(() => {
                     this.setTmpAsset()
-                    this.showRemoveAssetAlert = false
                 })   
         },
 

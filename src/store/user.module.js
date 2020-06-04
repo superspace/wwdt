@@ -74,6 +74,16 @@ const getters = {
     },
     authKey: () => () => {
         return localStorage.getItem('authKey')
+    },
+    hasEditPermission: function (state, getters, rootState, rootGetters) {
+
+        if (rootGetters.sessionMode == rootState.MODE_EDIT) {
+            if (state.role === 'Admin') {
+                return true
+            }
+            return false
+        }
+        return true
     }
 }
 

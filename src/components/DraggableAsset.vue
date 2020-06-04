@@ -11,6 +11,7 @@
             :grid="[10,10]"
             :handles="['tl','tr','bl','br']"
             :resizable="isResizable"
+            :draggable="isDraggable"
             :active="active"
             :class="assetClass"
             :key="componentKey"
@@ -131,10 +132,12 @@ export default {
             }
         },
         dragging: function (val) {
-            if (val) {
-                this.lock()
-            } else {
-                this.unlock()
+            if (this.hasEditPermission) {
+                if (val) {
+                    this.lock()
+                } else {
+                    this.unlock()
+                }
             }
         },
         resize: function (val) {
@@ -148,9 +151,11 @@ export default {
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
-        ...mapState('project', ['MODE_EDIT','MODE_RECORD']),
+        // ...mapState('project', ['MODE_EDIT','MODE_RECORD']),
 
-        ...mapGetters('project', ['sessionMode']),
+        // ...mapGetters('project', ['sessionMode']),
+
+        ...mapGetters('user', ['hasEditPermission']),
 
         src: function () {
             return (this.asset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.thumb : ''
@@ -167,6 +172,9 @@ export default {
 
             if (this.asset.type == 'IMAGE' && !this.loaded)
                 classNames += ' c-asset--hidden'
+
+            if (this.hasEditPermission)
+                classNames += ' c-asset--editable'
 
             return classNames
         },
@@ -205,8 +213,13 @@ export default {
         },
 
         isResizable: function () {
-            return (this.asset.type == 'IMAGE') ? true : false
+            return (this.asset.type == 'IMAGE') && this.hasEditPermission ? true : false
         },
+
+        isDraggable: function () {
+            return this.hasEditPermission ? true : false
+        },
+
         parentWidth: function () {
             return this.parent.width / 2
         },
@@ -301,12 +314,14 @@ export default {
         },
 
         onDragStartCallback: function () {
-            this.style = {}
-            if (!this.isResizable) {
-                this.style.minWidth = '200px'
-                this.style.height = 'auto'
+            if (this.hasEditPermission) {
+                this.style = {}
+                if (!this.isResizable) {
+                    this.style.minWidth = '200px'
+                    this.style.height = 'auto'
+                }
+                this.dragging = true
             }
-            this.dragging = true
         },
 
         handleDragStop: function (x, y) {
@@ -370,7 +385,8 @@ export default {
         },
 
         handleActivation: function () {
-            this.active = true
+            if (this.hasEditPermission)
+                this.active = true
         },
 
         handleDeactivation: function () {
@@ -404,6 +420,7 @@ export default {
     position: relative;
     transform: translateX(-50%) translateY(-50%);
     opacity: 1;
+    border: 1px solid #CCC;
 
     &--animate {
         transition: all 0.4s ease-in-out;
@@ -412,6 +429,10 @@ export default {
 
     &--hidden {
         opacity: 0;
+    }
+
+    &--editable {
+        border: 1px dashed black;
     }
 
     // &--autosize {

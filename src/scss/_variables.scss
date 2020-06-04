@@ -1,8 +1,10 @@
 $font-family-sans-serif: Roboto, "Helvetica Neue", Arial;
 
 $theme-colors: (
-    "primary": #3BC28A,
-    "light": #EDEDED
+    "primary": #3bc28a,
+    "light": #EDEDED,
+    "info": rgb(163, 76, 42),
+    "warning": rgb(138, 160, 73)
 );
 
 $enable-rounded: false;

@@ -14,7 +14,7 @@
             :title="data.title" 
             :class="classNames">
             <b-icon-triangle-fill v-if="type=='upload'"></b-icon-triangle-fill>
-            <b-icon-triangle v-if="type=='keyframe'"></b-icon-triangle>
+            <b-icon-circle-fill v-if="type=='keyframe'"></b-icon-circle-fill>
         </a>
         <b-popover :target="'popover-' + type + '-' + data.id" triggers="hover" placement="bottom">
             <b-button-group>
