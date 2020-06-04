@@ -23,13 +23,23 @@
                             </b-form-group>
 
                             <b-form-group label="Tags" label-for="tags">
-                                <b-form-tags id="tags" v-model="tmpAsset.tags" />
-                                <b-form-select :options="session.tags" />
+                                <b-input-group>
+                                    <b-form-tags id="tags" @input="handleTagInput" v-model="tmpAsset.tags" />
+                                    <template v-slot:append>
+                                        <b-form-select :options="session.tags" @change="handleTagSelect" />
+                                    </template>
+                                </b-input-group>
                             </b-form-group>
 
                             <b-form-group label="Ranking">
                                 <b-form-radio-group :options="ranking" v-model="tmpAsset.rank">
                                 </b-form-radio-group>
+                            </b-form-group>
+
+                            <b-form-group label="Related" label-for="related">
+                                <b-input-group>
+                                    <b-form-select id="related" multiple v-model="tmpAsset.related" :options="getAssetList" />
+                                </b-input-group>
                             </b-form-group>
 
                         </div>
@@ -46,6 +56,7 @@
                                         @input="handleFilePreview()"
                                     ></b-form-file>
                                 </b-form-group>
+
 
                                 <div class="card mb-4" v-if="preview">
                                     <div class="card-body">
@@ -104,12 +115,13 @@ export default {
         }
     },
     watch: {
+
     },
     computed: {
         ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
         ...mapState('marker', ['marker']),
         ...mapState('project', ['session']),
-        ...mapGetters('assets', ['allowedFileTypes']),
+        ...mapGetters('assets', ['allowedFileTypes', 'getAssetList']),
 
         preview: function () {
             let src = (this.tmpAsset.file && this.tmpAsset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.tmpAsset.file.thumb : ''
@@ -119,6 +131,7 @@ export default {
     methods: {
 
         ...mapActions('assets', ['updateAsset','deleteAsset', 'createAsset', 'setTmpAsset']),
+        ...mapActions('project', ['addTags']),
 
         reset: function () {
             this.setTmpAsset()
@@ -126,6 +139,14 @@ export default {
             this.inProgress = false
             this.uploadSrc =  ''
             this.uploadFilename =  ''
+        },
+
+        handleTagSelect: function (val) {
+            this.tmpAsset.tags.push(val)
+        },
+
+        handleTagInput: function (val) {
+            this.addTags(val)
         },
 
         handleFilePreview: function () {

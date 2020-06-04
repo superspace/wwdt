@@ -103,6 +103,10 @@ const actions = {
     setSessionEnd ({ commit }, end) {
         commit('setSessionEnd', end)
         commit('timeline/setIsRecording', false, {root: true})
+    },
+
+    addTags({commit}, tags) {
+        commit('addTags', tags)
     }
 
 }
@@ -113,6 +117,14 @@ const mutations = {
         state.project = {}
         state.session =  {}
         state.recording =  {}
+    },
+
+    addTags (state, tags) {
+        tags.forEach (tag => {
+            if (state.session.tags.indexOf(tag) === -1) {
+                state.session.tags.push(tag)
+            }
+        })
     },
 
     setProjects(state, projects=[]) {

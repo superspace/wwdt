@@ -84,7 +84,6 @@ export default {
         ...mapActions('keyframe', ['setTmpKeyframe','addPropertiesToKeyframe']),
 
         getProp: function (asset, prop) {
-            console.log(prop + ' :: ' + asset.props[prop]); // eslint-disable-line no-console
             return asset.props[prop]
         },
 
@@ -151,6 +150,7 @@ export default {
     height: calc(100vh - 340px);
     overflow: hidden;
     
+
     &:before {
         content: "\0020";
         position: absolute;

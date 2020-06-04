@@ -26,6 +26,19 @@ const getters = {
         return asset
     },
 
+    getAssetList: (state) => {
+
+        let options = [];
+        for (var item of Object.entries(state.assets)) {
+            const id = item[0]
+            const asset = item[1]
+            let option = {text: asset.title, value: id}
+            options.push(option)
+        }
+        return options
+
+    },
+
     allowedFileTypes: () => {
         const index = state.types.findIndex(x => x.value === state.tmpAsset.type)
         return state.types[index].types
@@ -50,6 +63,7 @@ const actions = {
         data.append('rank', asset.rank)
         data.append('type', asset.type)
         data.append('file', asset.upload)
+        data.append('related', asset.related)
 
         return new Promise((resolve) => {
             Axios.post('/asset/update', 
@@ -95,6 +109,7 @@ const actions = {
         data.append('rank', asset.rank)
         data.append('type', asset.type)
         data.append('file', asset.upload)
+        data.append('related', asset.related)
         data.append('sessionId', store.state.project.session.id)
 
         return new Promise((resolve) => {
@@ -181,7 +196,8 @@ const mutations = {
                 tags: [],
                 rank: 0,
                 type: 'IMAGE',
-                file: undefined
+                file: undefined,
+                related: []
             }
         }
         state.tmpAsset = Object.assign({}, asset)
