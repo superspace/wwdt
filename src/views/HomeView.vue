@@ -96,5 +96,16 @@ export default {
   height: calc(100vh - 100px);
   overflow: scroll;
 }
+
+.nav-tabs {
+  a.nav-link {
+      color: var(--secondary);
+
+    &.active {
+      color: var(--primary);
+    }
+  }
+}
+
 </style>
 
