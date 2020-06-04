@@ -23,8 +23,8 @@
 
             <p>{{ asset.description }}</p>
 
-            <figure v-if="src">
-                <img :src="src" :alt="asset.title" class="img-fluid" />
+            <figure v-if="previewSrc">
+                <img :src="previewSrc" :alt="asset.title" class="img-fluid" />
             </figure>
 
             <div v-if="asset.type === 'VIDEO'" class="mb-3">
@@ -68,9 +68,13 @@ export default {
     computed: {
         ...mapState('assets', ['tmpAsset', 'asset']),
 
-        src: function () {
+        previewSrc: function () {
             return (this.asset.file && this.asset.file.preview) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.preview : ''
         },
+
+        src: function () {
+            return (this.asset.file && this.asset.file.src) ? process.env.VUE_APP_ADMIN_HOST + this.asset.file.src : ''
+        }
 
     },
     methods: {
