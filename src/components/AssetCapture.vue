@@ -132,8 +132,6 @@ export default {
                 false
             );
 
-            console.log(this.tmpAsset.upload); // eslint-disable-line no-console
-
             if (this.tmpAsset.upload) {
                 this.filename = this.tmpAsset.upload.name
                 this.tmpAsset.title = this.filename

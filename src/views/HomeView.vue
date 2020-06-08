@@ -21,13 +21,13 @@
                 <b-tabs>
                   <b-tab :active="active">
                     <template v-slot:title>
-                      <b-icon-circle-fill style="width: 16px; height: 16px;"></b-icon-circle-fill> Arrangement  
+                      <b-icon-fullscreen style="width: 16px; height: 16px; margin: 0 4px 2px 0;"></b-icon-fullscreen> Keyframes  
                     </template>
                     <arrangement class="pt-3"></arrangement>
                   </b-tab>
                   <b-tab :active="!active">
                     <template v-slot:title>
-                      <b-icon-triangle-fill style="width: 16px; height: 16px;"></b-icon-triangle-fill>  Marker
+                      <b-icon-caret-up-fill style="width: 16px; height: 16px; margin: 0 4px 2px 0;"></b-icon-caret-up-fill>  Marker
                     </template>
                     <marker-list class="pt-3"></marker-list>
                   </b-tab>

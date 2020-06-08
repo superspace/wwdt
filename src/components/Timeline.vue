@@ -36,7 +36,7 @@
                         </span>
                     </div>
 
-                    <div class="c-timeline-marker">
+                    <div class="c-timeline-marker" v-if="hasEditPermission">
 
                         <span v-if="duration > 0">
                             <timeline-marker v-for="item in keyframes"
@@ -113,10 +113,11 @@ export default {
         ...mapState('timeline', ['time','start','end','duration', 'isRecording', 'now']),
         ...mapState('marker', ['markers']),
         ...mapState('keyframe', ['keyframes']),
-        ...mapState('project', ['recording', 'session']),
+        ...mapState('project', ['recording', 'session', 'MODE_EDIT', 'MODE_RECORD']),
         ...mapState('arrangement', {arrangement:'arrangement', arrangementLocked:'locked'}),
 
         ...mapGetters('project', ['sessionMode']),
+        ...mapGetters('user', ['hasEditPermission']),
 
         formattime: function () {
             return this.start > 0 ? this.$timestamp(this.start, this.time) : ''
@@ -153,7 +154,21 @@ export default {
                 this.value = this.duration
             }
 
-            if (this.sessionMode == 'MODE_EDIT') {
+            let context = this
+
+            if (this.sessionMode == this.MODE_EDIT) {
+                const markers = this.markers
+                    .filter(marker => marker.time == Math.round(context.time))
+
+                if (markers.length) {
+                    const marker = markers.slice(-1)[0]
+                    this.setMarker(marker)
+                } else {
+                    this.setMarker()
+                }
+            }
+
+            if (this.sessionMode == this.MODE_EDIT || (this.sessionMode == this.MODE_RECORD && !this.hasEditPermission)) {
 
                 let context = this
 
@@ -165,16 +180,6 @@ export default {
                     this.setKeyframe(keyframe)
                 } else {
                     this.setKeyframe()
-                }
-
-                const markers = this.markers
-                    .filter(marker => marker.time == Math.round(context.time))
-
-                if (markers.length) {
-                    const marker = markers.slice(-1)[0]
-                    this.setMarker(marker)
-                } else {
-                    this.setMarker()
                 }
             }
 

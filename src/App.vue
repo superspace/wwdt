@@ -6,9 +6,25 @@
 
           <router-link class="navbar-brand" to="/"><strong>/WWDT</strong></router-link>
 
-          <ul class="navbar-nav">
+          <div class="ml-3" v-if="project">
+
+            <strong>
+              {{project.title}}
+            </strong>
+
+            <b-badge class="ml-1" v-if="sessionMode === MODE_RECORD">
+              <b-icon-circle-fill class="mr-1"></b-icon-circle-fill> RECORDING
+            </b-badge>
+
+            <b-badge class="ml-1" v-if="sessionMode === MODE_EDIT">
+              <b-icon-pencil class="mr-1"></b-icon-pencil> EDITING
+            </b-badge>
+
+          </div>
+
+          <ul class="navbar-nav ml-3">
             <li class="nav-item">
-              <router-link class="nav-link" to="/projects">Projects</router-link>
+              <router-link class="nav-link" to="/projects">All Projects</router-link>
             </li>
           </ul>
 
@@ -44,7 +60,11 @@ export default {
   },
   computed: {
     ...mapState('user', ['firstname', 'lastname', 'role']),
-    ...mapGetters('user', ['isLoggedIn'])
+    ...mapState('project', ['project','MODE_EDIT', 'MODE_RECORD']),
+
+    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('project', ['sessionMode'])
+
   },
   methods: {
     ...mapActions('user', ['getUser'])

@@ -77,11 +77,15 @@ const getters = {
     },
     hasEditPermission: function (state, getters, rootState, rootGetters) {
 
-        if (rootGetters.sessionMode == rootState.MODE_EDIT) {
+        console.log(rootGetters['project/sessionMode']); // eslint-disable-line no-console
+        console.log(rootState.project.MODE_EDIT); // eslint-disable-line no-console
+
+        if (rootGetters['project/sessionMode'] == rootState.project.MODE_RECORD) {
             if (state.role === 'Admin') {
                 return true
+            } else {
+                return false
             }
-            return false
         }
         return true
     }

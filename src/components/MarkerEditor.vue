@@ -58,6 +58,7 @@ export default {
         }
     },
     mounted: function () {
+        this.tmpMarker.time = parseInt(this.tmpMarker.time)
     },
     computed: {
         ...mapState('marker', ['tmpMarker']),

@@ -151,9 +151,6 @@ export default {
     computed: {
         ...mapState('timeline', ['time']),
         ...mapState('player', ['play']),
-        // ...mapState('project', ['MODE_EDIT','MODE_RECORD']),
-
-        // ...mapGetters('project', ['sessionMode']),
 
         ...mapGetters('user', ['hasEditPermission']),
 

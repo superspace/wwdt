@@ -7,15 +7,23 @@ const state = {
     tmpAsset: {},
     assets: {},
     types: [
-        {value: 'FILE', text: 'File', types: ['doc','docx','pdf','xls','xlsx']},
-        {value: 'IMAGE', text: 'Image', types: ['jpeg','jpg','gif','png','svg']},
+        {value: 'FILE', text: 'File', types: []},
+        {value: 'IMAGE', text: 'Image', types: ['jpeg','jpg','gif','png','svg','pdf']},
         {value: 'TEXT', text: 'Text'},
         {value: 'VIDEO', text: 'Video', types: ['mp4']},
         {value: 'AUDIO', text: 'Audio', types: ['mp3']},
         {value: 'LABEL', text: 'Label'},
         {value: 'URL', text: 'Link'}
     ],
-    ranking: [1,2,3,4,5]
+    ranking: [
+        {value: -1, text: 'All'},
+        {value: 0, text: '0'},
+        {value: 1, text: '1'},
+        {value: 2, text: '2'},
+        {value: 3, text: '3'},
+        {value: 4, text: '4'},
+        {value: 5, text: '5'}
+    ]
 }
 
 const getters = {
@@ -26,7 +34,20 @@ const getters = {
         return asset
     },
 
-    getAssetList: (state) => {
+    getAssets: (state) => {
+
+        let assets = [];
+        for (var item of Object.entries(state.assets)) {
+            const id = item[0]
+            const asset = item[1]
+            asset.id = id
+            assets.push(asset)
+        }
+        return assets
+
+    },
+
+    getAssetListOptions: (state) => {
 
         let options = [];
         for (var item of Object.entries(state.assets)) {
@@ -41,7 +62,8 @@ const getters = {
 
     allowedFileTypes: () => {
         const index = state.types.findIndex(x => x.value === state.tmpAsset.type)
-        return state.types[index].types
+        let types = state.types[index].types.map(x => x = '.' + x)
+        return types.join(',')
     },
 
 }

@@ -8,7 +8,7 @@
                     </b-badge>
                 </h6>
                 <span></span>
-                <b-button class="mb-3" size="sm" variant="primary" @click.prevent="openCreateKeyframeModal">
+                <b-button class="mb-3" size="sm" variant="primary" @click.prevent="openCreateKeyframeModal" v-if="hasEditPermission">
                     <b-icon-plus></b-icon-plus> Add Keyframe
                 </b-button>
             </div>
@@ -67,6 +67,8 @@ export default {
     },
     computed: {
         ...mapGetters('assets', ['getAsset']),
+        ...mapGetters('user', ['hasEditPermission']),
+
         ...mapState('arrangement', ['arrangement', 'arrangements']),
         ...mapState('keyframe', ['keyframes','keyframe']),
         ...mapState('timeline', ['start', 'time']),

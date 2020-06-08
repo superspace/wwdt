@@ -32,15 +32,14 @@
                             </b-form-group>
 
                             <b-form-group label="Ranking">
-                                <b-form-radio-group :options="ranking" v-model="tmpAsset.rank">
-                                </b-form-radio-group>
+                                <b-form-rating v-model="tmpAsset.rank"></b-form-rating>
                             </b-form-group>
 
-                            <b-form-group label="Related" label-for="related">
+                            <!-- <b-form-group label="Related" label-for="related">
                                 <b-input-group>
-                                    <b-form-select id="related" multiple v-model="tmpAsset.related" :options="getAssetList" />
+                                    <b-form-select id="related" multiple v-model="tmpAsset.related" :options="getAssetListOptions" />
                                 </b-input-group>
-                            </b-form-group>
+                            </b-form-group> -->
 
                         </div>
                         <div class="col-md-6">
@@ -51,6 +50,7 @@
                                     <b-form-file
                                         v-model="tmpAsset.upload"
                                         id="file"
+                                        :accept="allowedFileTypes"
                                         placeholder="Select file ..."
                                         drop-placeholder="Drop file here..."
                                         @input="handleFilePreview()"
@@ -118,10 +118,13 @@ export default {
 
     },
     computed: {
-        ...mapState('assets', ['tmpAsset', 'types', 'ranking']),
+        ...mapState('assets', ['tmpAsset', 'types']),
         ...mapState('marker', ['marker']),
-        ...mapState('project', ['session']),
-        ...mapGetters('assets', ['allowedFileTypes', 'getAssetList']),
+        ...mapState('timeline', ['time']),
+        ...mapState('project', ['session', 'MODE_EDIT', 'MODE_RECORD']),
+
+        ...mapGetters('assets', ['allowedFileTypes', 'getAssetListOptions']),
+        ...mapGetters('project', ['sessionMode']),
 
         preview: function () {
             let src = (this.tmpAsset.file && this.tmpAsset.file.thumb) ? process.env.VUE_APP_ADMIN_HOST + this.tmpAsset.file.thumb : ''
@@ -132,6 +135,7 @@ export default {
 
         ...mapActions('assets', ['updateAsset','deleteAsset', 'createAsset', 'setTmpAsset']),
         ...mapActions('project', ['addTags']),
+        ...mapActions('marker', ['createMarker']),
 
         reset: function () {
             this.setTmpAsset()
@@ -180,6 +184,10 @@ export default {
             this.handleUpdateAssetSubmit()
         },
 
+        hideModal: function () {
+            this.$bvModal.hide('modal-update-asset')
+        },
+
         handleUpdateAssetSubmit: function () {
         
             if (!this.checkUpdateAssetValidity()) {
@@ -190,23 +198,48 @@ export default {
 
             if (this.tmpAsset.id == undefined) {
 
-                let payload = {
-                    asset: this.tmpAsset,
-                    marker: this.marker.id ? this.marker : 0
+                if (this.sessionMode == this.MODE_RECORD && !this.marker.id) {
+
+                    let marker = {
+                        title: 'MARKER',
+                        time: this.time
+                    }
+
+                    this.createMarker(marker)
+                        .then(() => {
+
+                            const payload = {
+                                asset: this.tmpAsset,
+                                marker: this.marker
+                            }
+
+                            this.createAsset(payload)
+                                .then(() => {
+                                    this.hideModal()
+                                })
+                        })
+
+
+                } else {
+
+                    let payload = {
+                        asset: this.tmpAsset,
+                        marker: this.marker.id ? this.marker : 0
+                    }
+
+                    this.createAsset(payload)
+                        .then(() => {
+                            this.hideModal()
+                        })
                 }
 
-                this.createAsset(payload)
-                    .then(() => {
-                        this.$bvModal.hide('modal-update-asset')
-                        this.inProgress = false;
-                    })
+
 
             } else {
 
                 this.updateAsset(this.tmpAsset)
                     .then(() => {
-                        this.$bvModal.hide('modal-update-asset')
-                        this.inProgress = false;
+                        this.hideModal()
                     })
 
             }

@@ -3,7 +3,24 @@
         <b-card no-body class="mb-3">
 
             <b-card-header class="d-flex justify-content-between align-items-center">
-                <div></div>
+                <b-form inline>
+                    <b-input-group prepend="Stars" size="sm">
+                        <template v-slot:prepend>
+                            <b-input-group-text>
+                                <b-icon-star-fill style="width: 14px; height: 14px;"></b-icon-star-fill>
+                            </b-input-group-text>
+                        </template>
+                        <b-form-select size="sm" v-model="filterRank" :options="rankingOptions" />
+                    </b-input-group>
+                    <b-input-group label-cols="6" size="sm">
+                        <template v-slot:prepend>
+                            <b-input-group-text>
+                                <b-icon-tag-fill style="width: 14px; height: 14px;"></b-icon-tag-fill>
+                            </b-input-group-text>
+                        </template>
+                        <b-form-select size="sm" v-model="filterTag" :options="tagOptions" />
+                    </b-input-group>
+                </b-form>
                 <b-button-group>
                     <b-button variant="primary" size="sm" @click.prevent="openCreateAssetModal()"><b-icon-plus></b-icon-plus> Add Asset</b-button>
                 </b-button-group>
@@ -12,8 +29,7 @@
 
             <b-list-group flush>
                 <drag class="list-group-item d-flex justify-content-between align-items-center" href="#"
-                    v-for="(asset, id) in assets" :key="id"
-                    :setid="asset.id = id"
+                    v-for="asset in filteredAssets" :key="asset.id"
                     :transfer-data="asset" 
                     @click.prevent="setAsset(asset)">
                     <div @click.prevent="openViewAssetModal(asset)">
@@ -47,11 +63,46 @@ export default {
     },
     data: function () {
         return {
+            filterRank: -1,
+            filterTag: '',
+            filterTags: []
         }
     },
     computed: {
-        ...mapState('assets', ['assets', 'tmpAsset']),
-        ...mapGetters('assets', ['getAsset']),
+        ...mapState('assets', ['tmpAsset', 'ranking']),
+        ...mapState('project', ['session']),
+
+        ...mapGetters('assets', ['getAssets']),
+
+        tagOptions: function () {
+            let tags = this.session.tags.slice(0)
+            tags.unshift({value: '', text: 'All'})
+            return tags
+        },
+
+        rankingOptions: function () {
+            return this.ranking
+        },
+
+        filteredAssets: function () {
+
+            let assets = this.getAssets
+            
+            if (this.filterRank >= 0 || this.filterTag != '') {
+
+                assets = assets.filter(asset => {
+
+                    if (asset.rank == this.filterRank) {
+                        return true
+                    }
+                    if (asset.tags.indexOf(this.filterTag) != -1) {
+                        return true
+                    }
+                })
+            }
+            
+            return assets
+        }
     },
     methods: {
         ...mapActions('assets', ['setAsset', 'setTmpAsset', 'deleteAsset']),

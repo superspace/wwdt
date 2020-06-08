@@ -13,12 +13,12 @@
             :id="'popover-' + type + '-' + data.id" 
             :title="data.title" 
             :class="classNames">
-            <b-icon-triangle-fill v-if="type=='upload'"></b-icon-triangle-fill>
-            <b-icon-circle-fill v-if="type=='keyframe'"></b-icon-circle-fill>
+            <b-icon-caret-up-fill v-if="type=='upload'"></b-icon-caret-up-fill>
+            <b-icon-fullscreen v-if="type=='keyframe'"></b-icon-fullscreen>
         </a>
         <b-popover :target="'popover-' + type + '-' + data.id" triggers="hover" placement="bottom">
             <b-button-group>
-                <b-button variant="light" size="sm">
+                <b-button variant="light" disabled size="sm">
                     {{data.title}}
                 </b-button>
                 <b-button variant="primary" size="sm" @click.prevent="openUpdateMarkerModal">
@@ -68,7 +68,13 @@ export default {
         ...mapGetters('project', ['sessionMode']),
 
         classNames: function () {
-            return ['c-marker', 'c-marker--'+this.type]
+            let classes = ['c-marker', 'c-marker--'+this.type]
+            if (this.data.time < 5) {
+                classes.push('c-marker--start')
+            } else if (this.data.time > this.duration - 5) {
+                classes.push('c-marker--end')
+            }
+            return classes
         }
     },
     watch: {
@@ -90,7 +96,7 @@ export default {
         ...mapActions('arrangement', {activateArrangement:'setActive'}),
 
         setXPos: function () {
-            const left = this.width / this.duration * this.data.time
+            let left = this.width / this.duration * this.data.time
             this.xPos = Math.round(left)
         },
 
@@ -98,6 +104,11 @@ export default {
 
             let time = left * (this.duration / this.width)
             time = Math.round(time)
+
+            time = time > this.duration ? this.duration : time;
+            time = time < 0 ? 0 : time;
+
+            console.log(time); // eslint-disable-line no-console
             
             if (time != this.data.time) {
                 this.data.time = time
@@ -192,6 +203,14 @@ export default {
 
     &.dragging {
         opacity: 0.7;
+    }
+
+    &--start {
+        transform: translateX(0);
+    }
+
+    &--end {
+        transform: translateX(-100%);
     }
 
     &--upload {
