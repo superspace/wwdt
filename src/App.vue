@@ -6,7 +6,7 @@
 
           <router-link class="navbar-brand" to="/"><strong>/WWDT</strong></router-link>
 
-          <div class="ml-3" v-if="project">
+          <div class="ml-3 d-none d-md-block" v-if="project">
 
             <strong>
               {{project.title}}

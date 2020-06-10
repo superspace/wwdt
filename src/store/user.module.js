@@ -5,8 +5,7 @@ const state = {
     firstname: '',
     lastname: '',
     email: '',
-    role: '',
-    response: {}
+    role: ''
 }
 
 const actions = {
@@ -44,7 +43,6 @@ const actions = {
         return new Promise((resolve, reject) => {
             Axios.get('/user')
                 .then(resp => {
-                    commit('setResponse', resp)
                     if (resp.data.status === 'OK') {
                         const result = resp.data.result.user
                         let user = {}
@@ -100,10 +98,6 @@ const getters = {
 }
 
 const mutations = {
-
-    setResponse (state, response) {
-        state.response = Object.assign({}, response)
-    },
 
     reset (state) {
         state.role = ''

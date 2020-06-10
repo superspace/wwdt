@@ -3,10 +3,6 @@
 
     <div class="row justify-content-center">
 
-      <!-- <pre>
-       {{ response }}
-      </pre> -->
-
       <div class="col-md-4 col-lg-3">
 
         <b-list-group>
@@ -31,7 +27,7 @@
 
 import router from '../router'
 
-import { mapState, mapActions, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'ProjectsView',
@@ -56,14 +52,10 @@ export default {
     },
     computed: {
         ...mapState('project', ['projects', 'project']),
-        ...mapState('user', ['id', 'email','response']),
-
-        ...mapGetters('user', ['authKey'])
+        ...mapState('user', ['id', 'email']),
     },
     methods: {
         ...mapActions('project', ['setProject', 'getProjects', 'resetProject']),
-
-        ...mapActions('user', ['getUser']),
 
         setActiveProject: function (project) {
 

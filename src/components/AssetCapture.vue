@@ -8,7 +8,7 @@
                 <div v-if="!filename">
                     <b-form-file 
                         class="mb-4"
-                        :placeholder="'UPLOAD'"
+                        :placeholder="'Add Asset'"
                         @input="handleFilePreview()"
                         v-model="tmpAsset.upload">
                     </b-form-file>
@@ -33,7 +33,7 @@
 
                     <b-button block variant="primary"
                         @click.prevent="handleCreateAssetSubmit">
-                        <b-icon-plus></b-icon-plus> Add Asset
+                        <b-icon-cloud-upload></b-icon-cloud-upload> Save
                     </b-button>
 
                     <b-button block variant="secondary"
