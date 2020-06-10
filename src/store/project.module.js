@@ -13,7 +13,10 @@ const state = {
 const getters = {
 
     sessionMode: function () {
-        return state.recording.id ? state.MODE_EDIT : state.MODE_RECORD
+        let mode = ''
+        if (state.project.id !== undefined)
+            mode = state.recording.id ? state.MODE_EDIT : state.MODE_RECORD
+        return mode
     }    
 }
 

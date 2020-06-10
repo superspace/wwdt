@@ -2,6 +2,11 @@
   <div class="container-fluid">
 
     <div class="row justify-content-center">
+
+      <!-- <pre>
+       {{ response }}
+      </pre> -->
+
       <div class="col-md-4 col-lg-3">
 
         <b-list-group>
@@ -26,7 +31,7 @@
 
 import router from '../router'
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'ProjectsView',
@@ -34,6 +39,8 @@ export default {
 
     },
     mounted: function () {
+
+      this.resetProject()
 
       this.getProjects()
         .then(()=>{
@@ -49,9 +56,14 @@ export default {
     },
     computed: {
         ...mapState('project', ['projects', 'project']),
+        ...mapState('user', ['id', 'email','response']),
+
+        ...mapGetters('user', ['authKey'])
     },
     methods: {
-        ...mapActions('project', ['setProject', 'getProjects']),
+        ...mapActions('project', ['setProject', 'getProjects', 'resetProject']),
+
+        ...mapActions('user', ['getUser']),
 
         setActiveProject: function (project) {
 

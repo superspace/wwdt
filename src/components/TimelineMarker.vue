@@ -108,7 +108,7 @@ export default {
             time = time > this.duration ? this.duration : time;
             time = time < 0 ? 0 : time;
 
-            console.log(time); // eslint-disable-line no-console
+            // console.log(time); // eslint-disable-line no-console
             
             if (time != this.data.time) {
                 this.data.time = time

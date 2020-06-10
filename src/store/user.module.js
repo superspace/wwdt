@@ -5,7 +5,8 @@ const state = {
     firstname: '',
     lastname: '',
     email: '',
-    role: ''
+    role: '',
+    response: {}
 }
 
 const actions = {
@@ -40,14 +41,24 @@ const actions = {
     },
 
     getUser({commit}) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             Axios.get('/user')
                 .then(resp => {
+                    commit('setResponse', resp)
                     if (resp.data.status === 'OK') {
-                        const user = resp.data.result.user
+                        const result = resp.data.result.user
+                        let user = {}
+                        user.id = result.id
+                        user.firstname = result.firstname
+                        user.lastname = result.lastname
+                        user.email = result.email
+                        user.role = result.role
                         commit('setUser', user)
                         resolve()
                     }
+                })
+                .catch(error => {
+                    reject(error)
                 })
         })
 
@@ -77,9 +88,6 @@ const getters = {
     },
     hasEditPermission: function (state, getters, rootState, rootGetters) {
 
-        console.log(rootGetters['project/sessionMode']); // eslint-disable-line no-console
-        console.log(rootState.project.MODE_EDIT); // eslint-disable-line no-console
-
         if (rootGetters['project/sessionMode'] == rootState.project.MODE_RECORD) {
             if (state.role === 'Admin') {
                 return true
@@ -92,6 +100,10 @@ const getters = {
 }
 
 const mutations = {
+
+    setResponse (state, response) {
+        state.response = Object.assign({}, response)
+    },
 
     reset (state) {
         state.role = ''
