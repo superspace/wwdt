@@ -15,7 +15,6 @@
             :active="active"
             :class="assetClass"
             :key="componentKey"
-            :style="style"
             :onDragStart="onDragStartCallback"
             @dragstop="handleDragStop"
             @resizing="handleResize"
@@ -233,20 +232,13 @@ export default {
 
         updatePosition: function () {
 
-            const x = Math.round(this.parentWidth / 100 * this.props.x + this.parentWidth)
-            const y = Math.round(this.parentHeight / 100 * this.props.y + this.parentHeight)
-
+            const x = Math.round((this.parentWidth / 100 * this.props.x + this.parentWidth)*1000)/1000
+            const y = Math.round((this.parentHeight / 100 * this.props.y + this.parentHeight)*1000)/1000
 
             this.xpos = x
             this.ypos = y
 
             this.setSize()
-
-            this.style.left = x + 'px'
-            this.style.top = y + 'px'
-            this.style.width = this.w + 'px'
-            this.style.height = this.h + 'px'
-
 
             const context = this;
             setTimeout(function () {
@@ -261,7 +253,7 @@ export default {
             let width = image.naturalHeight
 
             if (height && width) {
-                this.ratio = Math.round((width/height)*100)/100;
+                this.ratio = Math.round((width/height)*1000)/1000;
             }
 
             if (!this.loaded) {
@@ -275,6 +267,8 @@ export default {
 
         forceUpdate: function () {
             this.componentKey += 1
+            this.dragging = false
+            this.resize = false
         },
 
         handleIncreaseZ: function () {
@@ -304,7 +298,7 @@ export default {
         },
 
         setSize: function () {
-            this.w = Math.round(this.initalWidth * this.props.scale)
+            this.w = Math.round(this.initalWidth * this.props.scale * 1000)/1000
             if (this.lockRatio) {
                 this.h = Math.round(this.w * this.ratio) 
             }
@@ -312,17 +306,11 @@ export default {
 
         onDragStartCallback: function () {
             if (this.hasEditPermission) {
-                this.style = {}
-                if (!this.isResizable) {
-                    this.style.minWidth = '200px'
-                    this.style.height = 'auto'
-                }
                 this.dragging = true
             }
         },
 
         handleDragStop: function (x, y) {
-            this.dragging = false
 
             if (x != this.xpos || y != this.ypos) {    
 
@@ -338,8 +326,8 @@ export default {
                     ypos = this.props.y;
                 }
 
-                const relativeX = Math.round(100 / this.parentWidth * xpos * 100) / 100
-                const relativeY = Math.round(100 / this.parentHeight * ypos * 100) / 100
+                const relativeX = Math.round(100 / this.parentWidth * xpos * 1000) / 1000
+                const relativeY = Math.round(100 / this.parentHeight * ypos * 1000) / 1000
 
                 this.props.x = relativeX;
                 this.props.y = relativeY;
@@ -359,13 +347,13 @@ export default {
         },
 
         handleResize: function () {
-            this.style = {}
             this.resize = true
         },
 
         handleResizeStop: function (x, y, width) {
-            this.resize = false
             const scale = Math.round((width / this.initalWidth)*100)/100;
+
+            this.props.scale = scale
 
             const payload = {
                 asset: this.asset,
@@ -414,14 +402,12 @@ export default {
 .c-asset {
     background: transparentize(black, 0.95);
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
-    position: relative;
-    transform: translateX(-50%) translateY(-50%);
     opacity: 1;
     border: 1px solid #CCC;
 
     &--animate {
         transition: all 0.4s ease-in-out;
-        transition-property: width, height, top, left;
+        transition-property: width, height, transform;
     }
 
     &--hidden {

@@ -1,5 +1,5 @@
 import Axios from "axios"
-import Vue from "vue"
+// import Vue from "vue"
 import store from "."
 
 const sortKeyframes = function () {
@@ -257,12 +257,12 @@ const mutations = {
         state.keyframe.assets.splice(i, 1)
     },
 
-    updateProperties (state, {asset, props}) {
+    updateProperties (state, {asset, }) { //props
         const i = state.keyframe.assets.findIndex(x => x.id === asset.id)
         const currentAsset = state.keyframe.assets[i];
         if (currentAsset) {
-            const newProps = Object.assign(currentAsset.props, props)
-            Vue.set(currentAsset, 'props', newProps)
+            // const newProps = Object.assign(currentAsset.props, props)
+            // Vue.set(currentAsset, 'props', newProps)
         }
     },
 
