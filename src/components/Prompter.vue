@@ -17,10 +17,6 @@ export default {
     },
     mounted: function () {
 
-        if (!this.active) {
-            return
-        }
-
         this.file = process.env.VUE_APP_ADMIN_HOST + this.recording.transcript
 
         this.$http.get(this.file).then((response) => {

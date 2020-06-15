@@ -109,6 +109,8 @@ export default {
     computed: {
         ...mapState('marker', ['markers']),
         ...mapState('timeline', ['duration','time']),
+        ...mapState('project', ['MODE_EDIT']),
+
         ...mapGetters('project', ['sessionMode']),
 
         markerData: function () {
@@ -143,7 +145,7 @@ export default {
         },
 
         active: function () {
-            return this.sessionMode == 'MODE_EDIT' ? true : false
+            return this.sessionMode == this.MODE_EDIT ? true : false
 
         }
 

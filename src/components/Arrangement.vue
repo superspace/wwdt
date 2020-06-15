@@ -9,15 +9,15 @@
                 </h6>
                 <span></span>
                 <b-form inline class="mb-3">
-                    <b-form-select v-model="arrangement.id" :options="arrangementsAsOptions" size="sm" @change="handleChangeArrangement"></b-form-select>
-                    <b-button-group>
+                    <span v-if="this.sessionMode == this.MODE_EDIT">
+                        <b-form-select v-model="arrangement.id" :options="arrangementsAsOptions" size="sm" @change="handleChangeArrangement"></b-form-select>
                         <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateArrangementModal">
                             <b-icon-plus></b-icon-plus> Add Arrangement
                         </b-button>
-                        <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateKeyframeModal" v-if="hasEditPermission">
-                            <b-icon-plus></b-icon-plus> Add Keyframe
-                        </b-button>
-                    </b-button-group>
+                    </span>
+                    <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateKeyframeModal" v-if="hasEditPermission">
+                        <b-icon-plus></b-icon-plus> Add Keyframe
+                    </b-button>
                 </b-form>
             </div>
         </div>
@@ -90,10 +90,12 @@ export default {
     computed: {
         ...mapGetters('assets', ['getAsset']),
         ...mapGetters('user', ['hasEditPermission']),
+        ...mapGetters('project', ['sessionMode']),
 
         ...mapState('arrangement', ['arrangement', 'arrangements','tmpArrangement']),
         ...mapState('keyframe', ['keyframes','keyframe']),
         ...mapState('timeline', ['start', 'time']),
+        ...mapState('project', ['MODE_EDIT', 'MODE_RECORD']),
 
         dragOverClass: function () {
             return this.dragOver ? 'c-arrangement--dragover' : ''
