@@ -8,9 +8,17 @@
                     </b-badge>
                 </h6>
                 <span></span>
-                <b-button class="mb-3" size="sm" variant="primary" @click.prevent="openCreateKeyframeModal" v-if="hasEditPermission">
-                    <b-icon-plus></b-icon-plus> Add Keyframe
-                </b-button>
+                <b-form inline class="mb-3">
+                    <b-form-select v-model="arrangement.id" :options="arrangementsAsOptions" size="sm" @change="handleChangeArrangement"></b-form-select>
+                    <b-button-group>
+                        <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateArrangementModal">
+                            <b-icon-plus></b-icon-plus> Add Arrangement
+                        </b-button>
+                        <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateKeyframeModal" v-if="hasEditPermission">
+                            <b-icon-plus></b-icon-plus> Add Keyframe
+                        </b-button>
+                    </b-button-group>
+                </b-form>
             </div>
         </div>
         <div class="row c-arrangement__wrapper">
@@ -35,6 +43,20 @@
             </div>
 
         </div>    
+
+        <b-modal id="modal-create-arrangement" title="Add Arrangement" @ok="handleCreateArrangementModalOK">
+
+            <b-form @submit.stop.prevent="handleCreateArrangementSubmit">
+
+                <b-form-group label="Title" label-for="title" 
+                    invalid-feedback="Title is required">
+                    <b-form-input id="title" v-model="tmpArrangement.title" type="text" required />
+                </b-form-group>
+
+            </b-form>
+
+        </b-modal>
+
     </div>
 </template>
 
@@ -69,7 +91,7 @@ export default {
         ...mapGetters('assets', ['getAsset']),
         ...mapGetters('user', ['hasEditPermission']),
 
-        ...mapState('arrangement', ['arrangement', 'arrangements']),
+        ...mapState('arrangement', ['arrangement', 'arrangements','tmpArrangement']),
         ...mapState('keyframe', ['keyframes','keyframe']),
         ...mapState('timeline', ['start', 'time']),
 
@@ -79,10 +101,22 @@ export default {
 
         active: function () {
             return this.time > 0;
+        },
+
+        arrangementsAsOptions: function () {
+            let options = []
+            for (const arrangement of this.arrangements) {
+                let option = {
+                    value: arrangement.id,
+                    text: arrangement.title
+                }
+                options.push(option)
+            }
+            return options
         }
     },
     methods: {
-        ...mapActions('arrangement', ['getArrangement']),
+        ...mapActions('arrangement', ['getArrangement', 'setTmpArrangement', 'createArrangement']),
         ...mapActions('keyframe', ['setTmpKeyframe','addPropertiesToKeyframe']),
 
         getProp: function (asset, prop) {
@@ -139,6 +173,29 @@ export default {
 
                     })
             }
+
+        },
+        handleChangeArrangement: function () {
+            this.getArrangement(this.arrangement.id)
+        },
+
+        openCreateArrangementModal: function () {
+            this.setTmpArrangement()
+            this.$bvModal.show('modal-create-arrangement')
+        },
+
+        handleCreateArrangementModalOK: function (e) {
+            e.preventDefault();
+            this.handleCreateArrangementSubmit()
+
+        },
+
+        handleCreateArrangementSubmit: function () {
+            this.createArrangement(this.tmpArrangement)
+                .then(() => {
+                    this.setTmpArrangement()
+                    this.$bvModal.hide('modal-create-arrangement')
+                })
 
         }
 

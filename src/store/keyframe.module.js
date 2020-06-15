@@ -21,14 +21,23 @@ const state = {
 const actions = {
 
     setKeyframes({ commit, dispatch }, keyframes) {
+        commit('setKeyframes', keyframes)
         if (keyframes.length === 0) {
             dispatch('createKeyframe', {title: 'START', time: 0})
-        } else {
-            commit('setKeyframes', keyframes)
         }
     },
 
     setKeyframe({ commit }, keyframe) {
+        commit('setKeyframe', keyframe)
+    },
+
+    setKeyframeByTime( {commit}, time) {
+        const keyframes = state.keyframes
+            .filter(keyframe => keyframe.time <= time)
+        let keyframe = {}
+        if (keyframes.length) {
+            keyframe = keyframes.slice(-1)[0]
+        }   
         commit('setKeyframe', keyframe)
     },
 
@@ -202,7 +211,6 @@ const mutations = {
 
     setKeyframes (state, keyframes=[]) {
         state.keyframes = keyframes
-        
         sortKeyframes(state)
     },
 
@@ -220,7 +228,7 @@ const mutations = {
         sortKeyframes(state)
     },
 
-    setTmpKeyframe (state, keyframe) {
+    setTmpKeyframe (state, keyframe={}) {
         state.tmpKeyframe = Object.assign({}, keyframe)
     },
 

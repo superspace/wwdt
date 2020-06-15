@@ -50,6 +50,18 @@ const actions = {
         commit('setMarker', marker)
     },
 
+    setMarkerByTime( {commit}, time) {
+
+        const markers = state.markers
+            .filter(marker => marker.time <= time)
+        let marker = {}
+        if (markers.length) {
+            marker = markers.slice(-1)[0]
+        } 
+        
+        commit('setMarker', marker)
+    },
+
     setTmpMarker ({ commit }, marker) {
         commit('setTmpMarker', marker)
     },

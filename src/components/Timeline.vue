@@ -154,33 +154,12 @@ export default {
                 this.value = this.duration
             }
 
-            let context = this
-
             if (this.sessionMode == this.MODE_EDIT) {
-                const markers = this.markers
-                    .filter(marker => marker.time == Math.round(context.time))
-
-                if (markers.length) {
-                    const marker = markers.slice(-1)[0]
-                    this.setMarker(marker)
-                } else {
-                    this.setMarker()
-                }
+                this.setMarkerByTime(this.time)
             }
 
             if (this.sessionMode == this.MODE_EDIT || (this.sessionMode == this.MODE_RECORD && !this.hasEditPermission)) {
-
-                let context = this
-
-                const keyframes = this.keyframes
-                    .filter(keyframe => keyframe.time <= context.time)
-
-                if (keyframes.length) {
-                    const keyframe = keyframes.slice(-1)[0]
-                    this.setKeyframe(keyframe)
-                } else {
-                    this.setKeyframe()
-                }
+                this.setKeyframeByTime(this.time)
             }
 
         }
@@ -188,8 +167,8 @@ export default {
     methods: {
         ...mapActions('timeline', ['setDuration', 'setTime', 'setStart', 'startTimer']),
         ...mapActions('player', ['setPosition']),
-        ...mapActions('keyframe', ['setKeyframe']),
-        ...mapActions('marker', ['setMarker','getMarkers']),
+        ...mapActions('keyframe', ['setKeyframe', 'setKeyframeByTime']),
+        ...mapActions('marker', ['setMarker','getMarkers','setMarkerByTime']),
         ...mapActions('arrangement', ['getArrangement']),
 
         ...mapActions('assets', ['getAssets']),
