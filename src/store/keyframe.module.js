@@ -25,6 +25,7 @@ const actions = {
         if (keyframes.length === 0) {
             dispatch('createKeyframe', {title: 'START', time: 0})
         }
+        dispatch('setKeyframeByTime', store.state.timeline.time)
     },
 
     setKeyframe({ commit }, keyframe) {

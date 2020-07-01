@@ -1,5 +1,18 @@
 <template>
     <div>
+        <b-modal id="modal-update-arrangement" size="md" title="Update Arrangement" @ok="handleUpdateArrangementModalOK">
+
+            <b-form ref="formUpdateAsset" @submit.stop.prevent="handleUpdateArrangementSubmit">
+
+                <b-form-group label="Title" label-for="title" 
+                    invalid-feedback="Title is required">
+                    <b-form-input id="title" v-model="tmpArrangement.title" type="text" required />
+                </b-form-group>
+
+            </b-form>
+
+        </b-modal>
+
         <div class="row">
             <div class="col-md-12 d-flex justify-content-between align-items-center">
                 <h6 v-if="keyframe.id">{{ keyframe.title }} 
@@ -11,9 +24,17 @@
                 <b-form inline class="mb-3">
                     <span v-if="this.sessionMode == this.MODE_EDIT">
                         <b-form-select v-model="arrangement.id" :options="arrangementsAsOptions" size="sm" @change="handleChangeArrangement"></b-form-select>
-                        <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateArrangementModal">
-                            <b-icon-plus></b-icon-plus> Add Arrangement
-                        </b-button>
+                        <b-button-group>
+                            <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openUpdateArrangementModal">
+                                <b-icon-pencil></b-icon-pencil>
+                            </b-button>
+                            <b-button  size="sm" variant="primary" @click.prevent="openCreateArrangementModal">
+                                <b-icon-plus></b-icon-plus>
+                            </b-button>
+                            <b-button  size="sm" variant="light" @click.prevent="handleDeleteArrangementAlert" v-if="this.arrangements.length > 1 ">
+                                <b-icon-trash></b-icon-trash>
+                            </b-button>
+                        </b-button-group>
                     </span>
                     <b-button  size="sm" class="ml-3" variant="primary" @click.prevent="openCreateKeyframeModal" v-if="hasEditPermission">
                         <b-icon-plus></b-icon-plus> Add Keyframe
@@ -118,8 +139,19 @@ export default {
         }
     },
     methods: {
-        ...mapActions('arrangement', ['getArrangement', 'setTmpArrangement', 'createArrangement']),
-        ...mapActions('keyframe', ['setTmpKeyframe','addPropertiesToKeyframe','setKeyframeByTime']),
+        ...mapActions('arrangement', [
+            'getArrangement', 
+            'setTmpArrangement', 
+            'createArrangement', 
+            'updateArrangement', 
+            'deleteArrangement'
+        ]),
+
+        ...mapActions('keyframe', [
+            'setTmpKeyframe',
+            'addPropertiesToKeyframe',
+            'setKeyframeByTime'
+        ]),
 
         getProp: function (asset, prop) {
             return asset.props[prop]
@@ -179,9 +211,6 @@ export default {
         },
         handleChangeArrangement: function () {
             this.getArrangement(this.arrangement.id)
-                .then(()=>{
-                    this.setKeyframeByTime(this.time)
-                })
         },
 
         openCreateArrangementModal: function () {
@@ -190,7 +219,7 @@ export default {
         },
 
         handleCreateArrangementModalOK: function (e) {
-            e.preventDefault();
+            e.preventDefault()
             this.handleCreateArrangementSubmit()
 
         },
@@ -200,9 +229,45 @@ export default {
                 .then(() => {
                     this.setTmpArrangement()
                     this.$bvModal.hide('modal-create-arrangement')
+                    this.getArrangement(this.arrangement.id)
                 })
 
-        }
+        },
+
+        openUpdateArrangementModal: function () {
+            this.setTmpArrangement(this.arrangement)
+            this.$bvModal.show('modal-update-arrangement')
+        },
+
+        handleUpdateArrangementModalOK: function (e) {
+            e.preventDefault()
+            this.handleUpdateArrangementSubmit()
+        },
+
+        handleUpdateArrangementSubmit: function () {
+            this.updateArrangement(this.tmpArrangement)
+                .then(()=> {
+                    this.setTmpArrangement()
+                    this.$bvModal.hide('modal-update-arrangement')
+                })
+        },
+
+        handleDeleteArrangementAlert: function () {
+            this.setTmpArrangement(this.arrangement)
+            this.$bvModal.msgBoxConfirm('Really remove «' + this.tmpArrangement.title + '» with all keyframes and markers? This is permanent.')
+                .then(value => {
+                    if (value === true) {
+                        this.deleteArrangement(this.tmpArrangement.id)
+                            .then(() => {
+                                this.setTmpArrangement()
+                                if (this.arrangements.length > 0) {
+                                    this.getArrangement(this.arrangements[0]['id'])
+                                }
+                            })
+                    } 
+                })
+        },
+
 
     }
 }

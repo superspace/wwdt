@@ -57,6 +57,37 @@ const actions = {
         })
     },
 
+    updateArrangement ({ commit }, arrangement) {
+
+        let data = new FormData
+        data.append('id', arrangement.id)
+        data.append('title', arrangement.title)
+
+        return new Promise((resolve) => {
+            Axios.post('/arrangement/update', data)
+                .then(resp => {
+                    if (resp.data.status === 'OK') {
+                        arrangement = resp.data.result
+                        commit('updateArrangement', arrangement)
+                        resolve()
+                    }
+                })
+        })
+    },
+
+    deleteArrangement ({ commit}, id) {
+        let data = new FormData
+        data.append('id', id)
+
+        return new Promise((resolve) => {
+            Axios.post('/arrangement/delete', data)
+                .then(() => {
+                    commit('deleteArrangement', id)
+                    resolve()
+                })
+        })
+    },
+
     getArrangement ({ commit, dispatch }, id) {
 
         return new Promise((resolve) => {
@@ -96,12 +127,24 @@ const mutations = {
         state.arrangement = arrangement
     },
 
+    updateArrangement(state, arrangement) {
+        const index = state.arrangements.findIndex(x => x.id === arrangement.id)
+        state.arrangements.splice(index, 1, arrangement)
+        state.arrangement = arrangement
+    },
+
+    deleteArrangement(state, id) {
+        const index = state.arrangements.findIndex(x => x.id === id)
+        state.arrangements.splice(index, 1)
+        state.arrangement = {}
+    },
+
     setArrangements (state, arrangements) {
         state.arrangements = arrangements
     },
 
     setTmpArrangement (state, arrangement={}) {
-        state.arrangement = Object.assign({}, arrangement)
+        state.tmpArrangement = Object.assign({}, arrangement)
     },
 
     setArrangement (state, arrangement={}) {
