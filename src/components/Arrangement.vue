@@ -119,7 +119,7 @@ export default {
     },
     methods: {
         ...mapActions('arrangement', ['getArrangement', 'setTmpArrangement', 'createArrangement']),
-        ...mapActions('keyframe', ['setTmpKeyframe','addPropertiesToKeyframe']),
+        ...mapActions('keyframe', ['setTmpKeyframe','addPropertiesToKeyframe','setKeyframeByTime']),
 
         getProp: function (asset, prop) {
             return asset.props[prop]
@@ -179,6 +179,9 @@ export default {
         },
         handleChangeArrangement: function () {
             this.getArrangement(this.arrangement.id)
+                .then(()=>{
+                    this.setKeyframeByTime(this.time)
+                })
         },
 
         openCreateArrangementModal: function () {

@@ -96,7 +96,6 @@ export default {
                 this.setTime(this.duration)
             }
         }
-
     },
     destroyed: function () {
         this.stopRecording()
@@ -106,6 +105,7 @@ export default {
         let context = this;
         setTimeout(function () {
             context.setWidth();
+            context.handleTimeChange();
         }, 500)
 
     },
@@ -154,13 +154,7 @@ export default {
                 this.value = this.duration
             }
 
-            if (this.sessionMode == this.MODE_EDIT) {
-                this.setMarkerByTime(this.time)
-            }
-
-            if (this.sessionMode == this.MODE_EDIT || (this.sessionMode == this.MODE_RECORD && !this.hasEditPermission)) {
-                this.setKeyframeByTime(this.time)
-            }
+            this.handleTimeChange()
 
         }
     },
@@ -175,6 +169,18 @@ export default {
 
         onTimelineChange: function () {
             this.setPosition(this.value)
+        },
+
+        handleTimeChange: function () {
+
+            if (this.sessionMode == this.MODE_EDIT) {
+                this.setMarkerByTime(this.time)
+            }
+
+            if (this.sessionMode == this.MODE_EDIT || (this.sessionMode == this.MODE_RECORD && !this.hasEditPermission)) {
+                this.setKeyframeByTime(this.time)
+            }
+
         },
 
         startRecording: function () {

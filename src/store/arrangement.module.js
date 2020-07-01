@@ -67,11 +67,10 @@ const actions = {
                     delete arrangement.keyframes
                     commit('setArrangement', arrangement)
                     dispatch('keyframe/setKeyframes', keyframes, {root: true})
-                    if (!state.locked)
+                    if (!state.locked) {
                         dispatch('keyframe/resetKeyframe', null, {root: true}) 
-                    
+                    }
                     resolve()
-
                 })
             })
         },

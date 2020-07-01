@@ -404,6 +404,7 @@ export default {
     box-shadow: 2px 2px 5px transparentize(black, 0.8);
     opacity: 1;
     border: 1px solid #CCC;
+    position: absolute;
 
     &--animate {
         transition: all 0.4s ease-in-out;

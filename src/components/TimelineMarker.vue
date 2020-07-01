@@ -7,6 +7,7 @@
         :axis="'x'"
         :className="'c-marker'"
         :x="xPos"
+        :y="0"
         @dragstop="handleMarkerDragStop">
         <a href="#"
             @click.prevent="handleClickOnMarker()"
@@ -190,10 +191,9 @@ export default {
 <style lang="scss" scoped>
 
 .c-marker {
-    display: inline-block;
-    text-align: center;
     transform: translateX(-50%);
     transition: left 0.5s linear;
+    position: absolute;
 
     &.active {
         a {
