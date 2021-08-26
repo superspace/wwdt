@@ -7,6 +7,7 @@
 <script>
 
 import vtt from 'vtt.js'
+import Axios from "axios"
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -17,12 +18,14 @@ export default {
     },
     mounted: function () {
 
-        this.file = process.env.VUE_APP_ADMIN_HOST + this.recording.transcript
+        this.file = process.env.VUE_APP_ADMIN_HOST + '/fileproxy.php'
 
-        this.$http.get(this.file).then((response) => {
-            this.parseVTT(response.data)
-        })
-
+        Axios.get(this.file, {
+                params: {file: this.recording.transcript}
+            })
+            .then(response => {
+                this.parseVTT(response.data)
+            })
         
     },
     data: () => {
